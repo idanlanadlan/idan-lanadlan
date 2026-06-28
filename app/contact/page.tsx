@@ -13,7 +13,7 @@ export default function ContactPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen pt-28">
+      <main id="main-content" className="min-h-screen pt-28">
         <section className="py-16 bg-charcoal border-b border-gray-dark">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <p className="text-xs tracking-[0.3em] text-gold uppercase mb-3">בואו נדבר</p>
@@ -69,7 +69,7 @@ export default function ContactPage() {
                     <MapPin size={20} className="text-gold" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-white">רמת השרון, המרכז</p>
+                    <p className="text-sm font-semibold text-white">הירקון 319, נמל ת"א</p>
                     <p className="text-xs text-gray-light mt-1">פועל בכל אזור גוש דן</p>
                   </div>
                 </div>

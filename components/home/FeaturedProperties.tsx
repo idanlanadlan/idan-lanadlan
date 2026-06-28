@@ -5,55 +5,103 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import PropertyCard from "@/components/properties/PropertyCard";
 import { mockProperties } from "@/lib/mock-data";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function FeaturedProperties() {
-  const featured = mockProperties.filter((p) => p.featured).slice(0, 3);
+  const { t } = useLanguage();
+  const p = t.sections.properties;
+  const featured = mockProperties.filter((prop) => prop.featured).slice(0, 3);
 
   return (
-    <section className="py-24 max-w-7xl mx-auto px-4 sm:px-6">
+    <section className="py-28 max-w-7xl mx-auto px-4 sm:px-6" aria-labelledby="properties-heading">
+
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className="flex items-end justify-between mb-12"
+        className="flex items-end justify-between mb-14"
       >
         <div>
-          <p className="text-xs tracking-[0.3em] text-gold uppercase mb-3">נכסים נבחרים</p>
-          <div className="divider-gold mb-4" />
-          <h2 className="font-display text-4xl sm:text-5xl font-light text-white">
-            הנכסים שלנו
+          <span className="text-[10px] tracking-[0.45em] text-gold/60 uppercase block mb-5">
+            {p.eyebrow}
+          </span>
+          <h2
+            id="properties-heading"
+            className="font-display text-4xl sm:text-5xl font-extralight text-white leading-tight"
+          >
+            {p.title}
           </h2>
         </div>
         <Link
           href="/nadlan"
-          className="hidden sm:flex items-center gap-2 text-sm text-gold hover:text-gold-light transition-colors"
+          className="hidden sm:flex items-center gap-2 text-xs tracking-widest text-gray-light/60 hover:text-gold transition-colors duration-300 uppercase"
         >
-          כל הנכסים
-          <ArrowLeft size={16} className="rtl-flip" />
+          {p.all}
+          <ArrowLeft size={14} className="rtl-flip" aria-hidden="true" />
         </Link>
       </motion.div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {featured.map((property, i) => (
+      {featured.length === 1 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="max-w-2xl"
+        >
+          <PropertyCard property={featured[0]} variant="large" />
+        </motion.div>
+      )}
+
+      {featured.length === 2 && (
+        <div className="grid md:grid-cols-2 gap-3">
+          {featured.map((property, i) => (
+            <motion.div
+              key={property.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.12, duration: 0.6 }}
+            >
+              <PropertyCard property={property} />
+            </motion.div>
+          ))}
+        </div>
+      )}
+
+      {featured.length >= 3 && (
+        <div className="grid md:grid-cols-[2fr_1fr] gap-3">
           <motion.div
-            key={property.id}
-            initial={{ opacity: 0, y: 24 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: i * 0.12, duration: 0.5 }}
+            transition={{ duration: 0.6 }}
+            className="md:row-span-2"
           >
-            <PropertyCard property={property} />
+            <PropertyCard property={featured[0]} variant="large" />
           </motion.div>
-        ))}
-      </div>
+          {featured.slice(1, 3).map((property, i) => (
+            <motion.div
+              key={property.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.15 + i * 0.12, duration: 0.6 }}
+            >
+              <PropertyCard property={property} />
+            </motion.div>
+          ))}
+        </div>
+      )}
 
       <div className="mt-10 text-center sm:hidden">
         <Link
           href="/nadlan"
-          className="btn-outline-gold px-8 py-3 rounded text-sm"
+          className="btn-outline-gold px-8 py-3 text-sm inline-flex items-center gap-2"
         >
-          כל הנכסים
+          {p.all}
+          <ArrowLeft size={14} className="rtl-flip" aria-hidden="true" />
         </Link>
       </div>
     </section>

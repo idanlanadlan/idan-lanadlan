@@ -2,97 +2,121 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowLeft, Star } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Hero() {
+  const { t } = useLanguage();
+
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background image */}
-      <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&q=80')",
-        }}
-      />
-      {/* Dark overlay with gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black" />
+    <section className="min-h-screen overflow-hidden md:grid md:grid-cols-[1fr_1fr]">
 
-      {/* Gold accent line */}
-      <div
-        className="absolute top-0 inset-x-0 h-0.5"
-        style={{ background: "linear-gradient(90deg, transparent, #C9A96E, transparent)" }}
-      />
+      {/* ── Text panel — RIGHT in RTL / LEFT in LTR ── */}
+      <div className="relative flex flex-col justify-center px-8 sm:px-14 pt-32 pb-20 md:pt-28 bg-black min-h-[65vh] md:min-h-screen">
 
-      {/* Content */}
-      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center pt-24">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="flex items-center justify-center gap-2 mb-6"
+        <motion.span
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.9 }}
+          className="text-[10px] tracking-[0.5em] text-gold/50 uppercase mb-10 block"
         >
-          {[...Array(5)].map((_, i) => (
-            <Star key={i} size={16} className="text-gold fill-gold" />
-          ))}
-          <span className="text-sm text-gold-light mr-2">5.0 בגוגל</span>
-        </motion.div>
+          {t.hero.eyebrow}
+        </motion.span>
 
         <motion.h1
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 36 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
-          className="font-display text-5xl sm:text-6xl md:text-7xl font-light text-white leading-tight mb-4"
+          transition={{ duration: 1.1, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          className="font-display font-extralight leading-[0.87] text-white mb-10"
+          style={{ fontSize: "clamp(4rem, 9vw, 9rem)" }}
         >
-          הנדל״ן שלך{" "}
-          <span className="text-gold-gradient italic">מגיע לך</span>
+          {t.hero.line1}
+          <br />
+          <em className="not-italic text-gold-gradient">{t.hero.line2}</em>
         </motion.h1>
 
+        <motion.div
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ duration: 0.7, delay: 0.65, ease: "easeOut" }}
+          className="w-14 h-px mb-10 origin-right"
+          style={{ background: "linear-gradient(to left, rgba(201,169,110,0.5), transparent)" }}
+        />
+
         <motion.p
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-          className="text-lg sm:text-xl text-gray-light max-w-2xl mx-auto mb-10 leading-relaxed"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.75 }}
+          className="text-sm text-gray-light/65 leading-[2] max-w-[17rem] mb-12"
         >
-          20 שנות ניסיון בתיווך ושיווק נדל״ן יוקרה באזור רמת השרון ותל אביב.
-          <br />
-          שקיפות מלאה, תוצאות אמיתיות.
+          {t.hero.subtitle}
         </motion.p>
 
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.7, delay: 0.9 }}
+          className="flex items-center gap-8"
         >
           <Link
             href="/nadlan"
-            className="btn-gold px-8 py-4 rounded text-base flex items-center gap-2"
+            className="btn-gold px-7 py-3.5 text-sm inline-flex items-center gap-2"
           >
-            <span>גלה נכסים</span>
-            <ArrowLeft size={18} className="rtl-flip" />
+            {t.hero.cta_properties}
+            <ArrowLeft size={15} className="rtl-flip" />
           </Link>
           <a
             href="https://wa.me/972549791171?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%A2%D7%99%D7%93%D7%9F%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A9%D7%9E%D7%95%D7%A2%20%D7%A2%D7%95%D7%93"
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-outline-gold px-8 py-4 rounded text-base"
+            className="text-sm text-gray-light/50 hover:text-gold transition-colors duration-300 underline underline-offset-4 decoration-gray-dark/40 hover:decoration-gold/40"
           >
-            דבר עם עידן
+            {t.hero.cta_contact}
           </a>
         </motion.div>
 
-        {/* Scroll indicator */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.2 }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+          transition={{ delay: 1.6 }}
+          className="absolute bottom-10 end-14 hidden md:block"
+          aria-hidden="true"
         >
-          <span className="text-xs tracking-[0.25em] text-gray uppercase">גלול למטה</span>
-          <div className="w-px h-12 bg-gradient-to-b from-gold to-transparent" />
+          <div className="w-px h-14 bg-gradient-to-b from-gold/30 to-transparent mx-auto" />
         </motion.div>
       </div>
+
+      {/* ── Image panel ── */}
+      <div className="relative min-h-[55vw] md:min-h-screen" aria-hidden="true">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1400&q=85')",
+          }}
+        />
+        <div className="absolute top-0 inset-x-0 h-32 bg-gradient-to-b from-black/55 to-transparent pointer-events-none" />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to right, transparent 55%, rgba(10,10,10,0.35) 100%)",
+          }}
+        />
+
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.3, duration: 0.7 }}
+          className="absolute bottom-8 start-8 bg-black/70 backdrop-blur-sm border border-white/10 px-5 py-4"
+        >
+          <p className="font-display text-2xl text-gold font-light tracking-wide">★ 5.0</p>
+          <p className="text-[9px] text-gray-light/60 mt-1 tracking-[0.25em] uppercase">
+            {t.hero.rating}
+          </p>
+        </motion.div>
+      </div>
+
     </section>
   );
 }

@@ -3,83 +3,89 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, CheckCircle } from "lucide-react";
-
-const highlights = [
-  "20 שנות ניסיון בנדל״ן",
-  "מאות עסקאות מוצלחות",
-  "שקיפות מלאה בכל שלב",
-  "ייעוץ אישי ומקצועי",
-];
+import { ArrowLeft } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function AboutSnippet() {
+  const { t } = useLanguage();
+  const a = t.sections.about;
+
+  const [quoteLine1, quoteLine2] = a.quote.split("\n");
+
   return (
-    <section className="py-24 bg-charcoal">
+    <section className="py-28 bg-charcoal overflow-hidden" aria-labelledby="about-heading">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="grid md:grid-cols-2 gap-16 items-center">
-          {/* Image placeholder — replace with actual photo */}
+
+          {/* Photo side */}
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
+            initial={{ opacity: 0, x: -24 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
+            transition={{ duration: 0.8 }}
             className="relative"
           >
-            <div className="rounded-lg overflow-hidden h-96 relative">
+            <div className="absolute inset-0 border border-gold/15 translate-x-3 -translate-y-3 pointer-events-none" aria-hidden="true" />
+            <div className="relative overflow-hidden" style={{ aspectRatio: "3/4" }}>
               <Image
                 src="/idan-photo.jpg"
-                alt="עידן חולי — עידן לנדל״ן"
+                alt="עידן חולי — מנהל עידן לנדל״ן"
                 fill
                 className="object-cover object-top"
               />
+              <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-charcoal/60 to-transparent" aria-hidden="true" />
             </div>
-            {/* Gold frame accent */}
-            <div className="absolute -bottom-4 -right-4 w-32 h-32 border border-gold rounded-lg opacity-40" />
-            <div className="absolute -top-4 -left-4 w-20 h-20 border border-gold rounded-lg opacity-20" />
-            {/* Badge */}
-            <div className="absolute bottom-6 left-6 bg-black/90 border border-gold/30 rounded-lg px-5 py-4">
-              <p className="font-display text-3xl text-gold font-light">20+</p>
-              <p className="text-xs text-gray-light mt-1">שנות ניסיון</p>
+            <div className="absolute bottom-6 end-0 translate-x-4 bg-black border border-gold/20 px-6 py-5" aria-label="20 שנות ניסיון">
+              <p className="font-display text-4xl text-gold font-extralight leading-none">20+</p>
+              <p className="text-[10px] text-gray-light/60 mt-2 tracking-[0.3em] uppercase">שנות ניסיון</p>
             </div>
           </motion.div>
 
-          {/* Text */}
+          {/* Text side */}
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
+            initial={{ opacity: 0, x: 24 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
+            transition={{ duration: 0.8 }}
           >
-            <p className="text-xs tracking-[0.3em] text-gold uppercase mb-3">אודות</p>
-            <div className="divider-gold mb-6" />
-            <h2 className="font-display text-4xl sm:text-5xl font-light text-white mb-6 leading-tight">
-              הנדל״ן שלך
+            <span id="about-heading" className="text-[10px] tracking-[0.45em] text-gold/60 uppercase block mb-5">
+              {a.eyebrow}
+            </span>
+
+            <blockquote className="font-display text-2xl sm:text-3xl text-white font-extralight leading-snug mb-8 border-s-2 border-gold/30 ps-6 italic">
+              {quoteLine1}
               <br />
-              <span className="text-gold-gradient italic">בידיים בטוחות</span>
-            </h2>
-            <p className="text-gray-light leading-relaxed mb-4">
+              {quoteLine2}
+            </blockquote>
+
+            <p className="text-sm text-gray-light/70 leading-[2] mb-4">
               אחרי כ-20 שנה בליווי לקוחות בתהליכי קבלת החלטות פיננסיות ובהשקעות נדל״ן פרטיות,
-              הפכתי את התשוקה לקריירה מלאה: למצוא לכם בית נכון או השקעה נכונה — עסקה שמשנה חיים.
+              הפכתי את התשוקה לקריירה מלאה: למצוא לכם בית נכון או השקעה נכונה.
             </p>
-            <p className="text-gray-light leading-relaxed mb-8">
+            <p className="text-sm text-gray-light/70 leading-[2] mb-10">
               אני מאמין בשקיפות מלאה, חשיבה יצירתית בעסקאות מורכבות, ונחישות להביא תוצאה איפה שאחרים נופלים.
             </p>
 
-            <ul className="flex flex-col gap-3 mb-8">
-              {highlights.map((h) => (
-                <li key={h} className="flex items-center gap-3 text-sm text-cream">
-                  <CheckCircle size={16} className="text-gold shrink-0" />
-                  {h}
-                </li>
+            <div className="grid grid-cols-2 gap-x-8 gap-y-4 mb-12 border-t border-gray-dark/50 pt-8">
+              {[
+                ["20+", "שנות ניסיון"],
+                ["500+", "עסקאות"],
+                ["נמל ת״א", "כתובת המשרד"],
+                ["★ 5.0", "גוגל"],
+              ].map(([val, label]) => (
+                <div key={label}>
+                  <p className="font-display text-xl text-gold font-light">{val}</p>
+                  <p className="text-[11px] text-gray-light/50 mt-0.5 tracking-wider">{label}</p>
+                </div>
               ))}
-            </ul>
+            </div>
 
             <Link
               href="/about"
-              className="btn-outline-gold px-8 py-3 rounded text-sm inline-flex items-center gap-2"
+              className="inline-flex items-center gap-2 text-xs tracking-widest text-gold/70 hover:text-gold transition-colors duration-300 uppercase border-b border-gold/20 hover:border-gold/60 pb-0.5"
             >
-              קרא עוד עלי
-              <ArrowLeft size={16} className="rtl-flip" />
+              {a.read_more}
+              <ArrowLeft size={13} className="rtl-flip" aria-hidden="true" />
             </Link>
           </motion.div>
         </div>

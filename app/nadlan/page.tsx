@@ -26,7 +26,7 @@ export default function PropertiesPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen pt-28">
+      <main id="main-content" className="min-h-screen pt-28">
         {/* Page header */}
         <section className="py-16 bg-charcoal border-b border-gray-dark">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -36,7 +36,7 @@ export default function PropertiesPage() {
               נכסים
             </h1>
             <p className="text-gray-light max-w-xl">
-              מבחר נכסים יוקרתיים באזור רמת השרון ותל אביב. מכירה, השכרה ופרויקטים חדשים.
+              מבחר נכסים יוקרתיים בגוש דן. מכירה, השכרה ופרויקטים חדשים.
             </p>
           </div>
         </section>

@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Heebo, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/contexts/ThemeContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
+import CookieBanner from "@/components/CookieBanner";
 
 const heebo = Heebo({
   variable: "--font-heebo",
@@ -18,13 +21,13 @@ const cormorant = Cormorant_Garamond({
 export const metadata: Metadata = {
   title: "עידן לנדל\"ן — עידן חולי | תיווך ושיווק נדל\"ן יוקרה",
   description:
-    "עידן חולי — 20 שנות ניסיון בתיווך ושיווק נדל\"ן יוקרה באזור רמת השרון ותל אביב. מכירה, השכרה, שיווק פרויקטים וייעוץ משקיעים.",
+    "עידן חולי — 20 שנות ניסיון בתיווך, יזמות ושיווק נדל\"ן יוקרה בגוש דן. מכירה, השכרה, שיווק פרויקטים וייעוץ משקיעים.",
   keywords: [
-    "נדל\"ן רמת השרון",
     "תיווך נדל\"ן תל אביב",
     "עידן חולי",
-    "דירות למכירה רמת השרון",
-    "נדל\"ן יוקרה",
+    "נדל\"ן יוקרה גוש דן",
+    "דירות למכירה תל אביב",
+    "נמל תל אביב נדל\"ן",
     "משרד תיווך",
     "שיווק פרויקטים",
     "ייעוץ נדל\"ן",
@@ -38,7 +41,7 @@ export const metadata: Metadata = {
     siteName: "עידן לנדל\"ן",
     title: "עידן לנדל\"ן — עידן חולי | נדל\"ן יוקרה",
     description:
-      "20 שנות ניסיון בתיווך ושיווק נדל\"ן יוקרה. רמת השרון, תל אביב והמרכז.",
+      "20 שנות ניסיון בתיווך, יזמות ושיווק נדל\"ן יוקרה בגוש דן.",
     images: [
       {
         url: "https://idanlanadlan.co.il/og-image.jpg",
@@ -74,11 +77,12 @@ const schemaOrg = {
       telephone: "+972-54-979-1171",
       image: "https://idanlanadlan.co.il/idan-photo.jpg",
       description:
-        "משרד תיווך ושיווק נדל\"ן עם 20 שנות ניסיון באזור רמת השרון ותל אביב.",
-      areaServed: ["רמת השרון", "תל אביב", "המרכז"],
+        "משרד תיווך ושיווק נדל\"ן עם 20 שנות ניסיון בגוש דן. מס׳ רישיון 3205360.",
+      areaServed: ["תל אביב", "גוש דן", "המרכז"],
       address: {
         "@type": "PostalAddress",
-        addressLocality: "רמת השרון",
+        streetAddress: "הירקון 319",
+        addressLocality: "תל אביב",
         addressCountry: "IL",
       },
       sameAs: [
@@ -96,13 +100,14 @@ const schemaOrg = {
       telephone: "+972-54-979-1171",
       address: {
         "@type": "PostalAddress",
-        addressLocality: "רמת השרון",
+        streetAddress: "הירקון 319",
+        addressLocality: "תל אביב",
         addressCountry: "IL",
       },
       geo: {
         "@type": "GeoCoordinates",
-        latitude: 32.0967,
-        longitude: 34.7745,
+        latitude: 32.0927,
+        longitude: 34.7707,
       },
     },
   ],
@@ -118,13 +123,28 @@ export default function RootLayout({
       className={`${heebo.variable} ${cormorant.variable}`}
     >
       <head>
+        {/* Anti-flash: set theme before first paint */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();`,
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrg) }}
         />
       </head>
       <body className="min-h-screen bg-black text-cream antialiased">
-        {children}
+        {/* Skip navigation for keyboard/screen-reader users */}
+        <a href="#main-content" className="skip-nav">
+          דלג לתוכן הראשי
+        </a>
+        <ThemeProvider>
+          <LanguageProvider>
+            {children}
+            <CookieBanner />
+          </LanguageProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

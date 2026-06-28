@@ -42,7 +42,7 @@ export default function AboutPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen pt-24">
+      <main id="main-content" className="min-h-screen pt-24">
         {/* Hero */}
         <section className="py-20 bg-charcoal border-b border-gray-dark">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
