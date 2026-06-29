@@ -1,0 +1,79 @@
+"use server";
+
+import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
+import {
+  createProperty,
+  updateProperty,
+  deleteProperty as dbDeleteProperty,
+} from "@/lib/db";
+import type { PropertyType, PropertyStatus } from "@/lib/types";
+
+function parseForm(formData: FormData) {
+  const images = (formData.get("images") as string)
+    .split("\n")
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  return {
+    title: formData.get("title") as string,
+    price: Number(formData.get("price")),
+    type: formData.get("type") as PropertyType,
+    bedrooms: Number(formData.get("bedrooms")),
+    bathrooms: Number(formData.get("bathrooms")),
+    size_sqm: Number(formData.get("size_sqm")),
+    floor: formData.get("floor") ? Number(formData.get("floor")) : undefined,
+    address: formData.get("address") as string,
+    neighborhood: formData.get("neighborhood") as string,
+    city: (formData.get("city") as string) || "תל אביב",
+    description: formData.get("description") as string,
+    images: images.length ? images : [],
+    status: (formData.get("status") as PropertyStatus) || "available",
+    featured: formData.get("featured") === "on",
+  };
+}
+
+export async function createPropertyAction(formData: FormData) {
+  const data = parseForm(formData);
+  await createProperty(data);
+  revalidatePath("/");
+  revalidatePath("/nadlan");
+  revalidatePath("/admin/properties");
+  redirect("/admin/properties");
+}
+
+export async function updatePropertyAction(formData: FormData) {
+  const id = formData.get("id") as string;
+  const data = parseForm(formData);
+  await updateProperty(id, data);
+  revalidatePath("/");
+  revalidatePath("/nadlan");
+  revalidatePath(`/nadlan/${id}`);
+  revalidatePath("/admin/properties");
+  redirect("/admin/properties");
+}
+
+export async function deleteProperty(formData: FormData) {
+  const id = formData.get("id") as string;
+  await dbDeleteProperty(id);
+  revalidatePath("/");
+  revalidatePath("/nadlan");
+  revalidatePath("/admin/properties");
+  redirect("/admin/properties");
+}
+
+export async function toggleFeatured(formData: FormData) {
+  const id = formData.get("id") as string;
+  const featured = formData.get("featured") === "true";
+  await updateProperty(id, { featured });
+  revalidatePath("/");
+  revalidatePath("/admin/properties");
+}
+
+export async function updateStatus(formData: FormData) {
+  const id = formData.get("id") as string;
+  const status = formData.get("status") as PropertyStatus;
+  await updateProperty(id, { status });
+  revalidatePath("/nadlan");
+  revalidatePath("/admin/properties");
+}

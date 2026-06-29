@@ -1,0 +1,105 @@
+import { isConfigured } from "@/lib/supabase";
+
+const SQL = `-- הרץ את זה ב-Supabase SQL Editor
+CREATE TABLE IF NOT EXISTS properties (
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::TEXT,
+  title TEXT NOT NULL,
+  price BIGINT NOT NULL,
+  type TEXT NOT NULL CHECK (type IN ('sale', 'rent', 'project')),
+  bedrooms NUMERIC(4,1) NOT NULL,
+  bathrooms NUMERIC(4,1) NOT NULL,
+  size_sqm NUMERIC(7,1) NOT NULL,
+  floor INTEGER,
+  address TEXT NOT NULL DEFAULT '',
+  neighborhood TEXT NOT NULL DEFAULT '',
+  city TEXT NOT NULL DEFAULT 'תל אביב',
+  description TEXT NOT NULL DEFAULT '',
+  images TEXT[] NOT NULL DEFAULT '{}',
+  status TEXT NOT NULL DEFAULT 'available'
+    CHECK (status IN ('available', 'sold', 'rented')),
+  featured BOOLEAN NOT NULL DEFAULT false,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- אפשר גישה ציבורית לקריאה (האתר מציג נכסים)
+ALTER TABLE properties ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "public_read" ON properties FOR SELECT USING (true);
+CREATE POLICY "service_all"  ON properties USING (true) WITH CHECK (true);`;
+
+export default function SetupPage() {
+  return (
+    <div className="max-w-3xl mx-auto px-4 py-10" dir="rtl">
+      <div className="mb-8">
+        <p className="text-[10px] tracking-[0.4em] text-gold/80 uppercase mb-1">הגדרות</p>
+        <h1 className="font-display text-3xl font-light text-white">חיבור Supabase</h1>
+      </div>
+
+      {isConfigured ? (
+        <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-5 mb-8">
+          <p className="text-emerald-400 font-semibold">✓ Supabase מחובר ופעיל</p>
+        </div>
+      ) : (
+        <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-5 mb-8">
+          <p className="text-amber-400 font-semibold">⚠️ Supabase לא מחובר</p>
+          <p className="text-amber-300/70 text-sm mt-1">פעל לפי ההוראות למטה</p>
+        </div>
+      )}
+
+      <div className="space-y-8">
+        <Step num={1} title="צור פרויקט ב-Supabase">
+          <p className="text-sm text-gray-light">
+            גש ל-<a href="https://supabase.com" target="_blank" className="text-gold hover:underline">supabase.com</a>,
+            התחבר עם GitHub, ולחץ <strong className="text-cream">New project</strong>.
+            בחר שם ואזור (מומלץ: Frankfurt).
+          </p>
+        </Step>
+
+        <Step num={2} title="צור את טבלת הנכסים">
+          <p className="text-sm text-gray-light mb-3">
+            ב-Supabase פתח <strong className="text-cream">SQL Editor</strong> והרץ:
+          </p>
+          <pre className="bg-black rounded-lg p-4 text-xs text-cream overflow-x-auto leading-relaxed font-mono">
+            {SQL}
+          </pre>
+        </Step>
+
+        <Step num={3} title="הוסף משתני סביבה ל-Vercel">
+          <p className="text-sm text-gray-light mb-3">
+            ב-Supabase: <strong className="text-cream">Project Settings → API</strong>.
+            ב-Vercel: <strong className="text-cream">idan-lanadlan → Settings → Environment Variables</strong>.
+          </p>
+          <div className="bg-black rounded-lg p-4 font-mono text-xs text-cream space-y-2">
+            <p>NEXT_PUBLIC_SUPABASE_URL=<span className="text-gold">https://xxx.supabase.co</span></p>
+            <p>NEXT_PUBLIC_SUPABASE_ANON_KEY=<span className="text-gold">eyJ...</span></p>
+            <p>SUPABASE_SERVICE_ROLE_KEY=<span className="text-gold">eyJ...</span></p>
+            <p>ADMIN_PASSWORD=<span className="text-gold">סיסמה_חזקה_שתבחר</span></p>
+          </div>
+          <p className="text-xs text-gray-light mt-2">
+            ה-Service Role Key נמצא תחת <em>service_role secret</em> — שמור אותו בסוד.
+          </p>
+        </Step>
+
+        <Step num={4} title="עשה Redeploy">
+          <p className="text-sm text-gray-light">
+            ב-Vercel: <strong className="text-cream">Deployments → ⋯ → Redeploy</strong>.
+            אחרי הפריסה, חזור לכאן ותראה ✓ מחובר.
+          </p>
+        </Step>
+      </div>
+    </div>
+  );
+}
+
+function Step({ num, title, children }: { num: number; title: string; children: React.ReactNode }) {
+  return (
+    <div className="flex gap-5">
+      <div className="flex-none w-8 h-8 rounded-full bg-gold text-black flex items-center justify-center text-sm font-bold">
+        {num}
+      </div>
+      <div className="flex-1 pt-0.5">
+        <h3 className="text-white font-semibold mb-2">{title}</h3>
+        {children}
+      </div>
+    </div>
+  );
+}
