@@ -6,7 +6,7 @@ import type { Metadata } from "next";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
-import { mockBlogPosts } from "@/lib/mock-data";
+import { getBlogPostBySlug } from "@/lib/db";
 
 export async function generateMetadata({
   params,
@@ -14,7 +14,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const post = mockBlogPosts.find((p) => p.slug === slug);
+  const post = await getBlogPostBySlug(slug);
   if (!post) return {};
   return {
     title: `${post.title} | עידן לנדל״ן`,
@@ -35,7 +35,7 @@ export default async function BlogPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = mockBlogPosts.find((p) => p.slug === slug && p.published);
+  const post = await getBlogPostBySlug(slug);
   if (!post) notFound();
 
   const schema = {

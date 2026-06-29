@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { Home, Plus, List, LogOut, BarChart2 } from "lucide-react";
+import { Home, Plus, List, LogOut, BarChart2, FileText, Settings } from "lucide-react";
 
 async function logout() {
   "use server";
@@ -32,8 +32,22 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             href="/admin/properties"
             className="flex items-center gap-1.5 text-xs text-gray-light hover:text-gold px-3 py-1.5 rounded transition-colors"
           >
-            <List size={14} />
+            <Home size={14} />
             נכסים
+          </Link>
+          <Link
+            href="/admin/blog"
+            className="flex items-center gap-1.5 text-xs text-gray-light hover:text-gold px-3 py-1.5 rounded transition-colors"
+          >
+            <FileText size={14} />
+            בלוג
+          </Link>
+          <Link
+            href="/admin/settings"
+            className="flex items-center gap-1.5 text-xs text-gray-light hover:text-gold px-3 py-1.5 rounded transition-colors"
+          >
+            <Settings size={14} />
+            הגדרות
           </Link>
           <Link
             href="/admin/properties/new"

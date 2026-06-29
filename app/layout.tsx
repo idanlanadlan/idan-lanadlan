@@ -3,8 +3,10 @@ import { Heebo, Cormorant_Garamond, Frank_Ruhl_Libre } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { SettingsProvider } from "@/contexts/SettingsContext";
 import CookieBanner from "@/components/CookieBanner";
 import Advisor from "@/components/Advisor";
+import { getSettings } from "@/lib/db";
 
 const heebo = Heebo({
   variable: "--font-heebo",
@@ -120,9 +122,10 @@ const schemaOrg = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const settings = await getSettings();
   return (
     <html
       lang="he"
@@ -149,9 +152,11 @@ export default function RootLayout({
         </a>
         <ThemeProvider>
           <LanguageProvider>
-            {children}
-            <CookieBanner />
-            <Advisor />
+            <SettingsProvider settings={settings}>
+              {children}
+              <CookieBanner />
+              <Advisor />
+            </SettingsProvider>
           </LanguageProvider>
         </ThemeProvider>
       </body>

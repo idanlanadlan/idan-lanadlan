@@ -4,7 +4,9 @@ import { ArrowLeft } from "lucide-react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
-import { mockBlogPosts } from "@/lib/mock-data";
+import { getPublishedBlogPosts } from "@/lib/db";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "בלוג נדל״ן | עידן לנדל״ן",
@@ -12,8 +14,8 @@ export const metadata = {
     "טיפים, מדריכים וניתוחי שוק נדל״ן מאת עידן חולי — מומחה נדל״ן עם 20 שנות ניסיון.",
 };
 
-export default function BlogPage() {
-  const posts = mockBlogPosts.filter((p) => p.published);
+export default async function BlogPage() {
+  const posts = await getPublishedBlogPosts();
 
   return (
     <>

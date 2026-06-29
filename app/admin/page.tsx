@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { Plus, Home, Eye, Star, TrendingUp } from "lucide-react";
-import { getProperties } from "@/lib/db";
+import { Plus, Home, Eye, Star, TrendingUp, FileText, Settings } from "lucide-react";
+import { getProperties, getAllBlogPosts } from "@/lib/db";
 import { isConfigured } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboard() {
-  const properties = await getProperties();
+  const [properties, posts] = await Promise.all([getProperties(), getAllBlogPosts()]);
 
   const stats = {
     total: properties.length,
@@ -61,6 +61,7 @@ export default async function AdminDashboard() {
           { icon: Eye, label: "זמינים", value: stats.available, color: "text-emerald-400" },
           { icon: Star, label: "מוצגים בבית", value: stats.featured, color: "text-blue-400" },
           { icon: TrendingUp, label: "נמכרו/הושכרו", value: stats.sold + stats.rented, color: "text-gray-light" },
+          { icon: FileText, label: "מאמרים", value: posts.length, color: "text-purple-400" },
         ].map(({ icon: Icon, label, value, color }) => (
           <div key={label} className="bg-charcoal border border-gray-dark rounded-xl p-5">
             <Icon size={20} className={`${color} mb-3`} />
@@ -71,7 +72,7 @@ export default async function AdminDashboard() {
       </div>
 
       {/* Quick actions */}
-      <div className="grid sm:grid-cols-2 gap-4 mb-10">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
         <Link
           href="/admin/properties/new"
           className="bg-gold text-black rounded-xl p-6 flex items-center gap-4 hover:bg-gold/90 transition-colors group"
@@ -95,6 +96,32 @@ export default async function AdminDashboard() {
           <div>
             <p className="font-semibold text-white">נהל נכסים</p>
             <p className="text-xs text-gray-light mt-0.5">עריכה, מחיקה, עדכון סטטוס</p>
+          </div>
+        </Link>
+
+        <Link
+          href="/admin/blog"
+          className="bg-charcoal border border-gray-dark rounded-xl p-6 flex items-center gap-4 hover:border-gold/50 transition-colors"
+        >
+          <div className="w-10 h-10 bg-purple-500/10 rounded-lg flex items-center justify-center">
+            <FileText size={20} className="text-purple-400" />
+          </div>
+          <div>
+            <p className="font-semibold text-white">נהל בלוג</p>
+            <p className="text-xs text-gray-light mt-0.5">כתוב, ערוך ופרסם מאמרים</p>
+          </div>
+        </Link>
+
+        <Link
+          href="/admin/settings"
+          className="bg-charcoal border border-gray-dark rounded-xl p-6 flex items-center gap-4 hover:border-gold/50 transition-colors"
+        >
+          <div className="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center">
+            <Settings size={20} className="text-blue-400" />
+          </div>
+          <div>
+            <p className="font-semibold text-white">הגדרות אתר</p>
+            <p className="text-xs text-gray-light mt-0.5">טלפון, מייל, רשתות, תוכן</p>
           </div>
         </Link>
       </div>

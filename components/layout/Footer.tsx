@@ -4,17 +4,19 @@ import Link from "next/link";
 import Image from "next/image";
 import { Phone, Mail, MapPin, MessageCircle } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-
-const socialLinks = [
-  { href: "https://www.facebook.com/profile.php?id=100086018108373", label: "Facebook" },
-  { href: "https://www.instagram.com/idan.huli", label: "Instagram" },
-  { href: "https://www.tiktok.com/@idan.lanadlan", label: "TikTok" },
-  { href: "https://www.linkedin.com/in/idan-huli/", label: "LinkedIn" },
-  { href: "https://maps.app.goo.gl/RG3BgZUUxTh1g9u89", label: "Google" },
-];
+import { useSettings } from "@/contexts/SettingsContext";
 
 export default function Footer() {
   const { t } = useLanguage();
+  const s = useSettings();
+
+  const socialLinks = [
+    { href: s.facebook, label: "Facebook" },
+    s.instagram ? { href: s.instagram, label: "Instagram" } : null,
+    { href: s.tiktok, label: "TikTok" },
+    { href: s.linkedin, label: "LinkedIn" },
+    { href: s.maps_url, label: "Google" },
+  ].filter(Boolean) as { href: string; label: string }[];
   const f = t.footer;
   const year = new Date().getFullYear();
 
@@ -86,15 +88,15 @@ export default function Footer() {
               {f.contact}
             </h3>
             <a
-              href="tel:+972549791171"
+              href={`tel:+${s.phone_raw}`}
               className="flex items-center gap-3 text-sm text-gray-light hover:text-gold transition-colors"
-              aria-label="התקשר 054-979-1171"
+              aria-label={`התקשר ${s.phone}`}
             >
               <Phone size={14} aria-hidden="true" />
-              054-979-1171
+              {s.phone}
             </a>
             <a
-              href="https://wa.me/972549791171"
+              href={`https://wa.me/${s.whatsapp}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-3 text-sm text-gray-light hover:text-gold transition-colors"
@@ -104,16 +106,16 @@ export default function Footer() {
               WhatsApp
             </a>
             <a
-              href="mailto:idanlanadlan@gmail.com"
+              href={`mailto:${s.email}`}
               className="flex items-center gap-3 text-sm text-gray-light hover:text-gold transition-colors"
               aria-label="שלח מייל"
             >
               <Mail size={14} aria-hidden="true" />
-              idanlanadlan@gmail.com
+              {s.email}
             </a>
             <span className="flex items-center gap-3 text-sm text-cream">
               <MapPin size={14} className="text-gold shrink-0" aria-hidden="true" />
-              הירקון 319, נמל תל אביב
+              {s.address}
             </span>
           </div>
 
@@ -141,7 +143,7 @@ export default function Footer() {
         <div className="mt-12 pt-6 border-t border-gray-dark flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-light">
           <p className="text-gray-light">© {year} {f.copyright}</p>
           <a
-            href="https://maps.app.goo.gl/RG3BgZUUxTh1g9u89"
+            href={s.maps_url}
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-gold transition-colors"
