@@ -1,7 +1,7 @@
 export type Locale = "he" | "en" | "fr";
 
 export interface T {
-  nav: { home: string; properties: string; groups: string; blog: string; about: string; contact: string; message: string; close: string; open: string; };
+  nav: { home: string; properties: string; groups: string; sellers: string; blog: string; about: string; contact: string; message: string; close: string; open: string; };
   hero: { eyebrow: string; line1: string; line2: string; subtitle: string; cta_properties: string; cta_contact: string; rating: string; };
   stats: { experience: string; experience_value: string; deals: string; deals_value: string; rating: string; office: string; office_value: string; };
   sections: {
@@ -28,6 +28,7 @@ export const translations: Record<Locale, T> = {
       home: "בית",
       properties: "נכסים",
       groups: "קבוצות VIP",
+      sellers: "בעלי נכסים",
       blog: "בלוג",
       about: "אודות",
       contact: "צור קשר",
@@ -203,6 +204,7 @@ export const translations: Record<Locale, T> = {
       home: "Home",
       properties: "Properties",
       groups: "VIP Groups",
+      sellers: "Property Owners",
       blog: "Blog",
       about: "About",
       contact: "Contact",
@@ -378,6 +380,7 @@ export const translations: Record<Locale, T> = {
       home: "Accueil",
       properties: "Biens",
       groups: "Groupes VIP",
+      sellers: "Propriétaires",
       blog: "Blog",
       about: "À propos",
       contact: "Contact",
