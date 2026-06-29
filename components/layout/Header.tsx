@@ -6,19 +6,13 @@ import Image from "next/image";
 import { Menu, X, Phone, Sun, Moon } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { Locale } from "@/lib/translations";
-
-const LOCALES: { code: Locale; flag: string; label: string }[] = [
-  { code: "he", flag: "🇮🇱", label: "עברית" },
-  { code: "en", flag: "🇬🇧", label: "English" },
-  { code: "fr", flag: "🇫🇷", label: "Français" },
-];
+import LanguageSwitcher from "@/components/layout/LanguageSwitcher";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { theme, toggle } = useTheme();
-  const { locale, t, setLocale } = useLanguage();
+  const { t, setLocale } = useLanguage();
 
   const hamburgerRef = useRef<HTMLButtonElement>(null);
   const firstMenuItemRef = useRef<HTMLAnchorElement>(null);
@@ -94,27 +88,8 @@ export default function Header() {
         {/* Desktop controls */}
         <div className="hidden md:flex items-center gap-3">
           {/* Language switcher */}
-          <div
-            className="flex items-center gap-0.5 border border-gray-dark/40 rounded px-1 py-0.5"
-            role="group"
-            aria-label="בחירת שפה"
-          >
-            {LOCALES.map(({ code, flag, label }) => (
-              <button
-                key={code}
-                onClick={() => setLocale(code)}
-                aria-pressed={locale === code}
-                aria-label={`שפה: ${label}`}
-                title={label}
-                className={`px-1.5 py-0.5 text-base leading-none rounded transition-all ${
-                  locale === code
-                    ? "opacity-100 scale-110"
-                    : "opacity-40 hover:opacity-80"
-                }`}
-              >
-                {flag}
-              </button>
-            ))}
+          <div className="border border-gray-dark/40 rounded px-1 py-0.5">
+            <LanguageSwitcher size="sm" />
           </div>
 
           {/* Theme toggle */}
@@ -195,21 +170,8 @@ export default function Header() {
           ))}
 
           {/* Language picker in mobile menu */}
-          <div className="flex items-center gap-4 pt-2 border-t border-gray-dark/50" role="group" aria-label="בחירת שפה">
-            {LOCALES.map(({ code, flag, label }) => (
-              <button
-                key={code}
-                onClick={() => { setLocale(code); setOpen(false); }}
-                aria-pressed={locale === code}
-                aria-label={`שפה: ${label}`}
-                title={label}
-                className={`text-2xl leading-none transition-all ${
-                  locale === code ? "opacity-100 scale-110" : "opacity-40 hover:opacity-80"
-                }`}
-              >
-                {flag}
-              </button>
-            ))}
+          <div className="pt-2 border-t border-gray-dark/50">
+            <LanguageSwitcher size="lg" onSelect={() => setOpen(false)} />
           </div>
 
           <a
