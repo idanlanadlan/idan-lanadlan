@@ -24,7 +24,12 @@ async function verifyToken(token: string): Promise<boolean> {
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (pathname.startsWith("/admin") && !pathname.startsWith("/admin/login")) {
+  if (
+    pathname.startsWith("/admin") &&
+    !pathname.startsWith("/admin/login") &&
+    !pathname.startsWith("/admin/forgot-password") &&
+    !pathname.startsWith("/admin/reset")
+  ) {
     const token = request.cookies.get("admin_session")?.value;
     if (!token || !(await verifyToken(token))) {
       return NextResponse.redirect(new URL("/admin/login", request.url));

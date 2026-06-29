@@ -81,11 +81,17 @@ export default async function LoginPage({
           </button>
         </form>
 
-        <p className="text-center mt-8">
+        <div className="flex justify-between items-center mt-6">
           <a href="/" className="text-xs text-gray-light hover:text-gold transition-colors">
             ← חזור לאתר
           </a>
-        </p>
+          <a
+            href="/admin/forgot-password"
+            className="text-xs text-gray-light hover:text-gold transition-colors"
+          >
+            שכחתי סיסמה
+          </a>
+        </div>
       </div>
     </div>
   );
