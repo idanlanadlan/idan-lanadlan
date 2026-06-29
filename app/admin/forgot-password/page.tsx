@@ -26,6 +26,8 @@ async function sendResetLink() {
   const adminEmail = process.env.ADMIN_EMAIL || "idanlanadlan@gmail.com";
   const apiKey = process.env.RESEND_API_KEY;
 
+  let emailSent = false;
+
   if (apiKey) {
     try {
       const res = await fetch("https://api.resend.com/emails", {
@@ -55,15 +57,17 @@ async function sendResetLink() {
           `,
         }),
       });
-      if (res.ok) {
-        redirect("/admin/forgot-password?sent=1");
-      }
+      emailSent = res.ok;
     } catch {
-      // fall through to show link on screen
+      emailSent = false;
     }
   }
-  // Email not configured or failed — show link directly
-  redirect(`/admin/forgot-password?link=${encodeURIComponent(resetUrl)}`);
+
+  if (emailSent) {
+    redirect("/admin/forgot-password?sent=1");
+  } else {
+    redirect(`/admin/forgot-password?link=${encodeURIComponent(resetUrl)}`);
+  }
 }
 
 export default async function ForgotPasswordPage({
