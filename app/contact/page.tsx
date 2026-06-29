@@ -99,6 +99,7 @@ export default function ContactPage() {
                     allowFullScreen
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
+                    title="מפת מיקום עידן לנדל״ן — הירקון 319, תל אביב"
                   />
                 </div>
                 <div className="mt-4 text-center">

@@ -47,7 +47,7 @@ export default function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.75 }}
-          className="text-sm text-gray-light/65 leading-[2] max-w-[17rem] mb-12"
+          className="text-sm text-gray-light leading-[2] max-w-[17rem] mb-12"
         >
           {t.hero.subtitle}
         </motion.p>
@@ -69,7 +69,7 @@ export default function Hero() {
             href="https://wa.me/972549791171?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%A2%D7%99%D7%93%D7%9F%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A9%D7%9E%D7%95%D7%A2%20%D7%A2%D7%95%D7%93"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-gray-light/50 hover:text-gold transition-colors duration-300 underline underline-offset-4 decoration-gray-dark/40 hover:decoration-gold/40"
+            className="text-sm text-gray-light hover:text-gold transition-colors duration-300 underline underline-offset-4 decoration-gray-dark/40 hover:decoration-gold/40"
           >
             {t.hero.cta_contact}
           </a>
@@ -109,9 +109,11 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.3, duration: 0.7 }}
           className="absolute bottom-8 start-8 bg-black/70 backdrop-blur-sm border border-white/10 px-5 py-4"
+          role="img"
+          aria-label="דירוג גוגל: 5 מתוך 5 כוכבים"
         >
-          <p className="font-display text-2xl text-gold font-light tracking-wide">★ 5.0</p>
-          <p className="text-[9px] text-gray-light/60 mt-1 tracking-[0.25em] uppercase">
+          <p className="font-display text-2xl text-gold font-light tracking-wide" aria-hidden="true">★ 5.0</p>
+          <p className="text-[9px] text-gray-light mt-1 tracking-[0.25em] uppercase">
             {t.hero.rating}
           </p>
         </motion.div>

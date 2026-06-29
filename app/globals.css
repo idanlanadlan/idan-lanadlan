@@ -153,6 +153,23 @@ body {
 [data-theme="light"] ::-webkit-scrollbar-track { background: #E8E8E3; }
 
 
+/* ── Focus ring (WCAG 2.4.7) ── */
+:focus-visible {
+  outline: 2px solid #C9A96E;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ── Reduced motion (WCAG 1.4.3 / IS 5568) ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html { scroll-behavior: auto; }
+}
+
 /* ── Animations ── */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(24px); }

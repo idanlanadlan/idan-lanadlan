@@ -43,8 +43,8 @@ export default function Footer() {
               {f.tagline}
             </p>
             {/* License number — required by Israeli real estate law */}
-            <p className="text-[11px] text-gray/60 tracking-wide">
-              {f.license}: <span className="text-gold/60">3205360</span>
+            <p className="text-[11px] text-gray-light tracking-wide">
+              {f.license}: <span className="text-gold">3205360</span>
             </p>
             <div className="flex gap-4 mt-1" aria-label="רשתות חברתיות">
               {socialLinks.map((s) => (
@@ -130,8 +130,8 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-12 pt-6 border-t border-gray-dark flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray">
-          <p>© {year} {f.copyright}</p>
+        <div className="mt-12 pt-6 border-t border-gray-dark flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-light">
+          <p className="text-gray-light">© {year} {f.copyright}</p>
           <a
             href="https://maps.app.goo.gl/RG3BgZUUxTh1g9u89"
             target="_blank"

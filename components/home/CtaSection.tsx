@@ -28,7 +28,7 @@ export default function CtaSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
           >
-            <span className="text-[10px] tracking-[0.45em] text-gold/60 uppercase block mb-5">
+            <span className="text-[10px] tracking-[0.45em] text-gold uppercase block mb-5" aria-hidden="true">
               {c.eyebrow}
             </span>
             <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-extralight text-white leading-[1.05]">
@@ -36,7 +36,7 @@ export default function CtaSection() {
               <br />
               <em className="not-italic text-gold-gradient">{c.title2}</em>
             </h2>
-            <p className="text-sm text-gray-light/60 mt-6 leading-[2] max-w-md">
+            <p className="text-sm text-gray-light mt-6 leading-[2] max-w-md">
               {c.subtitle}
             </p>
           </motion.div>
@@ -53,6 +53,7 @@ export default function CtaSection() {
               target="_blank"
               rel="noopener noreferrer"
               className="btn-gold px-8 py-4 text-sm flex items-center justify-center gap-3"
+              aria-label={`${c.whatsapp} (נפתח בחלון חדש)`}
             >
               <MessageCircle size={17} aria-hidden="true" />
               {c.whatsapp}

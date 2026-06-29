@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Menu, X, Phone, Sun, Moon } from "lucide-react";
@@ -20,11 +20,30 @@ export default function Header() {
   const { theme, toggle } = useTheme();
   const { locale, t, setLocale } = useLanguage();
 
+  const hamburgerRef = useRef<HTMLButtonElement>(null);
+  const firstMenuItemRef = useRef<HTMLAnchorElement>(null);
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && open) setOpen(false);
+    };
+    document.addEventListener("keydown", handleEsc);
+    return () => document.removeEventListener("keydown", handleEsc);
+  }, [open]);
+
+  useEffect(() => {
+    if (open) {
+      firstMenuItemRef.current?.focus();
+    } else {
+      hamburgerRef.current?.focus();
+    }
+  }, [open]);
 
   const isLight = theme === "light";
 
@@ -123,6 +142,7 @@ export default function Header() {
             target="_blank"
             rel="noopener noreferrer"
             className="btn-gold px-5 py-2 rounded text-sm"
+            aria-label={`${t.nav.message} (נפתח בחלון חדש)`}
           >
             {t.nav.message}
           </a>
@@ -138,6 +158,7 @@ export default function Header() {
             {isLight ? <Moon size={16} /> : <Sun size={16} />}
           </button>
           <button
+            ref={hamburgerRef}
             className={`p-2 border rounded transition-colors ${
               isLight
                 ? "text-gray border-gray-dark/50 hover:border-gold/50 hover:text-gold"
@@ -161,10 +182,11 @@ export default function Header() {
           role="navigation"
           aria-label="תפריט ניידים"
         >
-          {navLinks.map((link) => (
+          {navLinks.map((link, i) => (
             <Link
               key={link.href}
               href={link.href}
+              ref={i === 0 ? firstMenuItemRef : undefined}
               className={`text-base hover:text-gold transition-colors ${isLight ? "text-gray" : "text-cream"}`}
               onClick={() => setOpen(false)}
             >
@@ -173,7 +195,7 @@ export default function Header() {
           ))}
 
           {/* Language picker in mobile menu */}
-          <div className="flex items-center gap-3 pt-2 border-t border-gray-dark/50">
+          <div className="flex items-center gap-3 pt-2 border-t border-gray-dark/50" role="group" aria-label="בחירת שפה">
             {LOCALES.map(({ code, label }) => (
               <button
                 key={code}
@@ -182,6 +204,7 @@ export default function Header() {
                   locale === code ? "text-gold" : "text-gray-light hover:text-gold"
                 }`}
                 aria-pressed={locale === code}
+                aria-label={`שפה: ${label}`}
               >
                 {label}
               </button>
@@ -193,6 +216,7 @@ export default function Header() {
             target="_blank"
             rel="noopener noreferrer"
             className="btn-gold px-5 py-3 rounded text-center text-sm mt-1"
+            aria-label={`${t.nav.message} (נפתח בחלון חדש)`}
           >
             {t.nav.message}
           </a>

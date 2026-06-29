@@ -29,12 +29,13 @@ export default function CookieBanner() {
   return (
     <div
       role="dialog"
-      aria-live="polite"
+      aria-modal="true"
       aria-label="הסכמה לעוגיות"
+      aria-describedby="cookie-message"
       className="fixed bottom-0 inset-x-0 z-[100] bg-charcoal border-t border-gray-dark/70 px-4 py-4 sm:px-6"
     >
       <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-        <p className="text-sm text-gray-light text-center sm:text-start">
+        <p id="cookie-message" className="text-sm text-gray-light text-center sm:text-start">
           {c.message}{" "}
           <Link href="/privacy" className="text-gold hover:underline">
             {c.privacy_link}

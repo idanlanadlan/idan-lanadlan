@@ -23,7 +23,7 @@ export default function FeaturedProperties() {
         className="flex items-end justify-between mb-14"
       >
         <div>
-          <span className="text-[10px] tracking-[0.45em] text-gold/60 uppercase block mb-5">
+          <span className="text-[10px] tracking-[0.45em] text-gold uppercase block mb-5" aria-hidden="true">
             {p.eyebrow}
           </span>
           <h2
@@ -35,7 +35,7 @@ export default function FeaturedProperties() {
         </div>
         <Link
           href="/nadlan"
-          className="hidden sm:flex items-center gap-2 text-xs tracking-widest text-gray-light/60 hover:text-gold transition-colors duration-300 uppercase"
+          className="hidden sm:flex items-center gap-2 text-xs tracking-widest text-gray-light hover:text-gold transition-colors duration-300 uppercase"
         >
           {p.all}
           <ArrowLeft size={14} className="rtl-flip" aria-hidden="true" />

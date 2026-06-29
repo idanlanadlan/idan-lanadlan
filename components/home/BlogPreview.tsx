@@ -10,7 +10,7 @@ export default function BlogPreview() {
   const posts = mockBlogPosts.filter((p) => p.published).slice(0, 3);
 
   return (
-    <section className="py-24 bg-black">
+    <section className="py-24 bg-black" aria-labelledby="blog-heading">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -21,7 +21,7 @@ export default function BlogPreview() {
           <div>
             <p className="text-xs tracking-[0.3em] text-gold uppercase mb-3">בלוג</p>
             <div className="divider-gold mb-4" />
-            <h2 className="font-display text-4xl sm:text-5xl font-light text-white">
+            <h2 id="blog-heading" className="font-display text-4xl sm:text-5xl font-light text-white">
               כתבות ותובנות
             </h2>
           </div>

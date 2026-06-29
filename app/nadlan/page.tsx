@@ -48,6 +48,7 @@ export default function PropertiesPage() {
               <button
                 key={opt.value}
                 onClick={() => setFilter(opt.value)}
+                aria-pressed={filter === opt.value}
                 className={`px-5 py-2 rounded text-sm font-medium transition-all ${
                   filter === opt.value
                     ? "bg-gold text-black"

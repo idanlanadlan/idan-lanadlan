@@ -63,21 +63,21 @@ export default function PropertyCard({ property, variant = "default" }: Property
           <h3 className={`font-semibold text-cream mb-1 line-clamp-1 ${isLarge ? "text-lg" : "text-base"}`}>
             {property.title}
           </h3>
-          <p className="text-xs text-gray-light/70 mb-5">
+          <p className="text-xs text-gray-light mb-5">
             {property.neighborhood}, {property.city}
           </p>
 
           <div className="flex items-center gap-6 text-xs text-gray-light mt-auto">
             <span className="flex items-center gap-1.5">
-              <BedDouble size={12} className="text-gold/70" />
+              <BedDouble size={12} className="text-gold/70" aria-hidden="true" />
               {property.bedrooms} חדרים
             </span>
             <span className="flex items-center gap-1.5">
-              <Bath size={12} className="text-gold/70" />
+              <Bath size={12} className="text-gold/70" aria-hidden="true" />
               {property.bathrooms} מק״ר
             </span>
             <span className="flex items-center gap-1.5">
-              <Maximize2 size={12} className="text-gold/70" />
+              <Maximize2 size={12} className="text-gold/70" aria-hidden="true" />
               {property.size_sqm} מ״ר
             </span>
           </div>

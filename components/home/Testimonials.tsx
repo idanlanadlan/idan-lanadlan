@@ -8,7 +8,7 @@ export default function Testimonials() {
   const testimonials = mockTestimonials.filter((t) => t.featured).slice(0, 6);
 
   return (
-    <section className="py-28 bg-black">
+    <section className="py-28 bg-black" aria-labelledby="testimonials-heading">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
 
         {/* Section header */}
@@ -19,10 +19,10 @@ export default function Testimonials() {
           transition={{ duration: 0.6 }}
           className="mb-16"
         >
-          <span className="text-[10px] tracking-[0.45em] text-gold/60 uppercase block mb-5">
+          <span className="text-[10px] tracking-[0.45em] text-gold uppercase block mb-5" aria-hidden="true">
             לקוחות מדברים
           </span>
-          <h2 className="font-display text-4xl sm:text-5xl font-extralight text-white">
+          <h2 id="testimonials-heading" className="font-display text-4xl sm:text-5xl font-extralight text-white">
             מה אומרים עלינו
           </h2>
         </motion.div>
@@ -41,27 +41,31 @@ export default function Testimonials() {
               {/* Large decorative quote mark */}
               <span
                 className="font-display text-[5rem] leading-none text-gold/10 mb-2 block select-none"
-                aria-hidden
+                aria-hidden="true"
               >
                 ״
               </span>
 
               {/* Review text */}
-              <blockquote className="text-sm text-gray-light/80 leading-[1.85] flex-1 mb-8">
+              <blockquote className="text-sm text-gray-light leading-[1.85] flex-1 mb-8">
                 {t.text}
               </blockquote>
 
               {/* Author row */}
               <div className="flex items-center justify-between mt-auto">
                 <div>
-                  <p className="text-xs text-cream/80 font-medium">{t.name}</p>
+                  <p className="text-xs text-cream font-medium">{t.name}</p>
                   {t.source === "google" && (
-                    <p className="text-[10px] text-gold/50 mt-0.5 tracking-wider">ביקורת גוגל</p>
+                    <p className="text-[10px] text-gold mt-0.5 tracking-wider">ביקורת גוגל</p>
                   )}
                 </div>
-                <div className="flex gap-0.5">
+                <div
+                  role="img"
+                  aria-label={`דירוג: ${t.rating} מתוך 5 כוכבים`}
+                  className="flex gap-0.5"
+                >
                   {[...Array(t.rating)].map((_, j) => (
-                    <span key={j} className="text-gold/60 text-xs">★</span>
+                    <span key={j} className="text-gold text-xs" aria-hidden="true">★</span>
                   ))}
                 </div>
               </div>
@@ -81,9 +85,10 @@ export default function Testimonials() {
             href="https://maps.app.goo.gl/RG3BgZUUxTh1g9u89"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-xs tracking-widest text-gray-light/40 hover:text-gold transition-colors duration-300 uppercase"
+            className="inline-flex items-center gap-2 text-xs tracking-widest text-gray-light hover:text-gold transition-colors duration-300 uppercase"
+            aria-label="כל הביקורות בגוגל (נפתח בחלון חדש)"
           >
-            <ExternalLink size={12} />
+            <ExternalLink size={12} aria-hidden="true" />
             כל הביקורות בגוגל
           </a>
         </motion.div>

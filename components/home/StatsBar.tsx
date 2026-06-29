@@ -6,10 +6,10 @@ import { useLanguage } from "@/contexts/LanguageContext";
 export default function StatsBar() {
   const { t } = useLanguage();
 
-  const stats = [
+  const stats: { value: string; label: string; ariaValue?: string }[] = [
     { value: "20+",           label: t.stats.experience },
     { value: "500+",          label: t.stats.deals },
-    { value: "★ 5.0",         label: t.stats.rating },
+    { value: "★ 5.0",         label: t.stats.rating, ariaValue: "דירוג 5.0 כוכבים" },
     { value: t.stats.office_value, label: t.stats.office },
   ];
 
@@ -31,10 +31,13 @@ export default function StatsBar() {
                          [&:not(:last-child)]:after:bg-gray-dark/50 [&:not(:last-child)]:after:hidden
                          md:[&:not(:last-child)]:after:block"
             >
-              <p className="font-display text-4xl sm:text-5xl font-extralight text-white mb-2 tracking-tight">
+              <p
+                className="font-display text-4xl sm:text-5xl font-extralight text-white mb-2 tracking-tight"
+                aria-label={stat.ariaValue}
+              >
                 {stat.value}
               </p>
-              <p className="text-[10px] tracking-[0.35em] text-gray uppercase">
+              <p className="text-[10px] tracking-[0.35em] text-gray-light uppercase">
                 {stat.label}
               </p>
             </motion.div>
