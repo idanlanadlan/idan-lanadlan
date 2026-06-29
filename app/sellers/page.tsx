@@ -247,7 +247,7 @@ export default function SellersPage() {
               <p className="text-xs tracking-[0.3em] text-gold uppercase mb-3">מה מקבלים</p>
               <div className="divider-gold mb-4 mx-auto w-12" />
               <h2 className="font-display text-3xl sm:text-4xl font-light text-white">
-                הבלעדיות שלי כוללת
+                תהליך השיווק שלי מבטיח! 👇
               </h2>
             </div>
 
