@@ -23,7 +23,7 @@ async function sendResetLink() {
   const siteUrl =
     process.env.NEXT_PUBLIC_SITE_URL || "https://www.idanlanadlan.co.il";
   const resetUrl = `${siteUrl}/admin/reset/${token}`;
-  const adminEmail = process.env.ADMIN_EMAIL || "idanhuli8@gmail.com";
+  const adminEmail = process.env.ADMIN_EMAIL || "idanlanadlan@gmail.com";
   const apiKey = process.env.RESEND_API_KEY;
 
   if (apiKey) {
@@ -34,7 +34,7 @@ async function sendResetLink() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "עידן לנדל״ן <noreply@idanlanadlan.co.il>",
+        from: "עידן לנדל״ן <onboarding@resend.dev>",
         to: [adminEmail],
         subject: "כניסה לדשבורד — עידן לנדל״ן",
         html: `
