@@ -9,6 +9,7 @@ import Testimonials from "@/components/home/Testimonials";
 import SocialFeed from "@/components/home/SocialFeed";
 import BlogPreview from "@/components/home/BlogPreview";
 import CtaSection from "@/components/home/CtaSection";
+import FaqSection from "@/components/home/FaqSection";
 
 export default function HomePage() {
   return (
@@ -22,6 +23,7 @@ export default function HomePage() {
         <Testimonials />
         <BlogPreview />
         <SocialFeed />
+        <FaqSection />
         <CtaSection />
       </main>
       <Footer />

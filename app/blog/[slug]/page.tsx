@@ -51,6 +51,7 @@ export default async function BlogPostPage({
     },
     datePublished: post.created_at,
     dateModified: post.updated_at,
+    articleBody: post.content || undefined,
     keywords: post.keywords.join(", "),
     publisher: {
       "@type": "Organization",
@@ -109,11 +110,12 @@ export default async function BlogPostPage({
             {post.excerpt}
           </p>
 
-          {/* Content — placeholder until real content */}
-          <div className="text-gray-light leading-relaxed space-y-4">
-            <p>
-              תוכן המאמר יופיע כאן. ניתן לערוך מהאדמין.
-            </p>
+          <div className="text-gray-light leading-relaxed space-y-5">
+            {post.content
+              ? post.content.split("\n\n").map((para, i) => (
+                  <p key={i}>{para}</p>
+                ))
+              : <p>תוכן המאמר יופיע כאן בקרוב.</p>}
           </div>
 
           {/* CTA */}

@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import CookieBanner from "@/components/CookieBanner";
+import Advisor from "@/components/Advisor";
 
 const heebo = Heebo({
   variable: "--font-heebo",
@@ -27,11 +28,11 @@ const frankRuhl = Frank_Ruhl_Libre({
 export const metadata: Metadata = {
   title: "עידן לנדל\"ן — עידן חולי | תיווך ושיווק נדל\"ן יוקרה",
   description:
-    "עידן חולי — 20 שנות ניסיון בתיווך, יזמות ושיווק נדל\"ן יוקרה בגוש דן. מכירה, השכרה, שיווק פרויקטים וייעוץ משקיעים.",
+    "עידן חולי — כעשור של ניסיון בתיווך, יזמות ושיווק נדל\"ן יוקרה בתל אביב וסביבתה. מכירה, השכרה, שיווק פרויקטים וייעוץ משקיעים.",
   keywords: [
     "תיווך נדל\"ן תל אביב",
     "עידן חולי",
-    "נדל\"ן יוקרה גוש דן",
+    "נדל\"ן יוקרה תל אביב",
     "דירות למכירה תל אביב",
     "נמל תל אביב נדל\"ן",
     "משרד תיווך",
@@ -47,7 +48,7 @@ export const metadata: Metadata = {
     siteName: "עידן לנדל\"ן",
     title: "עידן לנדל\"ן — עידן חולי | נדל\"ן יוקרה",
     description:
-      "20 שנות ניסיון בתיווך, יזמות ושיווק נדל\"ן יוקרה בגוש דן.",
+      "כעשור של ניסיון בתיווך, יזמות ושיווק נדל\"ן יוקרה בתל אביב וסביבתה.",
     images: [
       {
         url: "https://idanlanadlan.co.il/og-image.jpg",
@@ -60,7 +61,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "עידן לנדל\"ן — נדל\"ן יוקרה",
-    description: "20 שנות ניסיון בתיווך ושיווק נדל\"ן יוקרה.",
+    description: "כעשור של ניסיון בתיווך ושיווק נדל\"ן יוקרה בתל אביב וסביבתה.",
   },
   robots: {
     index: true,
@@ -83,8 +84,8 @@ const schemaOrg = {
       telephone: "+972-54-979-1171",
       image: "https://idanlanadlan.co.il/idan-photo.jpg",
       description:
-        "משרד תיווך ושיווק נדל\"ן עם 20 שנות ניסיון בגוש דן. מס׳ רישיון 3205360.",
-      areaServed: ["תל אביב", "גוש דן", "המרכז"],
+        "משרד תיווך ושיווק נדל\"ן עם כעשור של ניסיון בתל אביב וסביבתה. מס׳ רישיון 3205360.",
+      areaServed: ["תל אביב", "תל אביב וסביבתה", "המרכז"],
       address: {
         "@type": "PostalAddress",
         streetAddress: "הירקון 319",
@@ -127,6 +128,7 @@ export default function RootLayout({
       lang="he"
       dir="rtl"
       className={`${heebo.variable} ${cormorant.variable} ${frankRuhl.variable}`}
+      suppressHydrationWarning
     >
       <head>
         {/* Anti-flash: set theme before first paint */}
@@ -149,6 +151,7 @@ export default function RootLayout({
           <LanguageProvider>
             {children}
             <CookieBanner />
+            <Advisor />
           </LanguageProvider>
         </ThemeProvider>
       </body>

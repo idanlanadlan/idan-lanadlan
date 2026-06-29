@@ -3,9 +3,12 @@
 import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import { mockTestimonials } from "@/lib/mock-data";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Testimonials() {
-  const testimonials = mockTestimonials.filter((t) => t.featured).slice(0, 6);
+  const { t } = useLanguage();
+  const te = t.sections.testimonials;
+  const testimonials = mockTestimonials.filter((r) => r.featured).slice(0, 6);
 
   return (
     <section className="py-28 bg-black" aria-labelledby="testimonials-heading">
@@ -20,18 +23,18 @@ export default function Testimonials() {
           className="mb-16"
         >
           <span className="text-[10px] tracking-[0.45em] text-gold uppercase block mb-5" aria-hidden="true">
-            לקוחות מדברים
+            {te.eyebrow}
           </span>
           <h2 id="testimonials-heading" className="font-display text-4xl sm:text-5xl font-extralight text-white">
-            מה אומרים עלינו
+            {te.title}
           </h2>
         </motion.div>
 
         {/* Grid — hairline separators via gap + parent bg */}
         <div className="grid md:grid-cols-3 gap-px bg-gray-dark/25">
-          {testimonials.map((t, i) => (
+          {testimonials.map((r, i) => (
             <motion.div
-              key={t.id}
+              key={r.id}
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -48,23 +51,23 @@ export default function Testimonials() {
 
               {/* Review text */}
               <blockquote className="text-sm text-gray-light leading-[1.85] flex-1 mb-8">
-                {t.text}
+                {r.text}
               </blockquote>
 
               {/* Author row */}
               <div className="flex items-center justify-between mt-auto">
                 <div>
-                  <p className="text-xs text-cream font-medium">{t.name}</p>
-                  {t.source === "google" && (
-                    <p className="text-[10px] text-gold mt-0.5 tracking-wider">ביקורת גוגל</p>
+                  <p className="text-xs text-cream font-medium">{r.name}</p>
+                  {r.source === "google" && (
+                    <p className="text-[10px] text-gold mt-0.5 tracking-wider">{te.google_review}</p>
                   )}
                 </div>
                 <div
                   role="img"
-                  aria-label={`דירוג: ${t.rating} מתוך 5 כוכבים`}
+                  aria-label={`${r.rating}/5`}
                   className="flex gap-0.5"
                 >
-                  {[...Array(t.rating)].map((_, j) => (
+                  {[...Array(r.rating)].map((_, j) => (
                     <span key={j} className="text-gold text-xs" aria-hidden="true">★</span>
                   ))}
                 </div>
@@ -86,10 +89,9 @@ export default function Testimonials() {
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-xs tracking-widest text-gray-light hover:text-gold transition-colors duration-300 uppercase"
-            aria-label="כל הביקורות בגוגל (נפתח בחלון חדש)"
           >
             <ExternalLink size={12} aria-hidden="true" />
-            כל הביקורות בגוגל
+            {te.all}
           </a>
         </motion.div>
       </div>

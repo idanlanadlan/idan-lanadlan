@@ -5,8 +5,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
 import { mockBlogPosts } from "@/lib/mock-data";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function BlogPreview() {
+  const { t } = useLanguage();
+  const b = t.sections.blog;
   const posts = mockBlogPosts.filter((p) => p.published).slice(0, 3);
 
   return (
@@ -19,17 +22,17 @@ export default function BlogPreview() {
           className="flex items-end justify-between mb-12"
         >
           <div>
-            <p className="text-xs tracking-[0.3em] text-gold uppercase mb-3">בלוג</p>
+            <p className="text-xs tracking-[0.3em] text-gold uppercase mb-3">{b.eyebrow}</p>
             <div className="divider-gold mb-4" />
             <h2 id="blog-heading" className="font-display text-4xl sm:text-5xl font-light text-white">
-              כתבות ותובנות
+              {b.title}
             </h2>
           </div>
           <Link
             href="/blog"
             className="hidden sm:flex items-center gap-2 text-sm text-gold hover:text-gold-light transition-colors"
           >
-            כל הכתבות
+            {b.all}
             <ArrowLeft size={16} className="rtl-flip" />
           </Link>
         </motion.div>

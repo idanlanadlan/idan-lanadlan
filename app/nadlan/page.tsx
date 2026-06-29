@@ -8,16 +8,19 @@ import PropertyCard from "@/components/properties/PropertyCard";
 import { mockProperties } from "@/lib/mock-data";
 import type { PropertyType } from "@/lib/types";
 import { motion } from "framer-motion";
-
-const filterOptions: { value: PropertyType | "all"; label: string }[] = [
-  { value: "all", label: "הכל" },
-  { value: "sale", label: "למכירה" },
-  { value: "rent", label: "להשכרה" },
-  { value: "project", label: "פרויקטים" },
-];
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function PropertiesPage() {
   const [filter, setFilter] = useState<PropertyType | "all">("all");
+  const { t } = useLanguage();
+  const p = t.sections.properties;
+
+  const filterOptions: { value: PropertyType | "all"; label: string }[] = [
+    { value: "all", label: p.filter_all },
+    { value: "sale", label: p.filter_sale },
+    { value: "rent", label: p.filter_rent },
+    { value: "project", label: p.filter_projects },
+  ];
 
   const filtered = filter === "all"
     ? mockProperties
@@ -30,13 +33,13 @@ export default function PropertiesPage() {
         {/* Page header */}
         <section className="py-16 bg-charcoal border-b border-gray-dark">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
-            <p className="text-xs tracking-[0.3em] text-gold uppercase mb-3">הפורטפוליו שלנו</p>
+            <p className="text-xs tracking-[0.3em] text-gold uppercase mb-3">{p.eyebrow}</p>
             <div className="divider-gold mb-4" />
             <h1 className="font-display text-4xl sm:text-5xl font-light text-white mb-4">
-              נכסים
+              {p.title}
             </h1>
             <p className="text-gray-light max-w-xl">
-              מבחר נכסים יוקרתיים בגוש דן. מכירה, השכרה ופרויקטים חדשים.
+              {p.description}
             </p>
           </div>
         </section>
@@ -66,7 +69,7 @@ export default function PropertiesPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
             {filtered.length === 0 ? (
               <p className="text-center text-gray-light py-24">
-                אין נכסים זמינים בקטגוריה זו כרגע.
+                {p.empty}
               </p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

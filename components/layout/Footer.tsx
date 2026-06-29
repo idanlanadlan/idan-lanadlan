@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Phone, Mail, MapPin } from "lucide-react";
+import { Phone, Mail, MapPin, MessageCircle } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const socialLinks = [
@@ -100,12 +100,20 @@ export default function Footer() {
               className="flex items-center gap-3 text-sm text-gray-light hover:text-gold transition-colors"
               aria-label="שלח הודעת WhatsApp"
             >
-              <Mail size={14} aria-hidden="true" />
+              <MessageCircle size={14} aria-hidden="true" />
               WhatsApp
             </a>
-            <span className="flex items-center gap-3 text-sm text-gray-light">
-              <MapPin size={14} aria-hidden="true" />
-              הירקון 319, נמל ת"א
+            <a
+              href="mailto:idanlanadlan@gmail.com"
+              className="flex items-center gap-3 text-sm text-gray-light hover:text-gold transition-colors"
+              aria-label="שלח מייל"
+            >
+              <Mail size={14} aria-hidden="true" />
+              idanlanadlan@gmail.com
+            </a>
+            <span className="flex items-center gap-3 text-sm text-cream">
+              <MapPin size={14} className="text-gold shrink-0" aria-hidden="true" />
+              הירקון 319, נמל תל אביב
             </span>
           </div>
 

@@ -8,10 +8,10 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { Locale } from "@/lib/translations";
 
-const LOCALES: { code: Locale; label: string }[] = [
-  { code: "he", label: "עב" },
-  { code: "en", label: "EN" },
-  { code: "fr", label: "FR" },
+const LOCALES: { code: Locale; flag: string; label: string }[] = [
+  { code: "he", flag: "🇮🇱", label: "עברית" },
+  { code: "en", flag: "🇬🇧", label: "English" },
+  { code: "fr", flag: "🇫🇷", label: "Français" },
 ];
 
 export default function Header() {
@@ -50,6 +50,7 @@ export default function Header() {
   const navLinks = [
     { href: "/", label: t.nav.home },
     { href: "/nadlan", label: t.nav.properties },
+    { href: "/groups", label: t.nav.groups },
     { href: "/blog", label: t.nav.blog },
     { href: "/about", label: t.nav.about },
     { href: "/contact", label: t.nav.contact },
@@ -70,9 +71,9 @@ export default function Header() {
           <Image
             src="/logo.png"
             alt="עידן לנדל״ן"
-            width={165}
-            height={83}
-            className="object-contain"
+            width={130}
+            height={65}
+            className={`object-contain transition-all ${isLight ? "brightness-0" : ""}`}
             priority
           />
         </Link>
@@ -98,21 +99,20 @@ export default function Header() {
             role="group"
             aria-label="בחירת שפה"
           >
-            {LOCALES.map(({ code, label }) => (
+            {LOCALES.map(({ code, flag, label }) => (
               <button
                 key={code}
                 onClick={() => setLocale(code)}
                 aria-pressed={locale === code}
                 aria-label={`שפה: ${label}`}
-                className={`px-1.5 py-0.5 text-[11px] font-medium rounded transition-colors ${
+                title={label}
+                className={`px-1.5 py-0.5 text-base leading-none rounded transition-all ${
                   locale === code
-                    ? "text-gold"
-                    : isLight
-                    ? "text-gray hover:text-gold"
-                    : "text-gray-light hover:text-cream"
+                    ? "opacity-100 scale-110"
+                    : "opacity-40 hover:opacity-80"
                 }`}
               >
-                {label}
+                {flag}
               </button>
             ))}
           </div>
@@ -195,18 +195,19 @@ export default function Header() {
           ))}
 
           {/* Language picker in mobile menu */}
-          <div className="flex items-center gap-3 pt-2 border-t border-gray-dark/50" role="group" aria-label="בחירת שפה">
-            {LOCALES.map(({ code, label }) => (
+          <div className="flex items-center gap-4 pt-2 border-t border-gray-dark/50" role="group" aria-label="בחירת שפה">
+            {LOCALES.map(({ code, flag, label }) => (
               <button
                 key={code}
                 onClick={() => { setLocale(code); setOpen(false); }}
-                className={`text-sm font-medium transition-colors ${
-                  locale === code ? "text-gold" : "text-gray-light hover:text-gold"
-                }`}
                 aria-pressed={locale === code}
                 aria-label={`שפה: ${label}`}
+                title={label}
+                className={`text-2xl leading-none transition-all ${
+                  locale === code ? "opacity-100 scale-110" : "opacity-40 hover:opacity-80"
+                }`}
               >
-                {label}
+                {flag}
               </button>
             ))}
           </div>

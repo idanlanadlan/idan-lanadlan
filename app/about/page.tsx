@@ -8,7 +8,7 @@ import WhatsAppButton from "@/components/layout/WhatsAppButton";
 export const metadata: Metadata = {
   title: "אודות עידן חולי | עידן לנדל״ן",
   description:
-    "עידן חולי — 20 שנות ניסיון בתיווך ושיווק נדל״ן. שקיפות, מקצועיות ותוצאות.",
+    "עידן חולי — כעשור של ניסיון בתיווך ושיווק נדל״ן. שקיפות, מקצועיות ותוצאות.",
 };
 
 const services = [
@@ -56,7 +56,7 @@ export default function AboutPage() {
                   <span className="text-gold-gradient italic">עידן לנדל״ן</span>
                 </h1>
                 <p className="text-gray-light leading-relaxed mb-4">
-                  אחרי כ-20 שנה בליווי לקוחות בתהליכי קבלת החלטות פיננסיות ובהשקעות נדל״ן פרטיות,
+                  אחרי כעשור של ליווי לקוחות בתהליכי קבלת החלטות פיננסיות ובהשקעות נדל״ן פרטיות,
                   הפכתי את התשוקה לקריירה מלאה: למצוא לכם בית נכון או השקעה נכונה — עסקה שמשנה חיים.
                 </p>
                 <p className="text-gray-light leading-relaxed mb-4">
@@ -96,8 +96,8 @@ export default function AboutPage() {
                   />
                 </div>
                 <div className="absolute -bottom-4 -right-4 bg-black/90 border border-gold/40 rounded-xl px-5 py-4">
-                  <p className="font-display text-3xl text-gold font-light">20+</p>
-                  <p className="text-xs text-gray-light">שנות ניסיון</p>
+                  <p className="font-display text-3xl text-gold font-light">כעשור</p>
+                  <p className="text-xs text-gray-light">של ניסיון</p>
                 </div>
               </div>
             </div>

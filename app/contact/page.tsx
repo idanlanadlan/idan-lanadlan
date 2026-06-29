@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Phone, MessageCircle, MapPin, Clock } from "lucide-react";
+import { Phone, MessageCircle, MapPin, Clock, Mail, BookOpen } from "lucide-react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
@@ -52,6 +52,21 @@ export default function ContactPage() {
                 </a>
 
                 <a
+                  href="https://wa.me/c/972549791171"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-5 bg-charcoal border border-gray-dark rounded-xl p-6 hover:border-gold transition-colors group"
+                >
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ background: "linear-gradient(135deg, #25D366, #128C7E)" }}>
+                    <BookOpen size={20} className="text-white" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-white group-hover:text-gold transition-colors">קטלוג נכסים ב-WhatsApp</p>
+                    <p className="text-xs text-gray-light mt-1">עיינו בכל הנכסים הזמינים</p>
+                  </div>
+                </a>
+
+                <a
                   href="tel:+972549791171"
                   className="flex items-center gap-5 bg-charcoal border border-gray-dark rounded-xl p-6 hover:border-gold transition-colors group"
                 >
@@ -64,13 +79,26 @@ export default function ContactPage() {
                   </div>
                 </a>
 
+                <a
+                  href="mailto:idanlanadlan@gmail.com"
+                  className="flex items-center gap-5 bg-charcoal border border-gray-dark rounded-xl p-6 hover:border-gold transition-colors group"
+                >
+                  <div className="w-12 h-12 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center shrink-0">
+                    <Mail size={20} className="text-gold" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-white group-hover:text-gold transition-colors">idanlanadlan@gmail.com</p>
+                    <p className="text-xs text-gray-light mt-1">שלחו מייל ישירות</p>
+                  </div>
+                </a>
+
                 <div className="flex items-center gap-5 bg-charcoal border border-gray-dark rounded-xl p-6">
                   <div className="w-12 h-12 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center shrink-0">
                     <MapPin size={20} className="text-gold" />
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-white">הירקון 319, נמל ת"א</p>
-                    <p className="text-xs text-gray-light mt-1">פועל בכל אזור גוש דן</p>
+                    <p className="text-xs text-gray-light mt-1">פועל בתל אביב וסביבתה</p>
                   </div>
                 </div>
 

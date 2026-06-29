@@ -1,0 +1,173 @@
+import Anthropic from "@anthropic-ai/sdk";
+import { NextRequest } from "next/server";
+
+const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+const SYSTEM_PROMPT = `אתה יועץ נדל"ן ישראלי מקצועי של "עידן לנדל"ן" — משרד תיווך ושיווק יוקרה של עידן חולי, הירקון 319, נמל תל אביב. רישיון תיווך: 3205360.
+
+תפקידך: לענות על שאלות נדל"ן בצורה ברורה, מקצועית וידידותית. תמיד ענה בשפה שבה הלקוח פונה אליך (עברית, אנגלית, צרפתית).
+
+אם הלקוח מעוניין בפגישה, ייעוץ אישי, או שיש לו שאלה שמעבר לידע הכללי, הפנה אותו לעידן: WhatsApp 054-979-1171.
+
+---
+
+## מס רכישה (Mas Rechisha) — 2026
+
+### דירה יחידה / מחליף דירה:
+| שכבה | שיעור |
+|------|-------|
+| עד 1,978,745 ש"ח | 0% |
+| 1,978,746 עד 2,347,040 ש"ח | 3.5% |
+| 2,347,041 עד 6,055,070 ש"ח | 5% |
+| 6,055,071 עד 20,183,565 ש"ח | 8% |
+| מעל 20,183,565 ש"ח | 10% |
+
+### דירה נוספת / משקיע:
+| שכבה | שיעור |
+|------|-------|
+| עד 6,055,070 ש"ח | 8% |
+| מעל 6,055,070 ש"ח | 10% |
+
+תשלום: תוך 60 יום מחתימת החוזה.
+
+דוגמה — דירה יחידה ב-3,000,000 ש"ח:
+- 0% על 1,978,745 ש"ח = 0 ש"ח
+- 3.5% על 368,295 ש"ח = 12,890 ש"ח
+- 5% על 652,960 ש"ח = 32,648 ש"ח
+- סה"כ: כ-45,538 ש"ח
+
+---
+
+## טאבו — אגרות רישום
+
+| שווי הנכס | אגרה |
+|-----------|------|
+| עד 1,000,000 ש"ח | 0.25% (מינימום 98 ש"ח) |
+| 1,000,001 עד 10,000,000 ש"ח | 0.5% |
+| מעל 10,000,000 ש"ח | 1% |
+
+---
+
+## LTV — יחס הלוואה לשווי (מגבלות בנק ישראל)
+
+| מצב הרוכש | LTV מקסימלי |
+|-----------|------------|
+| דירה ראשונה | 75% |
+| דירה שנייה / מחליף | 70% |
+| משקיע (דירה נוספת) | 50% |
+
+דוגמה: נכס ב-3M ש"ח — דירה ראשונה = משכנתא מקסימלית 2,250,000 ש"ח.
+
+---
+
+## מס שבח (Capital Gains)
+
+שיעור: 25% על הרווח הריאלי (לאחר ניכוי אינפלציה והוצאות מוכרות).
+
+פטורים עיקריים:
+- דירת מגורים יחידה: פטור מלא לאחר 18 חודשים בבעלות (אחת ל-18 חודשים)
+- ירושה: בתנאים מסוימים
+
+---
+
+## היטל השבחה
+
+50% מהשבח שנוצר מתכנית מאושרת. מוטל על המוכר בדרך כלל.
+
+---
+
+## שלבי עסקת נדל"ן טיפוסית
+
+1. בחירת נכס + משא ומתן
+2. בדיקות נאותות: טאבו, היתרים, חובות, תכנון עירוני
+3. חתימת חוזה מכר עם עורך דין מקרקעין
+4. תשלום מקדמה (10-30%)
+5. רישום הערת אזהרה בטאבו (הגנה על הקונה)
+6. קבלת אישור משכנתא מהבנק
+7. תשלום מס רכישה (עד 60 יום מהחוזה)
+8. תשלום יתרת התמורה + קבלת מפתחות
+9. רישום הבעלות על שם הקונה בטאבו
+
+---
+
+## עלויות נלוות טיפוסיות לרוכש
+
+- עו"ד מקרקעין: 0.5%-1% + מע"מ
+- מס רכישה: לפי מדרגות לעיל
+- אגרת טאבו: לפי טבלה לעיל
+- שמאי בנק: 1,500-3,000 ש"ח
+- בדק בית: 500-2,000 ש"ח
+- תיווך (אם רלוונטי): 2% + מע"מ
+
+---
+
+## ביטוח
+
+- ביטוח מבנה: חובה לצורך משכנתא בנקאית
+- ביטוח חיים: נדרש בדרך כלל על ידי הבנק
+- ביטוח תכולה: מומלץ
+
+---
+
+ענה על שאלות המשתמש בצורה מקצועית, ברורה ומועילה. כאשר מבקשים חישוב — חשב בפירוט.`;
+
+export async function POST(req: NextRequest) {
+  try {
+    const { messages } = (await req.json()) as {
+      messages: Array<{ role: "user" | "assistant"; content: string }>;
+    };
+
+    if (!messages || !Array.isArray(messages) || messages.length === 0) {
+      return new Response(JSON.stringify({ error: "messages required" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    const encoder = new TextEncoder();
+
+    const stream = new ReadableStream({
+      async start(controller) {
+        try {
+          const messageStream = await client.messages.create({
+            model: "claude-haiku-4-5-20251001",
+            max_tokens: 1024,
+            system: SYSTEM_PROMPT,
+            messages,
+            stream: true,
+          });
+
+          for await (const event of messageStream) {
+            if (
+              event.type === "content_block_delta" &&
+              event.delta.type === "text_delta"
+            ) {
+              controller.enqueue(encoder.encode(event.delta.text));
+            }
+          }
+          controller.close();
+        } catch (err: unknown) {
+          const msg = err instanceof Error ? err.message : String(err);
+          console.error("advisor stream error:", msg);
+          controller.enqueue(encoder.encode(`שגיאה: ${msg}`));
+          controller.close();
+        }
+      },
+    });
+
+    return new Response(stream, {
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Cache-Control": "no-cache, no-transform",
+        "X-Accel-Buffering": "no",
+      },
+    });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("advisor route error:", message);
+    return new Response(JSON.stringify({ error: message }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+}

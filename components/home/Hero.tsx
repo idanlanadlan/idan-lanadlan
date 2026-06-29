@@ -12,13 +12,13 @@ export default function Hero() {
     <section className="min-h-screen overflow-hidden md:grid md:grid-cols-[1fr_1fr]">
 
       {/* ── Text panel — RIGHT in RTL / LEFT in LTR ── */}
-      <div className="relative flex flex-col justify-center px-8 sm:px-14 pt-32 pb-20 md:pt-28 bg-black min-h-[65vh] md:min-h-screen">
+      <div className="relative flex flex-col justify-center px-8 sm:px-14 pt-36 pb-20 md:pt-32 bg-black min-h-[65vh] md:min-h-screen">
 
         <motion.span
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.9 }}
-          className="text-[10px] tracking-[0.5em] text-gold/50 uppercase mb-10 block"
+          className="text-[10px] tracking-[0.5em] text-gold/80 uppercase mb-8 block"
         >
           {t.hero.eyebrow}
         </motion.span>
@@ -92,7 +92,7 @@ export default function Hero() {
           className="absolute inset-0 bg-cover bg-center"
           style={{
             backgroundImage:
-              "url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1400&q=85')",
+              "url('/hero4-telaviv.jpg')",
           }}
         />
         <div className="absolute top-0 inset-x-0 h-32 bg-gradient-to-b from-black/55 to-transparent pointer-events-none" />

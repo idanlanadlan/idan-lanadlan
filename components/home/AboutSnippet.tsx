@@ -9,6 +9,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 export default function AboutSnippet() {
   const { t } = useLanguage();
   const a = t.sections.about;
+  const s = t.stats;
 
   const [quoteLine1, quoteLine2] = a.quote.split("\n");
 
@@ -38,10 +39,10 @@ export default function AboutSnippet() {
             <div
               className="absolute bottom-6 end-0 translate-x-4 bg-black border border-gold/20 px-6 py-5"
               role="img"
-              aria-label="20 שנות ניסיון"
+              aria-label={`${s.experience_value} ${s.experience}`}
             >
-              <p className="font-display text-4xl text-gold font-extralight leading-none" aria-hidden="true">20+</p>
-              <p className="text-[10px] text-gray-light mt-2 tracking-[0.3em] uppercase" aria-hidden="true">שנות ניסיון</p>
+              <p className="font-display text-4xl text-gold font-extralight leading-none" aria-hidden="true">{s.experience_value}</p>
+              <p className="text-[10px] text-gray-light mt-2 tracking-[0.3em] uppercase" aria-hidden="true">{s.experience}</p>
             </div>
           </motion.div>
 
@@ -65,19 +66,18 @@ export default function AboutSnippet() {
             </blockquote>
 
             <p className="text-sm text-gray-light leading-[2] mb-4">
-              אחרי כ-20 שנה בליווי לקוחות בתהליכי קבלת החלטות פיננסיות ובהשקעות נדל״ן פרטיות,
-              הפכתי את התשוקה לקריירה מלאה: למצוא לכם בית נכון או השקעה נכונה.
+              {a.bio1}
             </p>
             <p className="text-sm text-gray-light leading-[2] mb-10">
-              אני מאמין בשקיפות מלאה, חשיבה יצירתית בעסקאות מורכבות, ונחישות להביא תוצאה איפה שאחרים נופלים.
+              {a.bio2}
             </p>
 
             <div className="grid grid-cols-2 gap-x-8 gap-y-4 mb-12 border-t border-gray-dark/50 pt-8">
               {[
-                ["20+", "שנות ניסיון"],
-                ["500+", "עסקאות"],
-                ["נמל ת״א", "כתובת המשרד"],
-                ["★ 5.0", "גוגל"],
+                [s.experience_value, s.experience],
+                [s.deals_value, s.deals],
+                [s.office_value, s.office],
+                ["★ 5.0", s.rating],
               ].map(([val, label]) => (
                 <div key={label}>
                   <p className="font-display text-xl text-gold font-light">{val}</p>

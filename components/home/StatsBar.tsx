@@ -7,8 +7,8 @@ export default function StatsBar() {
   const { t } = useLanguage();
 
   const stats: { value: string; label: string; ariaValue?: string }[] = [
-    { value: "20+",           label: t.stats.experience },
-    { value: "500+",          label: t.stats.deals },
+    { value: t.stats.experience_value, label: t.stats.experience },
+    { value: t.stats.deals_value,     label: t.stats.deals },
     { value: "★ 5.0",         label: t.stats.rating, ariaValue: "דירוג 5.0 כוכבים" },
     { value: t.stats.office_value, label: t.stats.office },
   ];
