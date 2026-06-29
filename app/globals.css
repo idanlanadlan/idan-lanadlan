@@ -1,6 +1,11 @@
 @import "tailwindcss";
 @import "flag-icons/css/flag-icons.min.css";
 
+@keyframes shimmer-sweep {
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
 @theme {
   /* Luxury palette */
   --color-black:      #0A0A0A;

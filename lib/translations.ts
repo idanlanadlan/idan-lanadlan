@@ -38,8 +38,8 @@ export const translations: Record<Locale, T> = {
     },
     hero: {
       eyebrow: 'הירקון 319, נמל ת"א',
-      line1: "עידן",
-      line2: "לנדל״ן",
+      line1: "עידן חולי",
+      line2: "עידן לנדל״ן",
       subtitle: "כעשור של ניסיון בתיווך ושיווק נדל״ן יוקרה. שקיפות מלאה, תוצאות אמיתיות.",
       cta_properties: "גלה נכסים",
       cta_contact: "דבר עם עידן",
@@ -214,8 +214,8 @@ export const translations: Record<Locale, T> = {
     },
     hero: {
       eyebrow: "319 HaYarkon St., Tel Aviv Port",
-      line1: "Idan",
-      line2: "Real Estate",
+      line1: "Idan Huli",
+      line2: "Idan Real Estate",
       subtitle: "About a decade of luxury real estate expertise. Full transparency, real results.",
       cta_properties: "View Properties",
       cta_contact: "Talk to Idan",
@@ -390,8 +390,8 @@ export const translations: Record<Locale, T> = {
     },
     hero: {
       eyebrow: "319 HaYarkon, Port de Tel Aviv",
-      line1: "Idan",
-      line2: "Immobilier",
+      line1: "Idan Huli",
+      line2: "Idan Immobilier",
       subtitle: "Une décennie d'expertise en immobilier de luxe. Transparence totale, résultats concrets.",
       cta_properties: "Voir les biens",
       cta_contact: "Parler à Idan",
