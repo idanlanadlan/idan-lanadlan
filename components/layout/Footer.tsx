@@ -7,6 +7,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 const socialLinks = [
   { href: "https://www.facebook.com/profile.php?id=100086018108373", label: "Facebook" },
+  { href: "https://www.instagram.com/idan.huli", label: "Instagram" },
   { href: "https://www.tiktok.com/@idan.lanadlan", label: "TikTok" },
   { href: "https://www.linkedin.com/in/idan-huli/", label: "LinkedIn" },
   { href: "https://maps.app.goo.gl/RG3BgZUUxTh1g9u89", label: "Google" },

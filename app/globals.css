@@ -15,7 +15,7 @@
 
   /* Fonts */
   --font-sans: var(--font-heebo), 'Helvetica Neue', Arial, sans-serif;
-  --font-display: var(--font-cormorant), Georgia, serif;
+  --font-display: var(--font-frankruhl), var(--font-cormorant), Georgia, serif;
 
   /* Spacing */
   --spacing-section: 5rem;

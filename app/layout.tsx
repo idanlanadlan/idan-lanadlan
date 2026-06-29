@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Heebo, Cormorant_Garamond } from "next/font/google";
+import { Heebo, Cormorant_Garamond, Frank_Ruhl_Libre } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
@@ -16,6 +16,12 @@ const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
   weight: ["300", "400", "600", "700"],
   style: ["normal", "italic"],
+});
+
+const frankRuhl = Frank_Ruhl_Libre({
+  variable: "--font-frankruhl",
+  subsets: ["hebrew", "latin"],
+  weight: ["300", "400", "500"],
 });
 
 export const metadata: Metadata = {
@@ -120,7 +126,7 @@ export default function RootLayout({
     <html
       lang="he"
       dir="rtl"
-      className={`${heebo.variable} ${cormorant.variable}`}
+      className={`${heebo.variable} ${cormorant.variable} ${frankRuhl.variable}`}
     >
       <head>
         {/* Anti-flash: set theme before first paint */}

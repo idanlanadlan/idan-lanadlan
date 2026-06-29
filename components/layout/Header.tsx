@@ -64,7 +64,7 @@ export default function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className={`text-sm tracking-wider transition-colors duration-200 hover:text-gold ${isLight ? "text-gray" : "text-gray-light"}`}
+              className={`text-sm font-medium tracking-wider transition-colors duration-200 hover:text-gold ${isLight ? "text-gray-dark" : "text-cream"}`}
             >
               {link.label}
             </Link>
@@ -110,7 +110,7 @@ export default function Header() {
           {/* Phone */}
           <a
             href="tel:+972549791171"
-            className={`flex items-center gap-2 text-sm transition-colors hover:text-gold ${isLight ? "text-gray" : "text-gray-light"}`}
+            className={`flex items-center gap-2 text-sm font-medium transition-colors hover:text-gold ${isLight ? "text-gray-dark" : "text-cream"}`}
             aria-label="התקשר לעידן חולי"
           >
             <Phone size={15} />
