@@ -27,38 +27,43 @@ async function sendResetLink() {
   const apiKey = process.env.RESEND_API_KEY;
 
   if (apiKey) {
-    await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: "עידן לנדל״ן <onboarding@resend.dev>",
-        to: [adminEmail],
-        subject: "כניסה לדשבורד — עידן לנדל״ן",
-        html: `
-          <div dir="rtl" style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;padding:32px;background:#0A0A0A;color:#F5F5F0;border-radius:12px;">
-            <h2 style="color:#C9A96E;margin-top:0">עידן לנדל״ן — כניסה לדשבורד</h2>
-            <p>קיבלת הודעה זו כי ביקשת קישור כניסה לדשבורד הניהול.</p>
-            <p>לחץ על הכפתור להלן לכניסה. הקישור תקף לשעה אחת בלבד.</p>
-            <a href="${resetUrl}"
-               style="display:inline-block;background:#C9A96E;color:#000;padding:14px 28px;text-decoration:none;border-radius:8px;font-weight:bold;margin:16px 0;">
-              כניסה לדשבורד
-            </a>
-            <p style="color:#666;font-size:12px;margin-top:24px;">
-              אם לא ביקשת קישור זה, אפשר להתעלם ממנו.<br/>
-              הקישור: ${resetUrl}
-            </p>
-          </div>
-        `,
-      }),
-    });
-    redirect("/admin/forgot-password?sent=1");
-  } else {
-    // No email service configured — return token for display
-    redirect(`/admin/forgot-password?link=${encodeURIComponent(resetUrl)}`);
+    try {
+      const res = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: "Idan Lanadlan <onboarding@resend.dev>",
+          to: [adminEmail],
+          subject: "כניסה לדשבורד — עידן לנדל״ן",
+          html: `
+            <div dir="rtl" style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;padding:32px;background:#0A0A0A;color:#F5F5F0;border-radius:12px;">
+              <h2 style="color:#C9A96E;margin-top:0">עידן לנדל״ן — כניסה לדשבורד</h2>
+              <p>קיבלת הודעה זו כי ביקשת קישור כניסה לדשבורד הניהול.</p>
+              <p>לחץ על הכפתור להלן לכניסה. הקישור תקף לשעה אחת בלבד.</p>
+              <a href="${resetUrl}"
+                 style="display:inline-block;background:#C9A96E;color:#000;padding:14px 28px;text-decoration:none;border-radius:8px;font-weight:bold;margin:16px 0;">
+                כניסה לדשבורד
+              </a>
+              <p style="color:#666;font-size:12px;margin-top:24px;">
+                אם לא ביקשת קישור זה, אפשר להתעלם ממנו.<br/>
+                הקישור: ${resetUrl}
+              </p>
+            </div>
+          `,
+        }),
+      });
+      if (res.ok) {
+        redirect("/admin/forgot-password?sent=1");
+      }
+    } catch {
+      // fall through to show link on screen
+    }
   }
+  // Email not configured or failed — show link directly
+  redirect(`/admin/forgot-password?link=${encodeURIComponent(resetUrl)}`);
 }
 
 export default async function ForgotPasswordPage({
