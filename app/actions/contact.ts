@@ -1,10 +1,22 @@
 "use server";
 
+function isValidPhone(raw: string): boolean {
+  const cleaned = raw.replace(/[\s\-().]/g, "");
+  if (!cleaned) return false;
+  if (/^05\d{8}$/.test(cleaned)) return true;
+  if (/^07\d{8}$/.test(cleaned)) return true;
+  if (/^0[23489]\d{7}$/.test(cleaned)) return true;
+  if (/^\+[1-9]\d{6,14}$/.test(cleaned)) return true;
+  return false;
+}
+
 export async function sendContactForm(data: {
   category: string;
   name: string;
   phone: string;
 }): Promise<{ success: boolean }> {
+  if (!data.name.trim() || !isValidPhone(data.phone)) return { success: false };
+
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) return { success: false };
 
