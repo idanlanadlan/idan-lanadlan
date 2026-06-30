@@ -73,6 +73,7 @@ export default function ImportPage() {
 
   // Property image upload (separate from screenshot)
   const [propImages,       setPropImages]       = useState<{ objectUrl: string; remoteUrl?: string }[]>([]);
+  const [primaryIdx,       setPrimaryIdx]       = useState(0);
   const [isUploadingImages, setIsUploadingImages] = useState(false);
   const [uploadError,      setUploadError]      = useState("");
   const propImgRef = useRef<HTMLInputElement>(null);
@@ -193,14 +194,22 @@ export default function ImportPage() {
       copy.splice(i, 1);
       return copy;
     });
+    setPrimaryIdx((prev) => {
+      if (i === prev) return 0;
+      if (i < prev) return prev - 1;
+      return prev;
+    });
   }
 
   // ── save ─────────────────────────────────────────────────
 
   function handleSave() {
     if (!preview) return;
-    const remoteUrls = propImages.map((e) => e.remoteUrl).filter(Boolean) as string[];
-    const allImages = [...remoteUrls, ...preview.images];
+    const uploaded = propImages.map((e) => e.remoteUrl).filter(Boolean) as string[];
+    // Ensure primary image is first
+    const primary = uploaded[primaryIdx];
+    const rest = uploaded.filter((_, i) => i !== primaryIdx);
+    const allImages = primary ? [primary, ...rest, ...preview.images] : [...uploaded, ...preview.images];
     startSave(async () => {
       await saveImportedProperty({ ...preview, images: allImages, featured });
     });
@@ -344,13 +353,27 @@ export default function ImportPage() {
           <span className="text-[11px] text-gray-light">{propImages.length} תמונות</span>
         </div>
 
+        {propImages.length > 0 && (
+          <p className="text-[11px] text-gray-light/70 mb-2">לחץ על תמונה לבחירתה כ<span className="text-gold">ראשית</span> (מופיעה בכרטיס הנכס)</p>
+        )}
+
         {/* Thumbnails */}
         {propImages.length > 0 && (
           <div className="grid grid-cols-4 gap-2 mb-3">
             {propImages.map((img, i) => (
-              <div key={i} className="relative aspect-square rounded-lg overflow-hidden group">
+              <div
+                key={i}
+                onClick={() => img.remoteUrl && setPrimaryIdx(i)}
+                className={`relative aspect-square rounded-lg overflow-hidden group cursor-pointer transition-all ${
+                  i === primaryIdx ? "ring-2 ring-gold ring-offset-2 ring-offset-charcoal" : "opacity-80 hover:opacity-100"
+                }`}
+              >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={img.objectUrl} alt="" className="w-full h-full object-cover" />
+                {/* Primary badge */}
+                {i === primaryIdx && img.remoteUrl && (
+                  <span className="absolute top-1 right-1 text-[9px] bg-gold text-black font-bold px-1.5 py-0.5 rounded">ראשית</span>
+                )}
                 {/* Upload indicator */}
                 {!img.remoteUrl && (
                   <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
@@ -359,7 +382,7 @@ export default function ImportPage() {
                 )}
                 {/* Remove button */}
                 <button
-                  onClick={() => removePropImage(i)}
+                  onClick={(e) => { e.stopPropagation(); removePropImage(i); }}
                   className="absolute top-1 left-1 w-5 h-5 bg-black/70 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                 >
                   <X size={10} className="text-white" />

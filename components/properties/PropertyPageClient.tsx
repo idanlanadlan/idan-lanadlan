@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { BedDouble, Bath, Maximize2, MapPin, ArrowRight, Phone, MessageCircle } from "lucide-react";
+import { BedDouble, Bath, Maximize2, MapPin, ArrowRight, Phone, MessageCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
@@ -17,6 +18,10 @@ interface Props {
 export default function PropertyPageClient({ property, schema }: Props) {
   const { t } = useLanguage();
   const pd = t.sections.property_detail;
+  const [activeImg, setActiveImg] = useState(0);
+
+  const images = property.images.length > 0 ? property.images : [];
+  const hasGallery = images.length > 1;
 
   const typeLabel: Record<string, string> = {
     sale: pd.type_sale,
@@ -51,19 +56,65 @@ export default function PropertyPageClient({ property, schema }: Props) {
             {/* Left: images + details */}
             <div className="lg:col-span-2">
               {/* Main image */}
-              <div className="relative h-80 sm:h-[500px] rounded-xl overflow-hidden mb-4">
-                <Image
-                  src={property.images[0]}
-                  alt={property.title}
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 66vw"
-                  className="object-cover"
-                  priority
-                />
+              <div className="relative h-80 sm:h-[500px] rounded-xl overflow-hidden mb-3">
+                {images.length > 0 ? (
+                  <Image
+                    src={images[activeImg]}
+                    alt={property.title}
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 66vw"
+                    className="object-cover transition-opacity duration-300"
+                    priority
+                    unoptimized
+                  />
+                ) : (
+                  <div className="absolute inset-0 bg-charcoal flex items-center justify-center">
+                    <span className="text-[10px] tracking-widest text-gray-light/40 uppercase">תמונה בקרוב</span>
+                  </div>
+                )}
                 <span className="absolute top-4 right-4 text-xs px-3 py-1 rounded-full bg-gold text-black font-semibold">
                   {typeLabel[property.type]}
                 </span>
+                {/* Arrow nav (shown when >1 image) */}
+                {hasGallery && (
+                  <>
+                    <button
+                      onClick={() => setActiveImg((p) => (p - 1 + images.length) % images.length)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-black/60 hover:bg-black/80 rounded-full flex items-center justify-center transition-colors"
+                      aria-label="תמונה קודמת"
+                    >
+                      <ChevronRight size={18} className="text-white" />
+                    </button>
+                    <button
+                      onClick={() => setActiveImg((p) => (p + 1) % images.length)}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-black/60 hover:bg-black/80 rounded-full flex items-center justify-center transition-colors"
+                      aria-label="תמונה הבאה"
+                    >
+                      <ChevronLeft size={18} className="text-white" />
+                    </button>
+                    <span className="absolute bottom-3 left-3 text-xs text-white bg-black/50 px-2 py-1 rounded-full">
+                      {activeImg + 1} / {images.length}
+                    </span>
+                  </>
+                )}
               </div>
+
+              {/* Thumbnail strip */}
+              {hasGallery && (
+                <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
+                  {images.map((src, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setActiveImg(i)}
+                      className={`relative shrink-0 w-20 h-14 rounded-lg overflow-hidden transition-all ${
+                        i === activeImg ? "ring-2 ring-gold" : "opacity-60 hover:opacity-90"
+                      }`}
+                    >
+                      <Image src={src} alt="" fill className="object-cover" unoptimized />
+                    </button>
+                  ))}
+                </div>
+              )}
 
               {/* Property info */}
               <div className="bg-charcoal rounded-xl border border-gray-dark p-6 mb-6">
