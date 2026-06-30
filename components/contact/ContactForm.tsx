@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { TrendingUp, Key, Search, Building2 } from "lucide-react";
 import { sendContactForm } from "@/app/actions/contact";
 
 const CATEGORIES = [
-  { label: "מעוניין למכור נכס", icon: "🏠" },
-  { label: "מעוניין להשכיר נכס", icon: "🔑" },
-  { label: "מחפש נכס לרכישה", icon: "🔍" },
-  { label: "מחפש דירה להשכרה", icon: "🏢" },
+  { label: "מעוניין למכור נכס", Icon: TrendingUp },
+  { label: "מעוניין להשכיר נכס", Icon: Key },
+  { label: "מחפש נכס לרכישה", Icon: Search },
+  { label: "מחפש דירה להשכרה", Icon: Building2 },
 ];
 
 export function ContactForm() {
@@ -44,19 +45,21 @@ export function ContactForm() {
       <div>
         <p className="text-xs tracking-[0.3em] text-gold uppercase mb-4">במה אוכל לעזור?</p>
         <div className="grid grid-cols-2 gap-3">
-          {CATEGORIES.map((cat) => (
+          {CATEGORIES.map(({ label, Icon }) => (
             <button
-              key={cat.label}
+              key={label}
               type="button"
-              onClick={() => setCategory(cat.label)}
-              className={`p-4 rounded-xl border text-right transition-all duration-200 ${
-                category === cat.label
+              onClick={() => setCategory(label)}
+              className={`p-5 rounded-xl border text-right transition-all duration-200 ${
+                category === label
                   ? "border-gold bg-gold/10 text-white"
                   : "border-gray-dark bg-black/40 text-gray-light hover:border-gold/40 hover:text-cream"
               }`}
             >
-              <span className="text-2xl mb-2 block">{cat.icon}</span>
-              <span className="text-sm font-medium leading-snug">{cat.label}</span>
+              <div className={`mb-3 ${category === label ? "text-gold" : "text-gray-light"}`}>
+                <Icon size={22} strokeWidth={1.5} />
+              </div>
+              <span className="text-sm font-medium leading-snug">{label}</span>
             </button>
           ))}
         </div>
