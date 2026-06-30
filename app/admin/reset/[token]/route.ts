@@ -39,8 +39,6 @@ export async function GET(
   const password = process.env.ADMIN_PASSWORD ?? "";
   const sessionToken = await generateSessionToken(password);
 
-  await upsertSettings({ reset_token: "", reset_token_expiry: "" });
-
   const response = NextResponse.redirect(new URL("/admin", request.url));
   response.cookies.set("admin_session", sessionToken, {
     httpOnly: true,
@@ -49,6 +47,9 @@ export async function GET(
     maxAge: 60 * 60 * 24 * 7,
     path: "/",
   });
+
+  // Clear token only after session is ready
+  await upsertSettings({ reset_token: "", reset_token_expiry: "" });
 
   return response;
 }
