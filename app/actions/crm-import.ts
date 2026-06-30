@@ -32,5 +32,5 @@ export async function saveImportedProperty(
   data: Omit<Property, "id" | "created_at">
 ): Promise<{ id: string }> {
   const saved = await createProperty(data);
-  redirect(`/admin/properties/${saved.id}/edit`);
+  redirect("/admin/properties");
 }

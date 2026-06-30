@@ -10,7 +10,13 @@ export default async function EditPropertyPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const property = await getPropertyById(id);
+  let property;
+  try {
+    property = await getPropertyById(id);
+  } catch (err) {
+    console.error("[EditPropertyPage] getPropertyById threw:", err);
+    throw err;
+  }
   if (!property) notFound();
 
   const updateWithId = updatePropertyAction.bind(null);
