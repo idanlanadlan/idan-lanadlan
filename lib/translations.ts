@@ -29,7 +29,7 @@ export const translations: Record<Locale, T> = {
       properties: "נכסים",
       groups: "קבוצות VIP",
       sellers: "בעלי נכסים",
-      blog: "ידע",
+      blog: "נכסים של ידע",
       about: "אודות",
       contact: "צור קשר",
       message: "שלח הודעה",

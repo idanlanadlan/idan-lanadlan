@@ -72,7 +72,7 @@ export default async function BlogPostPage({
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center gap-2 text-xs text-gray-light">
           <Link href="/" className="hover:text-gold transition-colors">בית</Link>
           <ArrowRight size={12} className="rtl-flip" />
-          <Link href="/blog" className="hover:text-gold transition-colors">בלוג</Link>
+          <Link href="/blog" className="hover:text-gold transition-colors">נכסים של ידע</Link>
           <ArrowRight size={12} className="rtl-flip" />
           <span className="text-cream line-clamp-1">{post.title}</span>
         </div>

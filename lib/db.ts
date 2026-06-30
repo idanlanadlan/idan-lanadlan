@@ -114,7 +114,8 @@ export async function getPublishedBlogPosts(): Promise<BlogPost[]> {
     .select("*")
     .eq("published", true)
     .order("created_at", { ascending: false });
-  return (data as BlogPost[]) ?? [];
+  const posts = (data as BlogPost[]) ?? [];
+  return posts.length > 0 ? posts : mockBlogPosts.filter((p) => p.published);
 }
 
 export async function getAllBlogPosts(): Promise<BlogPost[]> {
@@ -134,7 +135,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
     .eq("slug", slug)
     .eq("published", true)
     .single();
-  return (data as BlogPost) ?? null;
+  return (data as BlogPost) ?? mockBlogPosts.find((p) => p.slug === slug) ?? null;
 }
 
 export async function getBlogPostById(id: string): Promise<BlogPost | null> {
