@@ -1,7 +1,10 @@
 import Link from "next/link";
-import { Plus, Home, Eye, Star, TrendingUp, FileText, Settings } from "lucide-react";
+import nextDynamic from "next/dynamic";
+import { Plus, Home, Eye, Star, TrendingUp, FileText, Settings, Download } from "lucide-react";
 import { getProperties, getAllBlogPosts } from "@/lib/db";
 import { isConfigured } from "@/lib/supabase";
+
+const PropertyMap = nextDynamic(() => import("@/components/properties/PropertyMap"), { ssr: false });
 
 export const dynamic = "force-dynamic";
 
@@ -87,6 +90,19 @@ export default async function AdminDashboard() {
         </Link>
 
         <Link
+          href="/admin/properties/import"
+          className="bg-charcoal border border-gold/30 rounded-xl p-6 flex items-center gap-4 hover:border-gold transition-colors"
+        >
+          <div className="w-10 h-10 bg-gold/10 rounded-lg flex items-center justify-center">
+            <Download size={20} className="text-gold" />
+          </div>
+          <div>
+            <p className="font-semibold text-white">ייבוא מ-Nadlan One</p>
+            <p className="text-xs text-gray-light mt-0.5">הדבק לינק CRM → נכס באתר</p>
+          </div>
+        </Link>
+
+        <Link
           href="/admin/properties"
           className="bg-charcoal border border-gray-dark rounded-xl p-6 flex items-center gap-4 hover:border-gold/50 transition-colors"
         >
@@ -124,6 +140,12 @@ export default async function AdminDashboard() {
             <p className="text-xs text-gray-light mt-0.5">טלפון, מייל, רשתות, תוכן</p>
           </div>
         </Link>
+      </div>
+
+      {/* Map */}
+      <div className="mb-10">
+        <h2 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">מפת נכסים</h2>
+        <PropertyMap properties={properties} height="300px" />
       </div>
 
       {/* Recent properties */}

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Plus, Pencil, Trash2, Star, Eye, EyeOff } from "lucide-react";
+import { Plus, Pencil, Trash2, Star, Eye, EyeOff, Download } from "lucide-react";
 import { getProperties } from "@/lib/db";
 import { deleteProperty, toggleFeatured, updateStatus } from "@/app/actions/properties";
 
@@ -29,13 +29,22 @@ export default async function PropertiesAdmin() {
           <h1 className="font-display text-3xl font-light text-white">נכסים</h1>
           <p className="text-xs text-gray-light mt-1">{properties.length} נכסים בסך הכל</p>
         </div>
-        <Link
-          href="/admin/properties/new"
-          className="flex items-center gap-2 bg-gold text-black px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-gold/90 transition-colors"
-        >
-          <Plus size={16} />
-          נכס חדש
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/admin/properties/import"
+            className="flex items-center gap-2 bg-charcoal border border-gold/30 text-gold px-4 py-2.5 rounded-lg text-sm font-semibold hover:border-gold transition-colors"
+          >
+            <Download size={15} />
+            ייבוא מ-CRM
+          </Link>
+          <Link
+            href="/admin/properties/new"
+            className="flex items-center gap-2 bg-gold text-black px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-gold/90 transition-colors"
+          >
+            <Plus size={16} />
+            נכס חדש
+          </Link>
+        </div>
       </div>
 
       {properties.length === 0 ? (

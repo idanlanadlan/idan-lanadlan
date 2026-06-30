@@ -57,5 +57,23 @@ export async function sendContactForm(data: {
     }),
   });
 
+  // Forward lead to Nadlan One CRM (fire-and-forget, non-blocking)
+  const leadKey = process.env.NADLAN_ONE_LEAD_KEY;
+  if (leadKey) {
+    fetch("https://int.nadlanone.co.il/apiv1/Lead/0549791171", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-API-KEY": leadKey },
+      body: JSON.stringify({
+        FirstName: data.name,
+        Phone1: data.phone,
+        email: data.email ?? "",
+        Description: `${data.category} — ${data.city}`,
+        ParseDescription: true,
+        Notes: data.city,
+        Source: "אתר עידן לנדל״ן",
+      }),
+    }).catch(() => {/* silent — CRM failure doesn't affect UX */});
+  }
+
   return { success: res.ok, error: res.ok ? undefined : "server" };
 }

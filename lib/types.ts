@@ -18,6 +18,9 @@ export interface Property {
   status: PropertyStatus;
   featured: boolean;
   created_at: string;
+  lat?: number;
+  lng?: number;
+  crm_id?: string;
 }
 
 export interface BlogPost {

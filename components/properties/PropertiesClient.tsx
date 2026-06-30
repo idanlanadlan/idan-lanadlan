@@ -1,13 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { motion } from "framer-motion";
+import { LayoutGrid, Map } from "lucide-react";
 import PropertyCard from "@/components/properties/PropertyCard";
 import type { Property, PropertyType } from "@/lib/types";
 import { useLanguage } from "@/contexts/LanguageContext";
 
+const PropertyMap = lazy(() => import("@/components/properties/PropertyMap"));
+
 export default function PropertiesClient({ properties }: { properties: Property[] }) {
   const [filter, setFilter] = useState<PropertyType | "all">("all");
+  const [view, setView] = useState<"list" | "map">("list");
   const { t } = useLanguage();
   const p = t.sections.properties;
 
@@ -22,9 +26,9 @@ export default function PropertiesClient({ properties }: { properties: Property[
 
   return (
     <>
-      {/* Filters */}
+      {/* Filters + view toggle */}
       <section className="py-8 bg-black border-b border-gray-dark sticky top-16 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex gap-3">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center gap-3 flex-wrap">
           {filterOptions.map((opt) => (
             <button
               key={opt.value}
@@ -39,30 +43,61 @@ export default function PropertiesClient({ properties }: { properties: Property[
               {opt.label}
             </button>
           ))}
+
+          {/* Spacer */}
+          <div className="flex-1" />
+
+          {/* View toggle */}
+          <div className="flex items-center gap-1 border border-gray-dark rounded-lg p-1">
+            <button
+              onClick={() => setView("list")}
+              title="רשימה"
+              className={`p-1.5 rounded transition-colors ${view === "list" ? "bg-gold text-black" : "text-gray-light hover:text-gold"}`}
+            >
+              <LayoutGrid size={16} />
+            </button>
+            <button
+              onClick={() => setView("map")}
+              title="מפה"
+              className={`p-1.5 rounded transition-colors ${view === "map" ? "bg-gold text-black" : "text-gray-light hover:text-gold"}`}
+            >
+              <Map size={16} />
+            </button>
+          </div>
         </div>
       </section>
 
-      {/* Grid */}
-      <section className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          {filtered.length === 0 ? (
-            <p className="text-center text-gray-light py-24">{p.empty}</p>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filtered.map((property, i) => (
-                <motion.div
-                  key={property.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.08 }}
-                >
-                  <PropertyCard property={property} />
-                </motion.div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
+      {view === "map" ? (
+        <section className="py-10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+            <Suspense fallback={<div className="h-[480px] bg-charcoal border border-gray-dark rounded-xl animate-pulse" />}>
+              <PropertyMap properties={filtered} height="480px" />
+            </Suspense>
+          </div>
+        </section>
+      ) : (
+        /* Grid */
+        <section className="py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+            {filtered.length === 0 ? (
+              <p className="text-center text-gray-light py-24">{p.empty}</p>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filtered.map((property, i) => (
+                  <motion.div
+                    key={property.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.08 }}
+                  >
+                    <PropertyCard property={property} />
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
     </>
   );
 }
