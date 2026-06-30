@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, lazy, Suspense } from "react";
+import { useState, Suspense } from "react";
 import { motion } from "framer-motion";
 import { LayoutGrid, Map } from "lucide-react";
 import PropertyCard from "@/components/properties/PropertyCard";
+import PropertyMap from "@/components/properties/PropertyMap";
 import type { Property, PropertyType } from "@/lib/types";
 import { useLanguage } from "@/contexts/LanguageContext";
-
-const PropertyMap = lazy(() => import("@/components/properties/PropertyMap"));
 
 export default function PropertiesClient({ properties }: { properties: Property[] }) {
   const [filter, setFilter] = useState<PropertyType | "all">("all");

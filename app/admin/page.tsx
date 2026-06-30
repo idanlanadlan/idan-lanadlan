@@ -1,10 +1,8 @@
 import Link from "next/link";
-import nextDynamic from "next/dynamic";
 import { Plus, Home, Eye, Star, TrendingUp, FileText, Settings, Download } from "lucide-react";
 import { getProperties, getAllBlogPosts } from "@/lib/db";
 import { isConfigured } from "@/lib/supabase";
-
-const PropertyMap = nextDynamic(() => import("@/components/properties/PropertyMap"), { ssr: false });
+import PropertyMap from "@/components/properties/PropertyMap";
 
 export const dynamic = "force-dynamic";
 

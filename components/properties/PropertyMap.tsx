@@ -1,5 +1,6 @@
 "use client";
 
+// Leaflet is loaded dynamically inside useEffect — safe for SSR/Next.js 16
 import { useEffect, useRef } from "react";
 import type { Property } from "@/lib/types";
 
