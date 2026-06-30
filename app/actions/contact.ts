@@ -10,15 +10,27 @@ function isValidPhone(raw: string): boolean {
   return false;
 }
 
+function isValidEmail(raw: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(raw.trim());
+}
+
 export async function sendContactForm(data: {
   category: string;
   name: string;
   phone: string;
-}): Promise<{ success: boolean }> {
-  if (!data.name.trim() || !isValidPhone(data.phone)) return { success: false };
+  email?: string;
+  city: string;
+}): Promise<{ success: boolean; error?: "phone" | "email" | "validation" | "server" }> {
+  if (!data.name.trim() || !data.city.trim()) return { success: false, error: "validation" };
+  if (!isValidPhone(data.phone)) return { success: false, error: "phone" };
+  if (data.email && !isValidEmail(data.email)) return { success: false, error: "email" };
 
   const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) return { success: false };
+  if (!apiKey) return { success: false, error: "server" };
+
+  const emailRow = data.email
+    ? `<tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;">מייל:</td><td style="padding:10px 0;"><a href="mailto:${data.email}" style="color:#F5F5F0;">${data.email}</a></td></tr>`
+    : "";
 
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -37,11 +49,13 @@ export async function sendContactForm(data: {
             <tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;width:120px;">סוג פנייה:</td><td style="padding:10px 0;">${data.category}</td></tr>
             <tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;">שם:</td><td style="padding:10px 0;">${data.name}</td></tr>
             <tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;">טלפון:</td><td style="padding:10px 0;"><a href="tel:${data.phone}" style="color:#F5F5F0;">${data.phone}</a></td></tr>
+            ${emailRow}
+            <tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;">עיר:</td><td style="padding:10px 0;">${data.city}</td></tr>
           </table>
         </div>
       `,
     }),
   });
 
-  return { success: res.ok };
+  return { success: res.ok, error: res.ok ? undefined : "server" };
 }

@@ -12,18 +12,17 @@ const CATEGORIES = [
 ];
 
 function isValidPhone(raw: string): boolean {
-  // Strip spaces, dashes, dots, parens — but keep the leading +
   const cleaned = raw.replace(/[\s\-().]/g, "");
   if (!cleaned) return false;
-  // Israeli mobile (05X): exactly 10 digits
   if (/^05\d{8}$/.test(cleaned)) return true;
-  // Israeli VOIP (07X): exactly 10 digits
   if (/^07\d{8}$/.test(cleaned)) return true;
-  // Israeli landline (02/03/04/08/09): exactly 9 digits — explicitly excludes 05/06/07
   if (/^0[23489]\d{7}$/.test(cleaned)) return true;
-  // International: + followed by 7-15 digits
   if (/^\+[1-9]\d{6,14}$/.test(cleaned)) return true;
   return false;
+}
+
+function isValidEmail(raw: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(raw.trim());
 }
 
 export function ContactForm() {
@@ -31,8 +30,12 @@ export function ContactForm() {
   const [category, setCategory] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [city, setCity] = useState("");
   const [phoneError, setPhoneError] = useState("");
+  const [emailError, setEmailError] = useState("");
   const [phoneTouched, setPhoneTouched] = useState(false);
+  const [emailTouched, setEmailTouched] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
   function selectCategory(label: string) {
@@ -52,18 +55,50 @@ export function ContactForm() {
     setPhoneError(phone.trim() && !isValidPhone(phone) ? "מספר טלפון לא תקין" : "");
   }
 
+  function handleEmailChange(value: string) {
+    setEmail(value);
+    if (emailTouched) {
+      setEmailError(value.trim() && !isValidEmail(value) ? "כתובת מייל לא תקינה" : "");
+    }
+  }
+
+  function handleEmailBlur() {
+    setEmailTouched(true);
+    setEmailError(email.trim() && !isValidEmail(email) ? "כתובת מייל לא תקינה" : "");
+  }
+
   const phoneValid = isValidPhone(phone);
+  const emailOk = !email.trim() || isValidEmail(email);
+  const canSubmit = name.trim() && city.trim() && phoneValid && emailOk;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!name.trim() || !phoneValid) {
-      setPhoneTouched(true);
-      if (!phoneValid) setPhoneError("מספר טלפון לא תקין");
-      return;
-    }
+    setPhoneTouched(true);
+    setEmailTouched(true);
+    if (!phoneValid) { setPhoneError("מספר טלפון לא תקין"); return; }
+    if (!emailOk) { setEmailError("כתובת מייל לא תקינה"); return; }
+    if (!name.trim() || !city.trim()) return;
+
     setStatus("loading");
-    const result = await sendContactForm({ category, name: name.trim(), phone: phone.trim() });
-    setStatus(result.success ? "success" : "error");
+    const result = await sendContactForm({
+      category,
+      name: name.trim(),
+      phone: phone.trim(),
+      email: email.trim() || undefined,
+      city: city.trim(),
+    });
+
+    if (result.success) {
+      setStatus("success");
+    } else if (result.error === "phone") {
+      setPhoneError("מספר טלפון לא תקין — אנא בדוק ותקן");
+      setStatus("idle");
+    } else if (result.error === "email") {
+      setEmailError("כתובת מייל לא תקינה — אנא בדוק ותקן");
+      setStatus("idle");
+    } else {
+      setStatus("error");
+    }
   }
 
   if (status === "success") {
@@ -105,7 +140,7 @@ export function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6" dir="rtl">
+    <form onSubmit={handleSubmit} className="space-y-5" dir="rtl">
       {/* Selected category indicator */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-sm text-gold">
@@ -122,8 +157,11 @@ export function ContactForm() {
         </button>
       </div>
 
+      {/* שם מלא — חובה */}
       <div>
-        <label className="block text-xs text-gold tracking-widest uppercase mb-2">שם מלא</label>
+        <label className="block text-xs text-gold tracking-widest uppercase mb-2">
+          שם מלא <span className="text-red-400">*</span>
+        </label>
         <input
           type="text"
           value={name}
@@ -134,8 +172,11 @@ export function ContactForm() {
         />
       </div>
 
+      {/* טלפון — חובה */}
       <div>
-        <label className="block text-xs text-gold tracking-widest uppercase mb-2">טלפון</label>
+        <label className="block text-xs text-gold tracking-widest uppercase mb-2">
+          טלפון <span className="text-red-400">*</span>
+        </label>
         <input
           type="tel"
           value={phone}
@@ -146,10 +187,45 @@ export function ContactForm() {
             phoneError ? "border-red-500/70" : "border-gray-dark"
           }`}
         />
-        {phoneError && (
+        {phoneError ? (
           <p className="mt-1.5 text-xs text-red-400">{phoneError}</p>
+        ) : (
+          <p className="mt-1.5 text-xs text-gray-light">ישראלי (05X-XXXXXXX) או בינלאומי (+XX...)</p>
         )}
-        <p className="mt-1.5 text-xs text-gray-light">ישראלי (05X-XXXXXXX) או בינלאומי (+XX...)</p>
+      </div>
+
+      {/* עיר — חובה */}
+      <div>
+        <label className="block text-xs text-gold tracking-widest uppercase mb-2">
+          עיר <span className="text-red-400">*</span>
+        </label>
+        <input
+          type="text"
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+          required
+          placeholder="עיר הנכס הקיים או המבוקש"
+          className="w-full bg-charcoal border border-gray-dark rounded-lg px-4 py-3 text-sm text-cream placeholder:text-gray-light/50 focus:border-gold outline-none transition-colors"
+        />
+      </div>
+
+      {/* מייל — לא חובה */}
+      <div>
+        <label className="block text-xs text-gold tracking-widest uppercase mb-2">
+          מייל <span className="text-gray-light text-xs normal-case tracking-normal">(אופציונלי)</span>
+        </label>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => handleEmailChange(e.target.value)}
+          onBlur={handleEmailBlur}
+          className={`w-full bg-charcoal border rounded-lg px-4 py-3 text-sm text-cream placeholder:text-gray focus:border-gold outline-none transition-colors ${
+            emailError ? "border-red-500/70" : "border-gray-dark"
+          }`}
+        />
+        {emailError && (
+          <p className="mt-1.5 text-xs text-red-400">{emailError}</p>
+        )}
       </div>
 
       {status === "error" && (
@@ -160,7 +236,7 @@ export function ContactForm() {
 
       <button
         type="submit"
-        disabled={!name.trim() || !phoneValid || status === "loading"}
+        disabled={!canSubmit || status === "loading"}
         className="btn-gold w-full py-3.5 rounded-lg text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
       >
         {status === "loading" ? "שולח..." : "שלח פנייה →"}
