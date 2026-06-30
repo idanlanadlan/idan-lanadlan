@@ -9,9 +9,9 @@ import { getPublishedBlogPosts } from "@/lib/db";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "בלוג נדל״ן | עידן לנדל״ן",
+  title: "מדריכים ועדכונים | עידן לנדל״ן",
   description:
-    "טיפים, מדריכים וניתוחי שוק נדל״ן מאת עידן חולי — מומחה נדל״ן עם 20 שנות ניסיון.",
+    "מדריכים, טיפים ועדכונים חמים מעולם הנדל״ן מאת עידן חולי — נכסים של ידע לעסקה חכמה.",
 };
 
 export default async function BlogPage() {
@@ -24,13 +24,13 @@ export default async function BlogPage() {
         {/* Header */}
         <section className="py-16 bg-charcoal border-b border-gray-dark">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
-            <p className="text-xs tracking-[0.3em] text-gold uppercase mb-3">ידע ותובנות</p>
+            <p className="text-xs tracking-[0.3em] text-gold uppercase mb-3">נכסים של ידע</p>
             <div className="divider-gold mb-4" />
             <h1 className="font-display text-4xl sm:text-5xl font-light text-white mb-4">
-              בלוג נדל״ן
+              מדריכים ועדכונים חמים
             </h1>
             <p className="text-gray-light max-w-xl">
-              מאמרים, טיפים ומדריכים ממומחה הנדל״ן עידן חולי. כתבות מקצועיות שיעזרו לכם לקבל החלטות נכונות.
+              מדריכים מקצועיים, טיפים ועדכונים חמים מעולם הנדל״ן — כדי שתיכנסו לכל עסקה עם ידע אמיתי.
             </p>
           </div>
         </section>
