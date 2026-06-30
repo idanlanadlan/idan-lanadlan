@@ -11,11 +11,28 @@ const CATEGORIES = [
   { label: "מחפש דירה להשכרה", Icon: Building2 },
 ];
 
+function isValidPhone(raw: string): boolean {
+  // Strip spaces, dashes, dots, parens — but keep the leading +
+  const cleaned = raw.replace(/[\s\-().]/g, "");
+  if (!cleaned) return false;
+  // Israeli mobile (05X): exactly 10 digits
+  if (/^05\d{8}$/.test(cleaned)) return true;
+  // Israeli VOIP (07X): exactly 10 digits
+  if (/^07\d{8}$/.test(cleaned)) return true;
+  // Israeli landline (02/03/04/08/09): exactly 9 digits — explicitly excludes 05/06/07
+  if (/^0[23489]\d{7}$/.test(cleaned)) return true;
+  // International: + followed by 7-15 digits
+  if (/^\+[1-9]\d{6,14}$/.test(cleaned)) return true;
+  return false;
+}
+
 export function ContactForm() {
   const [step, setStep] = useState<"category" | "details">("category");
   const [category, setCategory] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [phoneError, setPhoneError] = useState("");
+  const [phoneTouched, setPhoneTouched] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
   function selectCategory(label: string) {
@@ -23,9 +40,27 @@ export function ContactForm() {
     setStep("details");
   }
 
+  function handlePhoneChange(value: string) {
+    setPhone(value);
+    if (phoneTouched) {
+      setPhoneError(value.trim() && !isValidPhone(value) ? "מספר טלפון לא תקין" : "");
+    }
+  }
+
+  function handlePhoneBlur() {
+    setPhoneTouched(true);
+    setPhoneError(phone.trim() && !isValidPhone(phone) ? "מספר טלפון לא תקין" : "");
+  }
+
+  const phoneValid = isValidPhone(phone);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!name.trim() || !phone.trim()) return;
+    if (!name.trim() || !phoneValid) {
+      setPhoneTouched(true);
+      if (!phoneValid) setPhoneError("מספר טלפון לא תקין");
+      return;
+    }
     setStatus("loading");
     const result = await sendContactForm({ category, name: name.trim(), phone: phone.trim() });
     setStatus(result.success ? "success" : "error");
@@ -104,10 +139,17 @@ export function ContactForm() {
         <input
           type="tel"
           value={phone}
-          onChange={(e) => setPhone(e.target.value)}
+          onChange={(e) => handlePhoneChange(e.target.value)}
+          onBlur={handlePhoneBlur}
           required
-          className="w-full bg-charcoal border border-gray-dark rounded-lg px-4 py-3 text-sm text-cream placeholder:text-gray focus:border-gold outline-none transition-colors"
+          className={`w-full bg-charcoal border rounded-lg px-4 py-3 text-sm text-cream placeholder:text-gray focus:border-gold outline-none transition-colors ${
+            phoneError ? "border-red-500/70" : "border-gray-dark"
+          }`}
         />
+        {phoneError && (
+          <p className="mt-1.5 text-xs text-red-400">{phoneError}</p>
+        )}
+        <p className="mt-1.5 text-xs text-gray-light">ישראלי (05X-XXXXXXX) או בינלאומי (+XX...)</p>
       </div>
 
       {status === "error" && (
@@ -118,7 +160,7 @@ export function ContactForm() {
 
       <button
         type="submit"
-        disabled={!name.trim() || !phone.trim() || status === "loading"}
+        disabled={!name.trim() || !phoneValid || status === "loading"}
         className="btn-gold w-full py-3.5 rounded-lg text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
       >
         {status === "loading" ? "שולח..." : "שלח פנייה →"}
