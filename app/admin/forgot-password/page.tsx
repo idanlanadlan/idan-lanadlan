@@ -73,9 +73,32 @@ async function sendResetLink() {
 export default async function ForgotPasswordPage({
   searchParams,
 }: {
-  searchParams: Promise<{ sent?: string; link?: string }>;
+  searchParams: Promise<{ sent?: string; link?: string; expired?: string }>;
 }) {
-  const { sent, link } = await searchParams;
+  const { sent, link, expired } = await searchParams;
+
+  if (expired) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center px-4" dir="rtl">
+        <div className="w-full max-w-sm text-center">
+          <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+            <span className="text-3xl">⛔</span>
+          </div>
+          <h1 className="font-display text-3xl font-light text-white mb-3">
+            קישור פג תוקף
+          </h1>
+          <p className="text-sm text-gray-light mb-8">
+            הקישור כבר שומש או פג תוקפו. שלח קישור חדש.
+          </p>
+          <form action={sendResetLink}>
+            <button type="submit" className="btn-gold px-8 py-3 rounded-lg text-sm font-semibold">
+              שלח קישור חדש
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
   if (sent) {
     return (
