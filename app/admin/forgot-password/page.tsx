@@ -37,7 +37,7 @@ async function sendResetLink() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          from: "Idan Lanadlan <onboarding@resend.dev>",
+          from: "Idan Lanadlan <noreply@idanlanadlan.co.il>",
           to: [adminEmail],
           subject: "כניסה לדשבורד — עידן לנדל״ן",
           html: `
