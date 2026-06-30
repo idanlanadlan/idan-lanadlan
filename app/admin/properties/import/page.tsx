@@ -2,7 +2,10 @@
 
 import { useState, useTransition, useRef } from "react";
 import Image from "next/image";
-import { Link2, Search, MapPin, BedDouble, Maximize2, Star, ArrowRight, Upload, FileText } from "lucide-react";
+import {
+  Link2, Search, MapPin, BedDouble, Maximize2, Star, ArrowRight,
+  Upload, FileText, X, ImagePlus
+} from "lucide-react";
 import { previewFromCRMLink, saveImportedProperty } from "@/app/actions/crm-import";
 import { parsePropertyFromImage, parsePropertyFromText } from "@/app/actions/ai-import";
 import type { Property } from "@/lib/types";
@@ -33,15 +36,13 @@ async function compressImage(file: File): Promise<{ base64: string; mimeType: st
       img.src = e.target?.result as string;
       img.onload = () => {
         const MAX = 1500;
-        let w = img.width;
-        let h = img.height;
+        let w = img.width, h = img.height;
         if (w > MAX || h > MAX) {
           if (w > h) { h = Math.round((h * MAX) / w); w = MAX; }
           else { w = Math.round((w * MAX) / h); h = MAX; }
         }
         const canvas = document.createElement("canvas");
-        canvas.width = w;
-        canvas.height = h;
+        canvas.width = w; canvas.height = h;
         canvas.getContext("2d")!.drawImage(img, 0, 0, w, h);
         const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
         resolve({ base64: dataUrl.split(",")[1], mimeType: "image/jpeg" });
@@ -52,10 +53,10 @@ async function compressImage(file: File): Promise<{ base64: string; mimeType: st
   });
 }
 
-const TABS: { id: Tab; label: string; icon: React.ReactNode; desc: string }[] = [
-  { id: "crm", label: "לינק CRM", icon: <Link2 size={14} />, desc: "הדבק קישור מ-Nadlan One" },
-  { id: "image", label: "צילום מסך", icon: <Upload size={14} />, desc: "תמונה → נתונים אוטומטית" },
-  { id: "text", label: "הדבקת טקסט", icon: <FileText size={14} />, desc: "טקסט מכל מקור" },
+const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
+  { id: "crm",   label: "לינק CRM",     icon: <Link2    size={14} /> },
+  { id: "image", label: "צילום מסך",    icon: <Upload   size={14} /> },
+  { id: "text",  label: "הדבקת טקסט",  icon: <FileText size={14} /> },
 ];
 
 const typeLabel: Record<string, string> = { sale: "למכירה", rent: "להשכרה", project: "פרויקט" };
@@ -64,58 +65,67 @@ export default function ImportPage() {
   const [tab, setTab] = useState<Tab>("crm");
 
   // Per-tab inputs
-  const [crmInput, setCrmInput] = useState("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imageObjectUrl, setImageObjectUrl] = useState("");
-  const [textInput, setTextInput] = useState("");
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [crmInput,      setCrmInput]      = useState("");
+  const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
+  const [screenshotUrl,  setScreenshotUrl]  = useState("");
+  const [textInput,     setTextInput]     = useState("");
+  const screenshotRef = useRef<HTMLInputElement>(null);
+
+  // Property image upload (separate from screenshot)
+  const [propImages,       setPropImages]       = useState<{ objectUrl: string; remoteUrl?: string }[]>([]);
+  const [isUploadingImages, setIsUploadingImages] = useState(false);
+  const [uploadError,      setUploadError]      = useState("");
+  const propImgRef = useRef<HTMLInputElement>(null);
 
   // Shared output
-  const [preview, setPreview] = useState<Preview | null>(null);
-  const [featured, setFeatured] = useState(false);
-  const [error, setError] = useState("");
-  const [isParsing, startParse] = useTransition();
-  const [isSaving, startSave] = useTransition();
+  const [preview,   setPreview]   = useState<Preview | null>(null);
+  const [featured,  setFeatured]  = useState(false);
+  const [error,     setError]     = useState("");
+  const [isParsing, startParse]   = useTransition();
+  const [isSaving,  startSave]    = useTransition();
+
+  // ── helpers ──────────────────────────────────────────────
 
   function switchTab(t: Tab) {
-    setTab(t);
-    setPreview(null);
-    setError("");
+    setTab(t); setPreview(null); setError("");
   }
 
-  function onParseResult(result: { ok: true; property: Preview } | { ok: false; error: string }, errorMap: Record<string, string>) {
+  function applyResult(
+    result: { ok: true; property: Preview } | { ok: false; error: string },
+    errMap: Record<string, string>
+  ) {
     if (result.ok) {
       setPreview(result.property);
       setFeatured(result.property.featured);
       setError("");
     } else {
-      setError(errorMap[result.error] ?? "שגיאה לא ידועה");
+      setError(errMap[result.error] ?? "שגיאה לא ידועה");
       setPreview(null);
     }
   }
 
+  // ── per-tab fetch/analyze ────────────────────────────────
+
   function handleCRMFetch() {
     setPreview(null); setError("");
     startParse(async () => {
-      const r = await previewFromCRMLink(crmInput);
-      onParseResult(r, CRM_ERRORS);
+      applyResult(await previewFromCRMLink(crmInput), CRM_ERRORS);
     });
   }
 
-  function handleImageSelect(file: File) {
-    if (imageObjectUrl) URL.revokeObjectURL(imageObjectUrl);
-    setImageFile(file);
-    setImageObjectUrl(URL.createObjectURL(file));
+  function handleScreenshotSelect(file: File) {
+    if (screenshotUrl) URL.revokeObjectURL(screenshotUrl);
+    setScreenshotFile(file);
+    setScreenshotUrl(URL.createObjectURL(file));
     setPreview(null); setError("");
   }
 
-  function handleImageAnalyze() {
-    if (!imageFile) return;
+  function handleScreenshotAnalyze() {
+    if (!screenshotFile) return;
     setPreview(null); setError("");
     startParse(async () => {
-      const { base64, mimeType } = await compressImage(imageFile);
-      const r = await parsePropertyFromImage(base64, mimeType);
-      onParseResult(r, AI_ERRORS);
+      const { base64, mimeType } = await compressImage(screenshotFile);
+      applyResult(await parsePropertyFromImage(base64, mimeType), AI_ERRORS);
     });
   }
 
@@ -123,20 +133,84 @@ export default function ImportPage() {
     if (!textInput.trim()) return;
     setPreview(null); setError("");
     startParse(async () => {
-      const r = await parsePropertyFromText(textInput);
-      onParseResult(r, AI_ERRORS);
+      applyResult(await parsePropertyFromText(textInput), AI_ERRORS);
     });
   }
+
+  // ── property image upload ────────────────────────────────
+
+  async function handlePropImagesSelect(files: FileList) {
+    setUploadError("");
+    const newEntries = Array.from(files)
+      .filter((f) => f.type.startsWith("image/"))
+      .map((f) => ({ objectUrl: URL.createObjectURL(f), file: f }));
+
+    if (!newEntries.length) return;
+
+    // Optimistically show thumbnails
+    setPropImages((prev) => [
+      ...prev,
+      ...newEntries.map((e) => ({ objectUrl: e.objectUrl })),
+    ]);
+
+    setIsUploadingImages(true);
+    try {
+      const formData = new FormData();
+      newEntries.forEach((e) => formData.append("files", e.file));
+
+      const res = await fetch("/api/upload-images", { method: "POST", body: formData });
+      const json = await res.json() as { urls?: string[]; error?: string };
+
+      if (!res.ok || json.error) {
+        if (json.error === "not_configured") {
+          setUploadError("Supabase לא מחובר — לא ניתן להעלות תמונות. הדבק URL ידנית בשדה הקישורים.");
+        } else {
+          setUploadError("שגיאה בהעלאת תמונות — נסה שוב");
+        }
+        // Keep thumbnails but mark without remote URL
+        return;
+      }
+
+      const urls: string[] = json.urls ?? [];
+      // Attach remote URLs to the last N entries we just added
+      setPropImages((prev) => {
+        const updated = [...prev];
+        const offset = updated.length - newEntries.length;
+        urls.forEach((url, i) => {
+          if (updated[offset + i]) updated[offset + i] = { ...updated[offset + i], remoteUrl: url };
+        });
+        return updated;
+      });
+    } finally {
+      setIsUploadingImages(false);
+    }
+  }
+
+  function removePropImage(i: number) {
+    setPropImages((prev) => {
+      const copy = [...prev];
+      URL.revokeObjectURL(copy[i].objectUrl);
+      copy.splice(i, 1);
+      return copy;
+    });
+  }
+
+  // ── save ─────────────────────────────────────────────────
 
   function handleSave() {
     if (!preview) return;
+    const remoteUrls = propImages.map((e) => e.remoteUrl).filter(Boolean) as string[];
+    const allImages = [...remoteUrls, ...preview.images];
     startSave(async () => {
-      await saveImportedProperty({ ...preview, featured });
+      await saveImportedProperty({ ...preview, images: allImages, featured });
     });
   }
 
+  // ─────────────────────────────────────────────────────────
+
   return (
     <div className="max-w-2xl mx-auto px-4 py-10">
+
       {/* Header */}
       <div className="mb-8">
         <Link href="/admin/properties" className="flex items-center gap-1 text-xs text-gray-light hover:text-gold transition-colors mb-4">
@@ -158,28 +232,23 @@ export default function ImportPage() {
               tab === id ? "bg-gold text-black" : "text-gray-light hover:text-white"
             }`}
           >
-            {icon}
-            {label}
+            {icon}{label}
           </button>
         ))}
       </div>
 
       {/* Input card */}
-      <div className="bg-charcoal border border-gray-dark rounded-xl p-6 mb-6">
+      <div className="bg-charcoal border border-gray-dark rounded-xl p-6 mb-4">
 
-        {/* ── Tab: CRM Link ── */}
+        {/* ── CRM Tab ── */}
         {tab === "crm" && (
           <>
-            <label className="block text-xs text-gold tracking-widest uppercase mb-3">
-              קישור לנכס או מזהה מספרי
-            </label>
+            <label className="block text-xs text-gold tracking-widest uppercase mb-3">קישור לנכס או מזהה מספרי</label>
             <div className="flex gap-3">
               <div className="relative flex-1">
                 <Link2 size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-light" />
                 <input
-                  type="text"
-                  value={crmInput}
-                  onChange={(e) => setCrmInput(e.target.value)}
+                  type="text" value={crmInput} onChange={(e) => setCrmInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleCRMFetch()}
                   placeholder="https://mls.nadlanone.co.il/... או מספר ID"
                   dir="ltr"
@@ -187,8 +256,7 @@ export default function ImportPage() {
                 />
               </div>
               <button
-                onClick={handleCRMFetch}
-                disabled={!crmInput.trim() || isParsing}
+                onClick={handleCRMFetch} disabled={!crmInput.trim() || isParsing}
                 className="flex items-center gap-2 bg-gold text-black px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-gold/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 <Search size={15} />
@@ -198,91 +266,68 @@ export default function ImportPage() {
           </>
         )}
 
-        {/* ── Tab: Screenshot ── */}
+        {/* ── Screenshot Tab ── */}
         {tab === "image" && (
           <>
-            <label className="block text-xs text-gold tracking-widest uppercase mb-3">
-              צילום מסך של הנכס
-            </label>
+            <label className="block text-xs text-gold tracking-widest uppercase mb-3">צילום מסך של הנכס (לניתוח AI)</label>
             <div
-              onClick={() => fileInputRef.current?.click()}
+              onClick={() => screenshotRef.current?.click()}
               onDragOver={(e) => e.preventDefault()}
               onDrop={(e) => {
                 e.preventDefault();
                 const f = e.dataTransfer.files[0];
-                if (f?.type.startsWith("image/")) handleImageSelect(f);
+                if (f?.type.startsWith("image/")) handleScreenshotSelect(f);
               }}
-              className={`relative border-2 border-dashed rounded-xl cursor-pointer transition-colors ${
-                imageObjectUrl ? "border-gold/30" : "border-gray-dark hover:border-gold/30"
+              className={`border-2 border-dashed rounded-xl cursor-pointer transition-colors ${
+                screenshotUrl ? "border-gold/30" : "border-gray-dark hover:border-gold/30"
               }`}
             >
-              {imageObjectUrl ? (
+              {screenshotUrl ? (
                 <div className="h-44 rounded-xl overflow-hidden">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={imageObjectUrl} alt="תצוגה מקדימה" className="w-full h-full object-cover" />
+                  <img src={screenshotUrl} alt="צילום מסך" className="w-full h-full object-cover" />
                 </div>
               ) : (
                 <div className="py-10 text-center">
                   <Upload size={28} className="mx-auto text-gray-light mb-3" />
-                  <p className="text-sm text-gray-light">
-                    גרור תמונה לכאן <span className="text-white">או לחץ לבחירה</span>
-                  </p>
+                  <p className="text-sm text-gray-light">גרור צילום מסך <span className="text-white">או לחץ לבחירה</span></p>
                   <p className="text-[11px] text-gray-light/50 mt-1">PNG, JPG, WebP — כל גודל</p>
                 </div>
               )}
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={(e) => {
-                  const f = e.target.files?.[0];
-                  if (f) handleImageSelect(f);
-                  e.target.value = "";
-                }}
-              />
+              <input ref={screenshotRef} type="file" accept="image/*" className="hidden"
+                onChange={(e) => { const f = e.target.files?.[0]; if (f) handleScreenshotSelect(f); e.target.value = ""; }} />
             </div>
-            {imageFile && (
+            {screenshotFile && (
               <button
-                onClick={handleImageAnalyze}
-                disabled={isParsing}
+                onClick={handleScreenshotAnalyze} disabled={isParsing}
                 className="mt-3 w-full flex items-center justify-center gap-2 bg-gold text-black py-2.5 rounded-lg text-sm font-semibold hover:bg-gold/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 <Search size={15} />
                 {isParsing ? "מנתח תמונה..." : "נתח צילום מסך"}
               </button>
             )}
-            <p className="mt-2 text-[11px] text-gray-light/60 text-center">
-              משתמש ב-Claude AI · ~$0.01 לניתוח
-            </p>
+            <p className="mt-2 text-[11px] text-gray-light/60 text-center">משתמש ב-Claude AI · ~$0.01 לניתוח</p>
           </>
         )}
 
-        {/* ── Tab: Text paste ── */}
+        {/* ── Text Tab ── */}
         {tab === "text" && (
           <>
-            <label className="block text-xs text-gold tracking-widest uppercase mb-3">
-              הדבק טקסט מודעת נכס
-            </label>
+            <label className="block text-xs text-gold tracking-widest uppercase mb-3">הדבק טקסט מודעת נכס</label>
             <textarea
-              value={textInput}
-              onChange={(e) => setTextInput(e.target.value)}
+              value={textInput} onChange={(e) => setTextInput(e.target.value)}
               placeholder={`הדבק כאן טקסט מכל מקור — Nadlan One, Yad2, WhatsApp, מייל...\n\nלדוגמה:\nדירת 4 חדרים, 120 מ"ר, קומה 5, נמל תל אביב\nמחיר: 4,500,000 ₪\nרחוב הירקון 100`}
-              rows={8}
-              dir="rtl"
+              rows={7} dir="rtl"
               className="w-full bg-black/30 border border-gray-dark rounded-xl px-4 py-3 text-sm text-cream placeholder:text-gray-light/40 focus:border-gold outline-none transition-colors resize-none"
             />
             <button
-              onClick={handleTextAnalyze}
-              disabled={!textInput.trim() || isParsing}
+              onClick={handleTextAnalyze} disabled={!textInput.trim() || isParsing}
               className="mt-3 w-full flex items-center justify-center gap-2 bg-gold text-black py-2.5 rounded-lg text-sm font-semibold hover:bg-gold/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <Search size={15} />
               {isParsing ? "מנתח טקסט..." : "נתח טקסט"}
             </button>
-            <p className="mt-2 text-[11px] text-gray-light/60 text-center">
-              משתמש ב-Claude AI · פחות מ-$0.01 לניתוח
-            </p>
+            <p className="mt-2 text-[11px] text-gray-light/60 text-center">משתמש ב-Claude AI · פחות מ-$0.01 לניתוח</p>
           </>
         )}
 
@@ -292,24 +337,91 @@ export default function ImportPage() {
         )}
       </div>
 
-      {/* Preview (shared for all tabs) */}
+      {/* ── Property image upload (always visible) ── */}
+      <div className="bg-charcoal border border-gray-dark rounded-xl p-6 mb-6">
+        <div className="flex items-center justify-between mb-3">
+          <label className="text-xs text-gold tracking-widest uppercase">תמונות הנכס לאתר</label>
+          <span className="text-[11px] text-gray-light">{propImages.length} תמונות</span>
+        </div>
+
+        {/* Thumbnails */}
+        {propImages.length > 0 && (
+          <div className="grid grid-cols-4 gap-2 mb-3">
+            {propImages.map((img, i) => (
+              <div key={i} className="relative aspect-square rounded-lg overflow-hidden group">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={img.objectUrl} alt="" className="w-full h-full object-cover" />
+                {/* Upload indicator */}
+                {!img.remoteUrl && (
+                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  </div>
+                )}
+                {/* Remove button */}
+                <button
+                  onClick={() => removePropImage(i)}
+                  className="absolute top-1 left-1 w-5 h-5 bg-black/70 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <X size={10} className="text-white" />
+                </button>
+              </div>
+            ))}
+
+            {/* Add more */}
+            <button
+              onClick={() => propImgRef.current?.click()}
+              className="aspect-square rounded-lg border-2 border-dashed border-gray-dark hover:border-gold/40 flex items-center justify-center transition-colors"
+            >
+              <ImagePlus size={18} className="text-gray-light" />
+            </button>
+          </div>
+        )}
+
+        {/* Drop zone (shown when empty) */}
+        {propImages.length === 0 && (
+          <div
+            onClick={() => propImgRef.current?.click()}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => {
+              e.preventDefault();
+              if (e.dataTransfer.files.length) handlePropImagesSelect(e.dataTransfer.files);
+            }}
+            className="border-2 border-dashed border-gray-dark hover:border-gold/30 rounded-xl py-8 text-center cursor-pointer transition-colors"
+          >
+            <ImagePlus size={24} className="mx-auto text-gray-light mb-2" />
+            <p className="text-sm text-gray-light">גרור תמונות <span className="text-white">או לחץ לבחירה</span></p>
+            <p className="text-[11px] text-gray-light/50 mt-1">ניתן לבחור מספר תמונות בבת אחת</p>
+          </div>
+        )}
+
+        <input
+          ref={propImgRef} type="file" accept="image/*" multiple className="hidden"
+          onChange={(e) => { if (e.target.files?.length) handlePropImagesSelect(e.target.files); e.target.value = ""; }}
+        />
+
+        {uploadError && (
+          <p className="mt-2 text-xs text-amber-400 bg-amber-500/10 rounded-lg px-3 py-2">{uploadError}</p>
+        )}
+        {isUploadingImages && (
+          <p className="mt-2 text-xs text-gray-light text-center">מעלה תמונות...</p>
+        )}
+      </div>
+
+      {/* Preview */}
       {preview && (
         <div className="bg-charcoal border border-gold/20 rounded-xl overflow-hidden">
-          {preview.images.length > 0 && (
+          {/* Images from CRM or prop images */}
+          {(propImages.filter(e => e.remoteUrl).length > 0 || preview.images.length > 0) && (
             <div className="relative h-56 bg-black">
               <Image
-                src={preview.images[0]}
+                src={propImages.find(e => e.remoteUrl)?.remoteUrl ?? preview.images[0]}
                 alt={preview.title}
-                fill
-                className="object-cover opacity-90"
-                unoptimized
+                fill className="object-cover opacity-90" unoptimized
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-              {preview.images.length > 1 && (
-                <span className="absolute bottom-3 left-3 text-xs text-white bg-black/50 px-2 py-1 rounded-full">
-                  +{preview.images.length - 1} תמונות
-                </span>
-              )}
+              <span className="absolute bottom-3 left-3 text-xs text-white bg-black/50 px-2 py-1 rounded-full">
+                {propImages.filter(e => e.remoteUrl).length + preview.images.length} תמונות
+              </span>
             </div>
           )}
 
@@ -319,14 +431,10 @@ export default function ImportPage() {
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-gold/10 text-gold border border-gold/20 ml-2">
                   {typeLabel[preview.type] ?? preview.type}
                 </span>
-                {preview.crm_id && (
-                  <span className="text-[10px] text-gray-light">#{preview.crm_id}</span>
-                )}
+                {preview.crm_id && <span className="text-[10px] text-gray-light">#{preview.crm_id}</span>}
                 <h2 className="font-display text-xl text-white font-light mt-2">{preview.title}</h2>
               </div>
-              <p className="text-lg font-semibold text-gold shrink-0">
-                ₪{preview.price.toLocaleString("he-IL")}
-              </p>
+              <p className="text-lg font-semibold text-gold shrink-0">₪{preview.price.toLocaleString("he-IL")}</p>
             </div>
 
             <div className="flex flex-wrap gap-4 text-xs text-gray-light mb-4">
@@ -337,45 +445,25 @@ export default function ImportPage() {
                 </span>
               )}
               {preview.bedrooms > 0 && (
-                <span className="flex items-center gap-1">
-                  <BedDouble size={12} className="text-gold" />
-                  {preview.bedrooms} חדרים
-                </span>
+                <span className="flex items-center gap-1"><BedDouble size={12} className="text-gold" />{preview.bedrooms} חדרים</span>
               )}
               {preview.size_sqm > 0 && (
-                <span className="flex items-center gap-1">
-                  <Maximize2 size={12} className="text-gold" />
-                  {preview.size_sqm} מ״ר
-                </span>
-              )}
-              {preview.lat && (
-                <span className="flex items-center gap-1">
-                  <MapPin size={12} className="text-emerald-400" />
-                  <span className="text-emerald-400">קואורדינטות זוהו</span>
-                </span>
+                <span className="flex items-center gap-1"><Maximize2 size={12} className="text-gold" />{preview.size_sqm} מ״ר</span>
               )}
             </div>
 
             {preview.description && (
-              <p className="text-xs text-gray-light leading-relaxed mb-5 line-clamp-3">
-                {preview.description}
-              </p>
+              <p className="text-xs text-gray-light leading-relaxed mb-5 line-clamp-3">{preview.description}</p>
             )}
 
             {/* Featured toggle */}
             <label className="flex items-center gap-3 cursor-pointer mb-5">
               <button
-                type="button"
-                role="switch"
-                aria-checked={featured}
+                type="button" role="switch" aria-checked={featured}
                 onClick={() => setFeatured(!featured)}
                 className={`w-10 h-5 rounded-full transition-colors relative ${featured ? "bg-gold" : "bg-gray-dark"}`}
               >
-                <span
-                  className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${
-                    featured ? "translate-x-[-1.25rem]" : "translate-x-[-0.25rem]"
-                  }`}
-                />
+                <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${featured ? "translate-x-[-1.25rem]" : "translate-x-[-0.25rem]"}`} />
               </button>
               <span className="flex items-center gap-1 text-sm text-white">
                 <Star size={13} className={featured ? "text-gold" : "text-gray-light"} fill={featured ? "currentColor" : "none"} />
@@ -385,10 +473,10 @@ export default function ImportPage() {
 
             <button
               onClick={handleSave}
-              disabled={isSaving}
+              disabled={isSaving || isUploadingImages}
               className="w-full bg-gold text-black py-3 rounded-lg text-sm font-semibold hover:bg-gold/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              {isSaving ? "שומר..." : "הוסף לאתר ←"}
+              {isSaving ? "שומר..." : isUploadingImages ? "ממתין לסיום העלאה..." : "הוסף לאתר ←"}
             </button>
           </div>
         </div>
