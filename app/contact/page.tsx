@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Phone, MessageCircle, MapPin, Clock, Mail, BookOpen } from "lucide-react";
+import { Phone, MessageCircle, MapPin, Mail, BookOpen } from "lucide-react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
@@ -104,25 +104,20 @@ export default function ContactPage() {
                   </div>
                 </a>
 
-                <div className="flex items-center gap-5 bg-charcoal border border-gray-dark rounded-xl p-5">
+                <a
+                  href="https://waze.com/ul?ll=32.0967,34.7745&navigate=yes"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-5 bg-charcoal border border-gray-dark rounded-xl p-5 hover:border-gold transition-colors group"
+                >
                   <div className="w-11 h-11 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center shrink-0">
                     <MapPin size={18} className="text-gold" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-white">הירקון 319, נמל ת"א</p>
-                    <p className="text-xs text-gray-light mt-0.5">פועל בתל אביב וסביבתה</p>
+                    <p className="text-sm font-semibold text-white group-hover:text-gold transition-colors">הירקון 319, נמל ת"א</p>
+                    <p className="text-xs text-gray-light mt-0.5">נווט עם Waze ←</p>
                   </div>
-                </div>
-
-                <div className="flex items-center gap-5 bg-charcoal border border-gray-dark rounded-xl p-5">
-                  <div className="w-11 h-11 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center shrink-0">
-                    <Clock size={18} className="text-gold" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-white">שעות פעילות</p>
-                    <p className="text-xs text-gray-light mt-0.5">א׳–ה׳: 08:00–20:00 | ו׳: 08:00–14:00</p>
-                  </div>
-                </div>
+                </a>
               </div>
             </div>
 
