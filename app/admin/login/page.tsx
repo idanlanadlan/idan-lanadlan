@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { PasswordInput } from "@/components/admin/PasswordInput";
 
 async function generateToken(password: string): Promise<string> {
   const encoder = new TextEncoder();
@@ -59,14 +60,7 @@ export default async function LoginPage({
             <label className="block text-xs text-gold tracking-wider uppercase mb-1.5">
               סיסמה
             </label>
-            <input
-              type="password"
-              name="password"
-              autoFocus
-              required
-              className="w-full bg-charcoal border border-gray-dark rounded-lg px-4 py-3 text-sm text-cream placeholder:text-gray focus:border-gold outline-none transition-colors"
-              placeholder="הזן סיסמת ניהול"
-            />
+            <PasswordInput />
           </div>
 
           {error && (
