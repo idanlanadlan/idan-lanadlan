@@ -161,7 +161,7 @@ export default function PropertyForm({ action, property }: Props) {
         <textarea
           className={`${field} h-24 resize-none font-mono text-xs`}
           name="images"
-          defaultValue={property?.images.join("\n")}
+          defaultValue={(property?.images ?? []).join("\n")}
           placeholder={"https://example.com/photo1.jpg\nhttps://example.com/photo2.jpg"}
         />
         <p className="text-[10px] text-gray mt-1">ניתן להשתמש בלינקים ממאגר תמונות כמו Cloudinary, Google Drive, Dropbox וכו׳</p>

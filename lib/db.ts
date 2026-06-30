@@ -51,17 +51,28 @@ export async function getProperties(): Promise<Property[]> {
     .from("properties")
     .select("*")
     .order("created_at", { ascending: false });
-  return (data as Property[]) ?? [];
+  return ((data ?? []) as unknown[]).map(normalizeProperty);
+}
+
+function normalizeProperty(data: unknown): Property {
+  const p = data as Record<string, unknown>;
+  let images = p.images;
+  if (typeof images === "string") {
+    try { images = JSON.parse(images); } catch { images = []; }
+  }
+  if (!Array.isArray(images)) images = [];
+  return { ...p, images } as Property;
 }
 
 export async function getPropertyById(id: string): Promise<Property | null> {
   if (!isConfigured) return mockProperties.find((p) => p.id === id) ?? null;
-  const { data } = await createClient()
+  const { data, error } = await createClient()
     .from("properties")
     .select("*")
     .eq("id", id)
     .single();
-  return (data as Property) ?? null;
+  if (error || !data) return null;
+  return normalizeProperty(data);
 }
 
 export async function getFeaturedProperties(): Promise<Property[]> {
@@ -73,7 +84,7 @@ export async function getFeaturedProperties(): Promise<Property[]> {
     .eq("status", "available")
     .order("created_at", { ascending: false })
     .limit(6);
-  return (data as Property[]) ?? [];
+  return ((data ?? []) as unknown[]).map(normalizeProperty);
 }
 
 export async function createProperty(property: Omit<Property, "id" | "created_at">): Promise<Property> {
