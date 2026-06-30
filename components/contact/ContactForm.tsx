@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { TrendingUp, Key, Search, Building2 } from "lucide-react";
+import { TrendingUp, Key, Search, Building2, ArrowRight } from "lucide-react";
 import { sendContactForm } from "@/app/actions/contact";
 
 const CATEGORIES = [
@@ -12,14 +12,20 @@ const CATEGORIES = [
 ];
 
 export function ContactForm() {
+  const [step, setStep] = useState<"category" | "details">("category");
   const [category, setCategory] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
+  function selectCategory(label: string) {
+    setCategory(label);
+    setStep("details");
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!category || !name.trim() || !phone.trim()) return;
+    if (!name.trim() || !phone.trim()) return;
     setStatus("loading");
     const result = await sendContactForm({ category, name: name.trim(), phone: phone.trim() });
     setStatus(result.success ? "success" : "error");
@@ -40,29 +46,45 @@ export function ContactForm() {
     );
   }
 
-  return (
-    <form onSubmit={handleSubmit} className="space-y-6" dir="rtl">
-      <div>
+  if (step === "category") {
+    return (
+      <div className="space-y-4" dir="rtl">
         <p className="text-xs tracking-[0.3em] text-gold uppercase mb-4">במה אוכל לעזור?</p>
         <div className="grid grid-cols-2 gap-3">
           {CATEGORIES.map(({ label, Icon }) => (
             <button
               key={label}
               type="button"
-              onClick={() => setCategory(label)}
-              className={`p-5 rounded-xl border text-right transition-all duration-200 ${
-                category === label
-                  ? "border-gold bg-gold/10 text-white"
-                  : "border-gray-dark bg-black/40 text-gray-light hover:border-gold/40 hover:text-cream"
-              }`}
+              onClick={() => selectCategory(label)}
+              className="p-5 rounded-xl border border-gray-dark bg-black/40 text-gray-light hover:border-gold hover:text-white transition-all duration-200 text-right group"
             >
-              <div className={`mb-3 ${category === label ? "text-gold" : "text-gray-light"}`}>
+              <div className="mb-3 text-gray-light group-hover:text-gold transition-colors">
                 <Icon size={22} strokeWidth={1.5} />
               </div>
               <span className="text-sm font-medium leading-snug">{label}</span>
             </button>
           ))}
         </div>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6" dir="rtl">
+      {/* Selected category indicator */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2 text-sm text-gold">
+          <span className="w-2 h-2 rounded-full bg-gold inline-block" />
+          {category}
+        </div>
+        <button
+          type="button"
+          onClick={() => setStep("category")}
+          className="flex items-center gap-1 text-xs text-gray-light hover:text-gold transition-colors"
+        >
+          <ArrowRight size={12} />
+          שנה
+        </button>
       </div>
 
       <div>
@@ -72,7 +94,7 @@ export function ContactForm() {
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
-          placeholder="ישראל ישראלי"
+          autoFocus
           className="w-full bg-charcoal border border-gray-dark rounded-lg px-4 py-3 text-sm text-cream placeholder:text-gray focus:border-gold outline-none transition-colors"
         />
       </div>
@@ -84,7 +106,6 @@ export function ContactForm() {
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           required
-          placeholder="050-000-0000"
           className="w-full bg-charcoal border border-gray-dark rounded-lg px-4 py-3 text-sm text-cream placeholder:text-gray focus:border-gold outline-none transition-colors"
         />
       </div>
@@ -97,7 +118,7 @@ export function ContactForm() {
 
       <button
         type="submit"
-        disabled={!category || !name.trim() || !phone.trim() || status === "loading"}
+        disabled={!name.trim() || !phone.trim() || status === "loading"}
         className="btn-gold w-full py-3.5 rounded-lg text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
       >
         {status === "loading" ? "שולח..." : "שלח פנייה →"}
