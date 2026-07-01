@@ -3,7 +3,7 @@ import { Plus, Pencil, Star, Eye, EyeOff, Download } from "lucide-react";
 import { getProperties } from "@/lib/db";
 import { deleteProperty, toggleFeatured, updateStatus } from "@/app/actions/properties";
 import StatusSelect from "@/components/admin/StatusSelect";
-import DeletePropertyForm from "@/components/admin/DeletePropertyForm";
+import ConfirmDeleteForm from "@/components/admin/ConfirmDeleteForm";
 
 export const dynamic = "force-dynamic";
 
@@ -125,7 +125,11 @@ export default async function PropertiesAdmin() {
                 >
                   <Pencil size={15} />
                 </Link>
-                <DeletePropertyForm id={p.id} title={p.title} action={deleteProperty} />
+                <ConfirmDeleteForm
+                  id={p.id}
+                  confirmMessage={`למחוק את "${p.title}"?`}
+                  action={deleteProperty}
+                />
               </div>
             </div>
           ))}

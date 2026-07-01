@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getBlogPostById } from "@/lib/db";
 import { updateBlogPostAction, deleteBlogPost } from "@/app/actions/blog";
 import BlogForm from "@/components/admin/BlogForm";
+import ConfirmDeleteForm from "@/components/admin/ConfirmDeleteForm";
 
 export default async function EditBlogPostPage({
   params,
@@ -35,18 +36,14 @@ export default async function EditBlogPostPage({
                 צפה באתר ↗
               </Link>
             )}
-            <form action={deleteBlogPost}>
-              <input type="hidden" name="id" value={post.id} />
-              <button
-                type="submit"
-                className="text-xs text-red-400 hover:text-red-300 transition-colors border border-red-500/30 hover:border-red-400/50 rounded-lg px-3 py-1.5"
-                onClick={(e) => {
-                  if (!confirm(`למחוק את "${post.title}"?`)) e.preventDefault();
-                }}
-              >
-                מחק מאמר
-              </button>
-            </form>
+            <ConfirmDeleteForm
+              id={post.id}
+              confirmMessage={`למחוק את "${post.title}"?`}
+              action={deleteBlogPost}
+              className="text-xs text-red-400 hover:text-red-300 transition-colors border border-red-500/30 hover:border-red-400/50 rounded-lg px-3 py-1.5"
+            >
+              מחק מאמר
+            </ConfirmDeleteForm>
           </div>
         </div>
       </div>

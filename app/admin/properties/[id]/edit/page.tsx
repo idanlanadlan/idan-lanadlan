@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getPropertyById } from "@/lib/db";
 import { updatePropertyAction, deleteProperty } from "@/app/actions/properties";
 import PropertyForm from "@/components/admin/PropertyForm";
+import ConfirmDeleteForm from "@/components/admin/ConfirmDeleteForm";
 
 export default async function EditPropertyPage({
   params,
@@ -41,18 +42,14 @@ export default async function EditPropertyPage({
             >
               צפה באתר ↗
             </Link>
-            <form action={deleteProperty}>
-              <input type="hidden" name="id" value={property.id} />
-              <button
-                type="submit"
-                className="text-xs text-red-400 hover:text-red-300 transition-colors border border-red-500/30 hover:border-red-400/50 rounded-lg px-3 py-1.5"
-                onClick={(e) => {
-                  if (!confirm(`למחוק את "${property.title}"?`)) e.preventDefault();
-                }}
-              >
-                מחק נכס
-              </button>
-            </form>
+            <ConfirmDeleteForm
+              id={property.id}
+              confirmMessage={`למחוק את "${property.title}"?`}
+              action={deleteProperty}
+              className="text-xs text-red-400 hover:text-red-300 transition-colors border border-red-500/30 hover:border-red-400/50 rounded-lg px-3 py-1.5"
+            >
+              מחק נכס
+            </ConfirmDeleteForm>
           </div>
         </div>
       </div>

@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { Plus, Pencil, Trash2, Eye, EyeOff } from "lucide-react";
+import { Plus, Pencil, Eye, EyeOff } from "lucide-react";
 import { getAllBlogPosts } from "@/lib/db";
 import { deleteBlogPost, togglePublished } from "@/app/actions/blog";
+import ConfirmDeleteForm from "@/components/admin/ConfirmDeleteForm";
 
 export const dynamic = "force-dynamic";
 
@@ -88,19 +89,11 @@ export default async function BlogAdmin() {
                 <Pencil size={15} />
               </Link>
 
-              <form action={deleteBlogPost}>
-                <input type="hidden" name="id" value={post.id} />
-                <button
-                  type="submit"
-                  className="p-1.5 text-gray-light hover:text-red-400 transition-colors"
-                  title="מחיקה"
-                  onClick={(e) => {
-                    if (!confirm(`למחוק את "${post.title}"?`)) e.preventDefault();
-                  }}
-                >
-                  <Trash2 size={15} />
-                </button>
-              </form>
+              <ConfirmDeleteForm
+                id={post.id}
+                confirmMessage={`למחוק את "${post.title}"?`}
+                action={deleteBlogPost}
+              />
             </div>
           ))}
         </div>
