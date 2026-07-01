@@ -10,6 +10,8 @@ import {
   BookOpen,
   Gem,
   Plane,
+  Landmark,
+  Receipt,
   ArrowLeft,
 } from "lucide-react";
 import Header from "@/components/layout/Header";
@@ -23,6 +25,8 @@ export const metadata: Metadata = {
 
 const TOOLS = [
   { href: "/toolbox/roi-calculator", Icon: TrendingUp, title: "מחשבון תשואה להשקעה", description: "חשבו את התשואה השנתית הנטו הצפויה מנכס להשקעה" },
+  { href: "/toolbox/mortgage-calculator", Icon: Landmark, title: "מחשבון משכנתא", description: "החזר חודשי, סך ריבית ואחוז מימון מול מגבלות בנק ישראל" },
+  { href: "/toolbox/tax-simulator", Icon: Receipt, title: "סימולטור מיסים בעסקת נדל״ן", description: "מס רכישה לפי סטטוס הרוכש ומס שבח בעת מכירה עתידית" },
   { href: "/toolbox/buy-vs-rent", Icon: Scale, title: "קנייה מול שכירות", description: "השוואת שווי נטו בעוד 10 שנים — לקנות או לשכור" },
   { href: "/toolbox/renovation-estimator", Icon: Hammer, title: "אומדן עלויות שיפוץ", description: "אומדן הנדסי לשיפוץ לפי שטח, רמה ושדרוגים" },
   { href: "/toolbox/inspection-checklist", Icon: ClipboardCheck, title: "צ'קליסט בדק בית", description: "מה לבדוק בביקור בנכס לפני שרוכשים" },
