@@ -1,7 +1,9 @@
 import Link from "next/link";
-import { Plus, Pencil, Trash2, Star, Eye, EyeOff, Download } from "lucide-react";
+import { Plus, Pencil, Star, Eye, EyeOff, Download } from "lucide-react";
 import { getProperties } from "@/lib/db";
 import { deleteProperty, toggleFeatured, updateStatus } from "@/app/actions/properties";
+import StatusSelect from "@/components/admin/StatusSelect";
+import DeletePropertyForm from "@/components/admin/DeletePropertyForm";
 
 export const dynamic = "force-dynamic";
 
@@ -10,12 +12,6 @@ const typeBg: Record<string, string> = {
   sale: "bg-emerald-500/10 text-emerald-400",
   rent: "bg-blue-500/10 text-blue-400",
   project: "bg-purple-500/10 text-purple-400",
-};
-const statusLabel: Record<string, string> = { available: "זמין", sold: "נמכר", rented: "הושכר" };
-const statusBg: Record<string, string> = {
-  available: "bg-emerald-500/10 text-emerald-400",
-  sold: "bg-red-500/10 text-red-400",
-  rented: "bg-blue-500/10 text-blue-400",
 };
 
 export default async function PropertiesAdmin() {
@@ -97,19 +93,7 @@ export default async function PropertiesAdmin() {
               </span>
 
               {/* Status */}
-              <form action={updateStatus}>
-                <input type="hidden" name="id" value={p.id} />
-                <select
-                  name="status"
-                  defaultValue={p.status}
-                  onChange={(e) => e.currentTarget.form?.requestSubmit()}
-                  className={`text-[10px] px-2 py-1 rounded-full font-medium border-0 outline-none cursor-pointer bg-transparent ${statusBg[p.status]}`}
-                >
-                  <option value="available">זמין</option>
-                  <option value="sold">נמכר</option>
-                  <option value="rented">הושכר</option>
-                </select>
-              </form>
+              <StatusSelect id={p.id} status={p.status} action={updateStatus} />
 
               {/* Featured toggle */}
               <form action={toggleFeatured}>
@@ -141,21 +125,7 @@ export default async function PropertiesAdmin() {
                 >
                   <Pencil size={15} />
                 </Link>
-                <form
-                  action={deleteProperty}
-                  onSubmit={(e) => {
-                    if (!confirm(`למחוק את "${p.title}"?`)) e.preventDefault();
-                  }}
-                >
-                  <input type="hidden" name="id" value={p.id} />
-                  <button
-                    type="submit"
-                    className="p-1.5 text-gray-light hover:text-red-400 transition-colors"
-                    title="מחיקה"
-                  >
-                    <Trash2 size={15} />
-                  </button>
-                </form>
+                <DeletePropertyForm id={p.id} title={p.title} action={deleteProperty} />
               </div>
             </div>
           ))}
