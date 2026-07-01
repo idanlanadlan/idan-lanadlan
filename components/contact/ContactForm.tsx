@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { TrendingUp, Key, Search, Building2, ArrowRight } from "lucide-react";
 import { sendContactForm } from "@/app/actions/contact";
+import { isValidPhone, isValidEmail } from "@/lib/validation";
 
 const CATEGORIES = [
   { label: "מעוניין למכור נכס", Icon: TrendingUp },
@@ -10,20 +11,6 @@ const CATEGORIES = [
   { label: "מחפש נכס לרכישה", Icon: Search },
   { label: "מחפש דירה להשכרה", Icon: Building2 },
 ];
-
-function isValidPhone(raw: string): boolean {
-  const cleaned = raw.replace(/[\s\-().]/g, "");
-  if (!cleaned) return false;
-  if (/^05\d{8}$/.test(cleaned)) return true;
-  if (/^07\d{8}$/.test(cleaned)) return true;
-  if (/^0[23489]\d{7}$/.test(cleaned)) return true;
-  if (/^\+[1-9]\d{6,14}$/.test(cleaned)) return true;
-  return false;
-}
-
-function isValidEmail(raw: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(raw.trim());
-}
 
 export function ContactForm() {
   const [step, setStep] = useState<"category" | "details">("category");

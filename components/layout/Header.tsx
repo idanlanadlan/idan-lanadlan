@@ -44,6 +44,7 @@ export default function Header() {
   const navLinks = [
     { href: "/", label: t.nav.home },
     { href: "/nadlan", label: t.nav.properties },
+    { href: "/toolbox", label: t.nav.tools },
     { href: "/groups", label: t.nav.groups },
     { href: "/sellers", label: t.nav.sellers },
     { href: "/blog", label: t.nav.blog },

@@ -2,14 +2,14 @@
 
 import { isValidPhone, isValidEmail } from "@/lib/validation";
 
-export async function sendContactForm(data: {
-  category: string;
+export async function sendToolLead(data: {
+  toolName: string;
   name: string;
   phone: string;
   email?: string;
-  city: string;
+  details?: string;
 }): Promise<{ success: boolean; error?: "phone" | "email" | "validation" | "server" }> {
-  if (!data.name.trim() || !data.city.trim()) return { success: false, error: "validation" };
+  if (!data.name.trim()) return { success: false, error: "validation" };
   if (!isValidPhone(data.phone)) return { success: false, error: "phone" };
   if (data.email && !isValidEmail(data.email)) return { success: false, error: "email" };
 
@@ -18,6 +18,10 @@ export async function sendContactForm(data: {
 
   const emailRow = data.email
     ? `<tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;">מייל:</td><td style="padding:10px 0;"><a href="mailto:${data.email}" style="color:#F5F5F0;">${data.email}</a></td></tr>`
+    : "";
+
+  const detailsRow = data.details
+    ? `<tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;vertical-align:top;">פרטים:</td><td style="padding:10px 0;white-space:pre-wrap;">${data.details}</td></tr>`
     : "";
 
   const res = await fetch("https://api.resend.com/emails", {
@@ -29,39 +33,20 @@ export async function sendContactForm(data: {
     body: JSON.stringify({
       from: "עידן לנדל״ן <noreply@idanlanadlan.co.il>",
       to: ["idanlanadlan@gmail.com"],
-      subject: `פנייה חדשה — ${data.category}`,
+      subject: `ליד חדש מארגז הכלים — ${data.toolName}`,
       html: `
         <div dir="rtl" style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;padding:32px;background:#0A0A0A;color:#F5F5F0;border-radius:12px;">
-          <h2 style="color:#C9A96E;margin-top:0">פנייה חדשה — עידן לנדל״ן</h2>
+          <h2 style="color:#C9A96E;margin-top:0">ליד חדש — ${data.toolName}</h2>
           <table style="width:100%;border-collapse:collapse;margin-top:16px;">
-            <tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;width:120px;">סוג פנייה:</td><td style="padding:10px 0;">${data.category}</td></tr>
-            <tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;">שם:</td><td style="padding:10px 0;">${data.name}</td></tr>
+            <tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;width:120px;">שם:</td><td style="padding:10px 0;">${data.name}</td></tr>
             <tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;">טלפון:</td><td style="padding:10px 0;"><a href="tel:${data.phone}" style="color:#F5F5F0;">${data.phone}</a></td></tr>
             ${emailRow}
-            <tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;">עיר:</td><td style="padding:10px 0;">${data.city}</td></tr>
+            ${detailsRow}
           </table>
         </div>
       `,
     }),
   });
-
-  // Forward lead to Nadlan One CRM (fire-and-forget, non-blocking)
-  const leadKey = process.env.NADLAN_ONE_LEAD_KEY;
-  if (leadKey) {
-    fetch("https://int.nadlanone.co.il/apiv1/Lead/0549791171", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "X-API-KEY": leadKey },
-      body: JSON.stringify({
-        FirstName: data.name,
-        Phone1: data.phone,
-        email: data.email ?? "",
-        Description: `${data.category} — ${data.city}`,
-        ParseDescription: true,
-        Notes: data.city,
-        Source: "אתר עידן לנדל״ן",
-      }),
-    }).catch(() => {/* silent — CRM failure doesn't affect UX */});
-  }
 
   return { success: res.ok, error: res.ok ? undefined : "server" };
 }
