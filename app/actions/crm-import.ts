@@ -15,7 +15,7 @@ export async function previewFromCRMLink(input: string): Promise<PreviewResult> 
   const id = extractCRMId(input);
   if (!id) return { ok: false, error: "invalid_input" };
 
-  if (!process.env.NADLAN_ONE_PROP_KEY || !process.env.NADLAN_ONE_LEAD_KEY) {
+  if (!process.env.NADLAN_ONE_PROP_KEY) {
     return { ok: false, error: "not_configured" };
   }
 

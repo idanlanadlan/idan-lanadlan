@@ -17,7 +17,7 @@ type Tab = "crm" | "image" | "text";
 const CRM_ERRORS: Record<string, string> = {
   invalid_input: "הלינק לא תקין — הדבק קישור לנכס מ-Nadlan One או מזהה מספרי",
   not_found: "הנכס לא נמצא — ייתכן שהמזהה שגוי או שה-API לא הופעל",
-  not_configured: "ה-API לא מוגדר — הוסף NADLAN_ONE_PROP_KEY ו-NADLAN_ONE_LEAD_KEY ל-Vercel",
+  not_configured: "ה-API לא מוגדר — הוסף NADLAN_ONE_PROP_KEY ל-Vercel",
   api_error: "שגיאת חיבור ל-Nadlan One",
 };
 
