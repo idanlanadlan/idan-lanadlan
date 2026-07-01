@@ -3,8 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { BedDouble, Bath, Maximize2, Layers, Wind, Car, Shield, ShieldCheck } from "lucide-react";
+import { BedDouble, Maximize2, Layers, Wind, Car, Shield, ShieldCheck, Tag } from "lucide-react";
 import type { Property } from "@/lib/types";
+import { pricePerSqm } from "@/lib/property-utils";
 
 function formatPrice(price: number, type: Property["type"]) {
   if (type === "rent") return `₪${price.toLocaleString("he-IL")}/חודש`;
@@ -79,13 +80,15 @@ export default function PropertyCard({ property, variant = "default" }: Property
               {property.bedrooms} חדרים
             </span>
             <span className="flex items-center gap-1.5">
-              <Bath size={12} className="text-gold/70" aria-hidden="true" />
-              {property.bathrooms} מק״ר
-            </span>
-            <span className="flex items-center gap-1.5">
               <Maximize2 size={12} className="text-gold/70" aria-hidden="true" />
               {property.size_sqm} מ״ר
             </span>
+            {property.type !== "rent" && (
+              <span className="flex items-center gap-1.5">
+                <Tag size={12} className="text-gold/70" aria-hidden="true" />
+                ₪{pricePerSqm(property).toLocaleString("he-IL")} למ״ר
+              </span>
+            )}
             {property.floor != null && (
               <span className="flex items-center gap-1.5">
                 <Layers size={12} className="text-gold/70" aria-hidden="true" />
