@@ -6,12 +6,37 @@ const label = "block text-xs text-gold tracking-wider uppercase mb-1.5";
 const field =
   "w-full bg-black border border-gray-dark rounded-lg px-4 py-2.5 text-sm text-cream placeholder:text-gray focus:border-gold outline-none transition-colors";
 
-// Approximate figures — verify current rates with the Israel Tax Authority / an accountant before relying on them
+// 2026 brackets under Regulation 12a (reformed track, in force since 15.8.2024, frozen at 2025
+// levels until Jan 2028) — uses the same thresholds as the regular single-home table, at reduced
+// rates. Olim who made aliyah before 15.8.2024 may still fall under an older, different track —
+// verify with the Tax Authority / an accountant before relying on this.
 const FX_TO_ILS: Record<string, number> = { ILS: 1, USD: 3.7, EUR: 4.0 };
 const CURRENCY_SYMBOL: Record<string, string> = { ILS: "₪", USD: "$", EUR: "€" };
-const OLEH_BRACKET_THRESHOLD = 1988090; // ILS
-const OLEH_RATE_LOW = 0.005;
-const OLEH_RATE_HIGH = 0.05;
+const OLEH_BRACKETS: [number, number][] = [
+  [1_978_745, 0],
+  [6_055_070, 0.005],
+  [20_183_565, 0.08],
+  [Infinity, 0.1],
+];
+
+function calcOlehTax(price: number) {
+  let remaining = price;
+  let prevLimit = 0;
+  let totalTax = 0;
+  const rows: { rate: number; taxable: number; tax: number }[] = [];
+
+  for (const [limit, rate] of OLEH_BRACKETS) {
+    if (remaining <= 0) break;
+    const taxable = Math.min(remaining, limit - prevLimit);
+    const tax = taxable * rate;
+    if (taxable > 0) rows.push({ rate, taxable, tax });
+    totalTax += tax;
+    remaining -= taxable;
+    prevLimit = limit;
+  }
+
+  return { totalTax, rows };
+}
 
 const ROADMAP = [
   "קבלת תעודת עולה מרשות האוכלוסין וההגירה",
@@ -31,11 +56,7 @@ export default function OlehTaxSimulator() {
   const priceInILS = priceNum * FX_TO_ILS[currency];
   const hasInput = priceInILS > 0;
 
-  const lowPortion = Math.min(priceInILS, OLEH_BRACKET_THRESHOLD);
-  const highPortion = Math.max(priceInILS - OLEH_BRACKET_THRESHOLD, 0);
-  const taxLow = lowPortion * OLEH_RATE_LOW;
-  const taxHigh = highPortion * OLEH_RATE_HIGH;
-  const totalTax = taxLow + taxHigh;
+  const { totalTax, rows } = calcOlehTax(priceInILS);
 
   return (
     <div className="space-y-6">
@@ -78,17 +99,17 @@ export default function OlehTaxSimulator() {
           </div>
 
           <div className="bg-black/40 border border-gray-dark rounded-lg p-4 text-sm text-gray-light space-y-1.5">
-            <div className="flex justify-between">
-              <span>{OLEH_RATE_LOW * 100}% על ₪{Math.round(lowPortion).toLocaleString("he-IL")}</span>
-              <span className="text-cream">₪{Math.round(taxLow).toLocaleString("he-IL")}</span>
-            </div>
-            {highPortion > 0 && (
-              <div className="flex justify-between">
-                <span>{OLEH_RATE_HIGH * 100}% על ₪{Math.round(highPortion).toLocaleString("he-IL")}</span>
-                <span className="text-cream">₪{Math.round(taxHigh).toLocaleString("he-IL")}</span>
+            {rows.map((row) => (
+              <div key={row.rate} className="flex justify-between">
+                <span>{row.rate * 100}% על ₪{Math.round(row.taxable).toLocaleString("he-IL")}</span>
+                <span className="text-cream">₪{Math.round(row.tax).toLocaleString("he-IL")}</span>
               </div>
-            )}
+            ))}
           </div>
+
+          <p className="text-xs text-gray-light leading-relaxed">
+            המדרגות לעיל הן מסלול תקנה 12א (בתוקף מ-15.8.2024). עולים שעלו לפני מועד זה עשויים להיות כפופים למסלול שונה — יש לאמת מול רשות המסים.
+          </p>
 
           <div>
             <p className="text-xs tracking-widest text-gold uppercase mb-3">מפת דרכים לרכישה</p>
