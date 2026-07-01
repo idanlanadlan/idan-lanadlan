@@ -3,12 +3,9 @@ import Link from "next/link";
 import {
   TrendingUp,
   Scale,
-  Hammer,
   ClipboardCheck,
-  Building2,
   Compass,
   BookOpen,
-  Gem,
   Plane,
   Landmark,
   Receipt,
@@ -28,12 +25,9 @@ const TOOLS = [
   { href: "/toolbox/mortgage-calculator", Icon: Landmark, title: "מחשבון משכנתא", description: "החזר חודשי, סך ריבית ואחוז מימון מול מגבלות בנק ישראל" },
   { href: "/toolbox/tax-simulator", Icon: Receipt, title: "סימולטור מיסים בעסקת נדל״ן", description: "מס רכישה לפי סטטוס הרוכש ומס שבח בעת מכירה עתידית" },
   { href: "/toolbox/buy-vs-rent", Icon: Scale, title: "קנייה מול שכירות", description: "השוואת שווי נטו בעוד 10 שנים — לקנות או לשכור" },
-  { href: "/toolbox/renovation-estimator", Icon: Hammer, title: "אומדן עלויות שיפוץ", description: "אומדן הנדסי לשיפוץ לפי שטח, רמה ושדרוגים" },
   { href: "/toolbox/inspection-checklist", Icon: ClipboardCheck, title: "צ'קליסט בדק בית", description: "מה לבדוק בביקור בנכס לפני שרוכשים" },
-  { href: "/toolbox/urban-renewal", Icon: Building2, title: "בדיקת זכאות התחדשות עירונית", description: "אינדיקציה ראשונית לתמ״א 38 ופינוי-בינוי" },
   { href: "/toolbox/property-match", Icon: Compass, title: "שאלון התאמת נכס", description: "3 שאלות שמאתרות את פרופיל הנכס המתאים לכם" },
   { href: "/toolbox/glossary", Icon: BookOpen, title: "מילון מונחי נדל״ן", description: "טאבו, הערת אזהרה, מס שבח ועוד — בעברית פשוטה" },
-  { href: "/toolbox/management-quote", Icon: Gem, title: "הצעת מחיר ניהול פרימיום", description: "אמדו דמי ניהול חודשיים לנכס יוקרה" },
   { href: "/toolbox/oleh-tax", Icon: Plane, title: "סימולטור מס לעולים חדשים", description: "מס רכישה מוזל ומפת דרכים לרכישה בישראל" },
 ];
 
