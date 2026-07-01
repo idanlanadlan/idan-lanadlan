@@ -10,15 +10,18 @@ import SocialFeed from "@/components/home/SocialFeed";
 import BlogPreview from "@/components/home/BlogPreview";
 import CtaSection from "@/components/home/CtaSection";
 import FaqSection from "@/components/home/FaqSection";
+import { getFeaturedProperties } from "@/lib/db";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const featuredProperties = await getFeaturedProperties();
+
   return (
     <>
       <Header />
       <main id="main-content">
         <Hero />
         <StatsBar />
-        <FeaturedProperties />
+        <FeaturedProperties properties={featuredProperties} />
         <AboutSnippet />
         <Testimonials />
         <BlogPreview />

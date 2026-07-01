@@ -17,8 +17,14 @@ const EXTRACTION_PROMPT = `אתה מומחה נדל"ן שמחלץ נתונים �
   "type": "sale",
   "bedrooms": 4,
   "bathrooms": 2,
+  "toilets": 1,
   "size_sqm": 120,
+  "balcony_sqm": 10,
   "floor": 5,
+  "parking_spots": 1,
+  "has_mamad": true,
+  "has_shelter": false,
+  "has_elevator": true,
   "address": "רחוב הירקון 100",
   "neighborhood": "נמל",
   "city": "תל אביב",
@@ -29,6 +35,8 @@ const EXTRACTION_PROMPT = `אתה מומחה נדל"ן שמחלץ נתונים �
 - type: "sale"=מכירה, "rent"=השכרה, "project"=פרויקט/בנייה חדשה
 - price: מספר שלם בשקלים בלבד (ללא ₪, ללא פסיקים)
 - שדות חסרים/לא ידועים: bedrooms/bathrooms/floor → 0, size_sqm → 0, שדות טקסט → ""
+- toilets/balcony_sqm/parking_spots: אם לא מוזכרים במקור, השאר null (אל תנחש)
+- has_mamad/has_shelter/has_elevator: true רק אם מוזכר מפורשות במקור, אחרת false
 - אל תמציא נתונים שאינם מופיעים במקור`;
 
 function getClient(): Anthropic | null {
@@ -45,8 +53,14 @@ function buildProperty(parsed: Record<string, unknown>): PropertyData {
     type: (["sale", "rent", "project"].includes(type) ? type : "sale") as Property["type"],
     bedrooms: Number(parsed.bedrooms ?? 0),
     bathrooms: Number(parsed.bathrooms ?? 0),
+    toilets: parsed.toilets != null ? Number(parsed.toilets) : undefined,
     size_sqm: Number(parsed.size_sqm ?? 0),
+    balcony_sqm: parsed.balcony_sqm != null ? Number(parsed.balcony_sqm) : undefined,
     floor: parsed.floor != null && Number(parsed.floor) !== 0 ? Number(parsed.floor) : undefined,
+    parking_spots: parsed.parking_spots != null ? Number(parsed.parking_spots) : undefined,
+    has_mamad: parsed.has_mamad === true,
+    has_shelter: parsed.has_shelter === true,
+    has_elevator: parsed.has_elevator === true,
     address: String(parsed.address ?? ""),
     neighborhood: String(parsed.neighborhood ?? ""),
     city: String(parsed.city ?? ""),

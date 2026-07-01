@@ -1,9 +1,9 @@
 import type { MetadataRoute } from "next";
-import { mockBlogPosts, mockProperties } from "@/lib/mock-data";
+import { getProperties, getPublishedBlogPosts } from "@/lib/db";
 
 const BASE = "https://idanlanadlan.co.il";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages = [
     { url: BASE, changeFrequency: "weekly" as const, priority: 1 },
     { url: `${BASE}/nadlan`, changeFrequency: "daily" as const, priority: 0.9 },
@@ -12,7 +12,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/contact`, changeFrequency: "monthly" as const, priority: 0.7 },
   ];
 
-  const propertyPages = mockProperties
+  const properties = await getProperties();
+  const propertyPages = properties
     .filter((p) => p.status === "available")
     .map((p) => ({
       url: `${BASE}/nadlan/${p.id}`,
@@ -21,14 +22,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(p.created_at),
     }));
 
-  const blogPages = mockBlogPosts
-    .filter((p) => p.published)
-    .map((p) => ({
-      url: `${BASE}/blog/${p.slug}`,
-      changeFrequency: "monthly" as const,
-      priority: 0.7,
-      lastModified: new Date(p.updated_at),
-    }));
+  const blogPosts = await getPublishedBlogPosts();
+  const blogPages = blogPosts.map((p) => ({
+    url: `${BASE}/blog/${p.slug}`,
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+    lastModified: new Date(p.updated_at),
+  }));
 
   return [...staticPages, ...propertyPages, ...blogPages];
 }

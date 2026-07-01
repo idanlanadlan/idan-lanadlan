@@ -8,8 +8,14 @@ export interface Property {
   type: PropertyType;
   bedrooms: number;
   bathrooms: number;
+  toilets?: number;
   size_sqm: number;
+  balcony_sqm?: number;
   floor?: number;
+  parking_spots?: number;
+  has_mamad?: boolean;
+  has_shelter?: boolean;
+  has_elevator?: boolean;
   address: string;
   neighborhood: string;
   city: string;

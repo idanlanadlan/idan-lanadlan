@@ -4,13 +4,17 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import PropertyCard from "@/components/properties/PropertyCard";
-import { mockProperties } from "@/lib/mock-data";
+import type { Property } from "@/lib/types";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-export default function FeaturedProperties() {
+interface Props {
+  properties: Property[];
+}
+
+export default function FeaturedProperties({ properties }: Props) {
   const { t } = useLanguage();
   const p = t.sections.properties;
-  const featured = mockProperties.filter((prop) => prop.featured).slice(0, 3);
+  const featured = properties.slice(0, 3);
 
   return (
     <section className="py-28 max-w-7xl mx-auto px-4 sm:px-6" aria-labelledby="properties-heading">

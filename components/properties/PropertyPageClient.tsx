@@ -3,12 +3,30 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { BedDouble, Bath, Maximize2, MapPin, ArrowRight, Phone, MessageCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  BedDouble,
+  Bath,
+  Maximize2,
+  MapPin,
+  ArrowRight,
+  Phone,
+  MessageCircle,
+  ChevronLeft,
+  ChevronRight,
+  Layers,
+  Wind,
+  Car,
+  Shield,
+  ShieldCheck,
+  ArrowUpDown,
+  Toilet,
+} from "lucide-react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { Property } from "@/lib/types";
+import { grossSize, pricePerSqm } from "@/lib/property-utils";
 
 interface Props {
   property: Property;
@@ -33,6 +51,24 @@ export default function PropertyPageClient({ property, schema }: Props) {
     if (type === "rent") return `₪${price.toLocaleString("he-IL")} ${pd.per_month}`;
     return `₪${price.toLocaleString("he-IL")}`;
   };
+
+  const specs: { icon: typeof BedDouble; value: string | number; label: string }[] = [
+    { icon: BedDouble, value: property.bedrooms, label: pd.rooms },
+    { icon: Bath, value: property.bathrooms, label: pd.bathrooms },
+    ...(property.toilets ? [{ icon: Toilet, value: property.toilets, label: pd.toilets }] : []),
+    { icon: Maximize2, value: property.size_sqm, label: pd.sqm },
+    ...(property.balcony_sqm
+      ? [
+          { icon: Maximize2, value: grossSize(property), label: pd.gross_sqm },
+          { icon: Wind, value: property.balcony_sqm, label: pd.balcony },
+        ]
+      : []),
+    ...(property.floor != null ? [{ icon: Layers, value: property.floor, label: pd.floor }] : []),
+    ...(property.parking_spots ? [{ icon: Car, value: property.parking_spots, label: pd.parking }] : []),
+    ...(property.has_elevator ? [{ icon: ArrowUpDown, value: "✓", label: pd.elevator }] : []),
+    ...(property.has_mamad ? [{ icon: Shield, value: "✓", label: pd.mamad }] : []),
+    ...(property.has_shelter ? [{ icon: ShieldCheck, value: "✓", label: pd.shelter }] : []),
+  ];
 
   return (
     <>
@@ -126,22 +162,14 @@ export default function PropertyPageClient({ property, schema }: Props) {
                   {property.address}, {property.neighborhood}, {property.city}
                 </p>
 
-                <div className="grid grid-cols-3 gap-4 py-6 border-y border-gray-dark mb-6">
-                  <div className="text-center">
-                    <BedDouble size={22} className="text-gold mx-auto mb-2" />
-                    <p className="text-lg font-semibold text-white">{property.bedrooms}</p>
-                    <p className="text-xs text-gray-light">{pd.rooms}</p>
-                  </div>
-                  <div className="text-center">
-                    <Bath size={22} className="text-gold mx-auto mb-2" />
-                    <p className="text-lg font-semibold text-white">{property.bathrooms}</p>
-                    <p className="text-xs text-gray-light">{pd.bathrooms}</p>
-                  </div>
-                  <div className="text-center">
-                    <Maximize2 size={22} className="text-gold mx-auto mb-2" />
-                    <p className="text-lg font-semibold text-white">{property.size_sqm}</p>
-                    <p className="text-xs text-gray-light">{pd.sqm}</p>
-                  </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 py-6 border-y border-gray-dark mb-6">
+                  {specs.map((spec, i) => (
+                    <div key={i} className="text-center">
+                      <spec.icon size={22} className="text-gold mx-auto mb-2" />
+                      <p className="text-lg font-semibold text-white">{spec.value}</p>
+                      <p className="text-xs text-gray-light">{spec.label}</p>
+                    </div>
+                  ))}
                 </div>
 
                 <h2 className="text-sm font-semibold text-white mb-3">{pd.description_title}</h2>
@@ -174,9 +202,14 @@ export default function PropertyPageClient({ property, schema }: Props) {
             <div className="lg:col-span-1">
               <div className="sticky top-24 bg-charcoal rounded-xl border border-gray-dark p-6">
                 <p className="text-xs tracking-widest text-gold uppercase mb-1">{pd.price_label}</p>
-                <p className="font-display text-3xl text-white font-light mb-6">
+                <p className={`font-display text-3xl text-white font-light ${property.type !== "rent" ? "mb-1" : "mb-6"}`}>
                   {formatPrice(property.price, property.type)}
                 </p>
+                {property.type !== "rent" && (
+                  <p className="text-sm text-gray-light mb-6">
+                    {pd.price_per_sqm}: ₪{pricePerSqm(property).toLocaleString("he-IL")}
+                  </p>
+                )}
 
                 <div className="divider-gold mb-6" />
 

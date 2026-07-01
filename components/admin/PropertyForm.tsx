@@ -55,7 +55,7 @@ export default function PropertyForm({ action, property }: Props) {
         </div>
       </div>
 
-      {/* Rooms + Bathrooms + sqm + Floor */}
+      {/* Rooms + Bathrooms + Toilets + sqm */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div>
           <label className={label}>חדרים *</label>
@@ -84,7 +84,19 @@ export default function PropertyForm({ action, property }: Props) {
           />
         </div>
         <div>
-          <label className={label}>מ״ר *</label>
+          <label className={label}>שירותים</label>
+          <input
+            className={field}
+            name="toilets"
+            type="number"
+            step="1"
+            min="0"
+            defaultValue={property?.toilets}
+            placeholder="1"
+          />
+        </div>
+        <div>
+          <label className={label}>מ״ר נטו *</label>
           <input
             className={field}
             name="size_sqm"
@@ -95,6 +107,10 @@ export default function PropertyForm({ action, property }: Props) {
             placeholder="120"
           />
         </div>
+      </div>
+
+      {/* Floor + Balcony + Parking */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
         <div>
           <label className={label}>קומה</label>
           <input
@@ -106,6 +122,61 @@ export default function PropertyForm({ action, property }: Props) {
             placeholder="5"
           />
         </div>
+        <div>
+          <label className={label}>גודל מרפסת (מ״ר)</label>
+          <input
+            className={field}
+            name="balcony_sqm"
+            type="number"
+            step="0.5"
+            min="0"
+            defaultValue={property?.balcony_sqm}
+            placeholder="10"
+          />
+        </div>
+        <div>
+          <label className={label}>מקומות חניה</label>
+          <input
+            className={field}
+            name="parking_spots"
+            type="number"
+            step="1"
+            min="0"
+            defaultValue={property?.parking_spots}
+            placeholder="1"
+          />
+        </div>
+      </div>
+
+      {/* Amenities */}
+      <div className="grid grid-cols-3 gap-4">
+        <label className="flex items-center gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            name="has_elevator"
+            defaultChecked={property?.has_elevator ?? false}
+            className="w-4 h-4 accent-gold"
+          />
+          <span className="text-sm text-cream">מעלית</span>
+        </label>
+        <label className="flex items-center gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            name="has_mamad"
+            defaultChecked={property?.has_mamad ?? false}
+            className="w-4 h-4 accent-gold"
+          />
+          <span className="text-sm text-cream">ממ״ד</span>
+        </label>
+        <label className="flex items-center gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            name="has_shelter"
+            defaultChecked={property?.has_shelter ?? false}
+            className="w-4 h-4 accent-gold"
+          />
+          <span className="text-sm text-cream">מקלט</span>
+        </label>
       </div>
 
       {/* Address */}

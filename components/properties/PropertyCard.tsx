@@ -3,12 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { BedDouble, Bath, Maximize2 } from "lucide-react";
+import { BedDouble, Bath, Maximize2, Layers, Wind, Car, Shield, ShieldCheck } from "lucide-react";
 import type { Property } from "@/lib/types";
 
 function formatPrice(price: number, type: Property["type"]) {
   if (type === "rent") return `₪${price.toLocaleString("he-IL")}/חודש`;
-  return `₪${(price / 1000000).toFixed(1)}M`;
+  return `₪${price.toLocaleString("he-IL")}`;
 }
 
 const typeLabel: Record<Property["type"], string> = {
@@ -25,6 +25,12 @@ interface PropertyCardProps {
 export default function PropertyCard({ property, variant = "default" }: PropertyCardProps) {
   const isLarge = variant === "large";
   const [imgError, setImgError] = useState(false);
+
+  const hasBadges =
+    (property.balcony_sqm ?? 0) > 0 ||
+    (property.parking_spots ?? 0) > 0 ||
+    property.has_mamad ||
+    property.has_shelter;
 
   return (
     <Link href={`/nadlan/${property.id}`} className="group block h-full">
@@ -52,8 +58,8 @@ export default function PropertyCard({ property, variant = "default" }: Property
             {typeLabel[property.type]}
           </span>
 
-          {/* Price — large format in display font */}
-          <p className={`absolute bottom-4 end-4 font-display font-light text-white ${isLarge ? "text-3xl" : "text-xl"}`}>
+          {/* Price — exact amount, in display font */}
+          <p className={`absolute bottom-4 end-4 font-display font-light text-white ${isLarge ? "text-2xl" : "text-lg"}`}>
             {formatPrice(property.price, property.type)}
           </p>
         </div>
@@ -67,7 +73,7 @@ export default function PropertyCard({ property, variant = "default" }: Property
             {property.neighborhood}, {property.city}
           </p>
 
-          <div className="flex items-center gap-6 text-xs text-gray-light mt-auto">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-gray-light mt-auto">
             <span className="flex items-center gap-1.5">
               <BedDouble size={12} className="text-gold/70" aria-hidden="true" />
               {property.bedrooms} חדרים
@@ -80,7 +86,42 @@ export default function PropertyCard({ property, variant = "default" }: Property
               <Maximize2 size={12} className="text-gold/70" aria-hidden="true" />
               {property.size_sqm} מ״ר
             </span>
+            {property.floor != null && (
+              <span className="flex items-center gap-1.5">
+                <Layers size={12} className="text-gold/70" aria-hidden="true" />
+                קומה {property.floor}
+              </span>
+            )}
           </div>
+
+          {hasBadges && (
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-gray-light mt-2">
+              {(property.balcony_sqm ?? 0) > 0 && (
+                <span className="flex items-center gap-1.5">
+                  <Wind size={12} className="text-gold/70" aria-hidden="true" />
+                  מרפסת {property.balcony_sqm} מ״ר
+                </span>
+              )}
+              {(property.parking_spots ?? 0) > 0 && (
+                <span className="flex items-center gap-1.5">
+                  <Car size={12} className="text-gold/70" aria-hidden="true" />
+                  {property.parking_spots} חניה
+                </span>
+              )}
+              {property.has_mamad && (
+                <span className="flex items-center gap-1.5">
+                  <Shield size={12} className="text-gold/70" aria-hidden="true" />
+                  ממ״ד
+                </span>
+              )}
+              {property.has_shelter && (
+                <span className="flex items-center gap-1.5">
+                  <ShieldCheck size={12} className="text-gold/70" aria-hidden="true" />
+                  מקלט
+                </span>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </Link>

@@ -8,8 +8,14 @@ CREATE TABLE IF NOT EXISTS properties (
   type TEXT NOT NULL CHECK (type IN ('sale', 'rent', 'project')),
   bedrooms NUMERIC(4,1) NOT NULL,
   bathrooms NUMERIC(4,1) NOT NULL,
+  toilets NUMERIC(4,1),
   size_sqm NUMERIC(7,1) NOT NULL,
+  balcony_sqm NUMERIC(6,1),
   floor INTEGER,
+  parking_spots INTEGER,
+  has_mamad BOOLEAN NOT NULL DEFAULT false,
+  has_shelter BOOLEAN NOT NULL DEFAULT false,
+  has_elevator BOOLEAN NOT NULL DEFAULT false,
   address TEXT NOT NULL DEFAULT '',
   neighborhood TEXT NOT NULL DEFAULT '',
   city TEXT NOT NULL DEFAULT 'תל אביב',
@@ -25,6 +31,15 @@ CREATE TABLE IF NOT EXISTS properties (
 ALTER TABLE properties ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "public_read" ON properties FOR SELECT USING (true);
 CREATE POLICY "service_all"  ON properties USING (true) WITH CHECK (true);`;
+
+const MIGRATION_SQL = `-- אם הטבלה כבר קיימת (פרויקט מחובר), הרץ את זה כדי להוסיף שדות חדשים
+ALTER TABLE properties
+  ADD COLUMN IF NOT EXISTS toilets NUMERIC(4,1),
+  ADD COLUMN IF NOT EXISTS balcony_sqm NUMERIC(6,1),
+  ADD COLUMN IF NOT EXISTS parking_spots INTEGER,
+  ADD COLUMN IF NOT EXISTS has_mamad BOOLEAN NOT NULL DEFAULT false,
+  ADD COLUMN IF NOT EXISTS has_shelter BOOLEAN NOT NULL DEFAULT false,
+  ADD COLUMN IF NOT EXISTS has_elevator BOOLEAN NOT NULL DEFAULT false;`;
 
 export default function SetupPage() {
   return (
@@ -84,6 +99,15 @@ export default function SetupPage() {
             ב-Vercel: <strong className="text-cream">Deployments → ⋯ → Redeploy</strong>.
             אחרי הפריסה, חזור לכאן ותראה ✓ מחובר.
           </p>
+        </Step>
+
+        <Step num={5} title="עדכון: שדות נכס חדשים (חניה, ממ״ד, מקלט, מעלית, מרפסת, שירותים)">
+          <p className="text-sm text-gray-light mb-3">
+            אם הטבלה כבר קיימת (הפרויקט כבר מחובר), הרץ ב-<strong className="text-cream">SQL Editor</strong> את זה כדי להוסיף את השדות החדשים:
+          </p>
+          <pre className="bg-black rounded-lg p-4 text-xs text-cream overflow-x-auto leading-relaxed font-mono">
+            {MIGRATION_SQL}
+          </pre>
         </Step>
       </div>
     </div>

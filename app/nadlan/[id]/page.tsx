@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { mockProperties } from "@/lib/mock-data";
+import { getPropertyById } from "@/lib/db";
 import PropertyPageClient from "@/components/properties/PropertyPageClient";
 
 function formatPrice(price: number, type: string) {
@@ -20,7 +20,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const p = mockProperties.find((prop) => prop.id === id);
+  const p = await getPropertyById(id);
   if (!p) return {};
   const priceStr = formatPrice(p.price, p.type);
   return {
@@ -37,17 +37,13 @@ export async function generateMetadata({
   };
 }
 
-export async function generateStaticParams() {
-  return mockProperties.map((p) => ({ id: p.id }));
-}
-
 export default async function PropertyPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const property = mockProperties.find((p) => p.id === id);
+  const property = await getPropertyById(id);
   if (!property) notFound();
 
   const schema = {

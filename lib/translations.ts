@@ -13,7 +13,7 @@ export interface T {
     social: { eyebrow: string; title: string; facebook_link: string; tiktok_description: string; tiktok_button: string; linkedin_description: string; linkedin_button: string; };
     faq: { eyebrow: string; title: string; subtitle: string; items: { q: string; a: string }[]; };
     groups: { eyebrow: string; title: string; subtitle: string; sale_badge: string; rent_badge: string; sale_title: string; sale_subtitle: string; sale_description: string; sale_items: string[]; rent_title: string; rent_subtitle: string; rent_description: string; rent_items: string[]; request_button: string; card_footer: string; managed_note: string; share_note: string; };
-    property_detail: { rooms: string; bathrooms: string; sqm: string; description_title: string; location_title: string; price_label: string; contact_text: string; whatsapp_button: string; per_month: string; type_sale: string; type_rent: string; type_project: string; };
+    property_detail: { rooms: string; bathrooms: string; toilets: string; sqm: string; gross_sqm: string; balcony: string; floor: string; parking: string; mamad: string; shelter: string; elevator: string; price_per_sqm: string; description_title: string; location_title: string; price_label: string; contact_text: string; whatsapp_button: string; per_month: string; type_sale: string; type_rent: string; type_project: string; };
   };
   footer: { tagline: string; quick_nav: string; contact: string; legal: string; privacy: string; accessibility: string; copyright: string; license: string; };
   cookie: { message: string; accept: string; decline: string; privacy_link: string; };
@@ -135,7 +135,16 @@ export const translations: Record<Locale, T> = {
       property_detail: {
         rooms: "חדרים",
         bathrooms: "מקלחות",
-        sqm: "מ״ר",
+        toilets: "שירותים",
+        sqm: "מ״ר נטו",
+        gross_sqm: "מ״ר ברוטו",
+        balcony: "מרפסת",
+        floor: "קומה",
+        parking: "חניה",
+        mamad: "ממ״ד",
+        shelter: "מקלט",
+        elevator: "מעלית",
+        price_per_sqm: "מחיר למ״ר",
         description_title: "תיאור הנכס",
         location_title: "מיקום הנכס",
         price_label: "מחיר",
@@ -311,7 +320,16 @@ export const translations: Record<Locale, T> = {
       property_detail: {
         rooms: "Rooms",
         bathrooms: "Bathrooms",
-        sqm: "sqm",
+        toilets: "Toilets",
+        sqm: "sqm (net)",
+        gross_sqm: "sqm (gross)",
+        balcony: "Balcony",
+        floor: "Floor",
+        parking: "Parking",
+        mamad: "Safe room",
+        shelter: "Shelter",
+        elevator: "Elevator",
+        price_per_sqm: "Price per sqm",
         description_title: "Property Description",
         location_title: "Property Location",
         price_label: "Price",
@@ -487,7 +505,16 @@ export const translations: Record<Locale, T> = {
       property_detail: {
         rooms: "Pièces",
         bathrooms: "Salles de bain",
-        sqm: "m²",
+        toilets: "Toilettes",
+        sqm: "m² net",
+        gross_sqm: "m² brut",
+        balcony: "Balcon",
+        floor: "Étage",
+        parking: "Parking",
+        mamad: "Abri (Mamad)",
+        shelter: "Abri collectif",
+        elevator: "Ascenseur",
+        price_per_sqm: "Prix au m²",
         description_title: "Description du bien",
         location_title: "Emplacement",
         price_label: "Prix",
