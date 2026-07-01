@@ -45,12 +45,19 @@ export async function fetchCRMProperty(id: string): Promise<CRMProperty | null> 
       headers: { Accept: "application/json" },
       next: { revalidate: 0 },
     });
-    if (!res.ok) return null;
+    if (!res.ok) {
+      console.error("Nadlan One prop API error:", res.status, await res.text());
+      return null;
+    }
     const data = await res.json();
     // API returns an array even for single-property queries
     const list: CRMProperty[] = Array.isArray(data) ? data : [data];
+    if (list.length === 0) {
+      console.error(`Nadlan One prop API returned an empty list for id=${id}`);
+    }
     return list[0] ?? null;
-  } catch {
+  } catch (err) {
+    console.error("Nadlan One prop API request failed:", err);
     return null;
   }
 }
