@@ -20,6 +20,14 @@ export interface Property {
   neighborhood: string;
   city: string;
   description: string;
+  title_en?: string;
+  title_fr?: string;
+  description_en?: string;
+  description_fr?: string;
+  neighborhood_en?: string;
+  neighborhood_fr?: string;
+  city_en?: string;
+  city_fr?: string;
   images: string[];
   status: PropertyStatus;
   featured: boolean;

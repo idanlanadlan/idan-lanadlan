@@ -5,18 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { BedDouble, Maximize2, Layers, Wind, Car, Shield, ShieldCheck, Tag } from "lucide-react";
 import type { Property } from "@/lib/types";
-import { pricePerSqm } from "@/lib/property-utils";
-
-function formatPrice(price: number, type: Property["type"]) {
-  if (type === "rent") return `₪${price.toLocaleString("he-IL")}/חודש`;
-  return `₪${price.toLocaleString("he-IL")}`;
-}
-
-const typeLabel: Record<Property["type"], string> = {
-  sale: "למכירה",
-  rent: "להשכרה",
-  project: "פרויקט",
-};
+import { pricePerSqm, localizedField } from "@/lib/property-utils";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface PropertyCardProps {
   property: Property;
@@ -24,8 +14,25 @@ interface PropertyCardProps {
 }
 
 export default function PropertyCard({ property, variant = "default" }: PropertyCardProps) {
+  const { locale, t } = useLanguage();
+  const pd = t.sections.property_detail;
   const isLarge = variant === "large";
   const [imgError, setImgError] = useState(false);
+
+  const typeLabel: Record<Property["type"], string> = {
+    sale: pd.type_sale,
+    rent: pd.type_rent,
+    project: pd.type_project,
+  };
+
+  function formatPrice(price: number, type: Property["type"]) {
+    if (type === "rent") return `₪${price.toLocaleString("he-IL")}/${pd.per_month}`;
+    return `₪${price.toLocaleString("he-IL")}`;
+  }
+
+  const title = localizedField(property, "title", locale);
+  const neighborhood = localizedField(property, "neighborhood", locale);
+  const city = localizedField(property, "city", locale);
 
   const hasBadges =
     (property.balcony_sqm ?? 0) > 0 ||
@@ -41,7 +48,7 @@ export default function PropertyCard({ property, variant = "default" }: Property
           {!imgError ? (
             <Image
               src={property.images[0]}
-              alt={property.title}
+              alt={title}
               fill
               sizes={isLarge ? "(max-width: 768px) 100vw, 66vw" : "(max-width: 768px) 100vw, 33vw"}
               className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -68,31 +75,31 @@ export default function PropertyCard({ property, variant = "default" }: Property
         {/* Details */}
         <div className={`flex flex-col flex-1 ${isLarge ? "p-7" : "p-5"}`}>
           <h3 className={`font-semibold text-cream mb-1 line-clamp-1 ${isLarge ? "text-lg" : "text-base"}`}>
-            {property.title}
+            {title}
           </h3>
           <p className="text-xs text-gray-light mb-5">
-            {property.neighborhood}, {property.city}
+            {neighborhood}, {city}
           </p>
 
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-gray-light mt-auto">
             <span className="flex items-center gap-1.5">
               <BedDouble size={12} className="text-gold/70" aria-hidden="true" />
-              {property.bedrooms} חדרים
+              {property.bedrooms} {pd.rooms}
             </span>
             <span className="flex items-center gap-1.5">
               <Maximize2 size={12} className="text-gold/70" aria-hidden="true" />
-              {property.size_sqm} מ״ר
+              {property.size_sqm} {pd.sqm}
             </span>
             {property.type !== "rent" && (
               <span className="flex items-center gap-1.5">
                 <Tag size={12} className="text-gold/70" aria-hidden="true" />
-                ₪{pricePerSqm(property).toLocaleString("he-IL")} למ״ר
+                {pd.price_per_sqm}: ₪{pricePerSqm(property).toLocaleString("he-IL")}
               </span>
             )}
             {property.floor != null && (
               <span className="flex items-center gap-1.5">
                 <Layers size={12} className="text-gold/70" aria-hidden="true" />
-                קומה {property.floor}
+                {pd.floor} {property.floor}
               </span>
             )}
           </div>
@@ -102,25 +109,25 @@ export default function PropertyCard({ property, variant = "default" }: Property
               {(property.balcony_sqm ?? 0) > 0 && (
                 <span className="flex items-center gap-1.5">
                   <Wind size={12} className="text-gold/70" aria-hidden="true" />
-                  מרפסת {property.balcony_sqm} מ״ר
+                  {pd.balcony} {property.balcony_sqm} {pd.sqm}
                 </span>
               )}
               {(property.parking_spots ?? 0) > 0 && (
                 <span className="flex items-center gap-1.5">
                   <Car size={12} className="text-gold/70" aria-hidden="true" />
-                  {property.parking_spots} חניה
+                  {property.parking_spots} {pd.parking}
                 </span>
               )}
               {property.has_mamad && (
                 <span className="flex items-center gap-1.5">
                   <Shield size={12} className="text-gold/70" aria-hidden="true" />
-                  ממ״ד
+                  {pd.mamad}
                 </span>
               )}
               {property.has_shelter && (
                 <span className="flex items-center gap-1.5">
                   <ShieldCheck size={12} className="text-gold/70" aria-hidden="true" />
-                  מקלט
+                  {pd.shelter}
                 </span>
               )}
             </div>

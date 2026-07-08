@@ -41,6 +41,17 @@ ALTER TABLE properties
   ADD COLUMN IF NOT EXISTS has_shelter BOOLEAN NOT NULL DEFAULT false,
   ADD COLUMN IF NOT EXISTS has_elevator BOOLEAN NOT NULL DEFAULT false;`;
 
+const MIGRATION_SQL_TRANSLATIONS = `-- הוספת שדות תרגום (אנגלית/צרפתית) לכותרת, תיאור, שכונה ועיר
+ALTER TABLE properties
+  ADD COLUMN IF NOT EXISTS title_en TEXT,
+  ADD COLUMN IF NOT EXISTS title_fr TEXT,
+  ADD COLUMN IF NOT EXISTS description_en TEXT,
+  ADD COLUMN IF NOT EXISTS description_fr TEXT,
+  ADD COLUMN IF NOT EXISTS neighborhood_en TEXT,
+  ADD COLUMN IF NOT EXISTS neighborhood_fr TEXT,
+  ADD COLUMN IF NOT EXISTS city_en TEXT,
+  ADD COLUMN IF NOT EXISTS city_fr TEXT;`;
+
 export default function SetupPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-10" dir="rtl">
@@ -107,6 +118,15 @@ export default function SetupPage() {
           </p>
           <pre className="bg-black rounded-lg p-4 text-xs text-cream overflow-x-auto leading-relaxed font-mono">
             {MIGRATION_SQL}
+          </pre>
+        </Step>
+
+        <Step num={6} title="עדכון: תרגום אוטומטי של נכסים (אנגלית/צרפתית)">
+          <p className="text-sm text-gray-light mb-3">
+            כדי שכותרת/תיאור/שכונה/עיר יוצגו מתורגמים כשמחליפים שפה באתר, הרץ ב-<strong className="text-cream">SQL Editor</strong> את זה:
+          </p>
+          <pre className="bg-black rounded-lg p-4 text-xs text-cream overflow-x-auto leading-relaxed font-mono">
+            {MIGRATION_SQL_TRANSLATIONS}
           </pre>
         </Step>
       </div>

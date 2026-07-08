@@ -5,6 +5,9 @@ import { updatePropertyAction, deleteProperty } from "@/app/actions/properties";
 import PropertyForm from "@/components/admin/PropertyForm";
 import ConfirmDeleteForm from "@/components/admin/ConfirmDeleteForm";
 
+// Saving now also calls Claude to auto-translate the listing (EN/FR).
+export const maxDuration = 30;
+
 export default async function EditPropertyPage({
   params,
 }: {

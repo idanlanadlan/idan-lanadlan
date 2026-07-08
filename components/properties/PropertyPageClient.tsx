@@ -26,7 +26,7 @@ import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { Property } from "@/lib/types";
-import { grossSize, pricePerSqm } from "@/lib/property-utils";
+import { grossSize, pricePerSqm, localizedField } from "@/lib/property-utils";
 
 interface Props {
   property: Property;
@@ -34,9 +34,14 @@ interface Props {
 }
 
 export default function PropertyPageClient({ property, schema }: Props) {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const pd = t.sections.property_detail;
   const [activeImg, setActiveImg] = useState(0);
+
+  const title = localizedField(property, "title", locale);
+  const description = localizedField(property, "description", locale);
+  const neighborhood = localizedField(property, "neighborhood", locale);
+  const city = localizedField(property, "city", locale);
 
   const images = property.images.length > 0 ? property.images : [];
   const hasGallery = images.length > 1;
@@ -84,7 +89,7 @@ export default function PropertyPageClient({ property, schema }: Props) {
           <ArrowRight size={12} className="rtl-flip" />
           <Link href="/nadlan" className="hover:text-gold transition-colors">{t.nav.properties}</Link>
           <ArrowRight size={12} className="rtl-flip" />
-          <span className="text-cream">{property.title}</span>
+          <span className="text-cream">{title}</span>
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
@@ -96,7 +101,7 @@ export default function PropertyPageClient({ property, schema }: Props) {
                 {images.length > 0 ? (
                   <Image
                     src={images[activeImg]}
-                    alt={property.title}
+                    alt={title}
                     fill
                     sizes="(max-width: 1024px) 100vw, 66vw"
                     className="object-cover transition-opacity duration-300"
@@ -155,11 +160,11 @@ export default function PropertyPageClient({ property, schema }: Props) {
               {/* Property info */}
               <div className="bg-charcoal rounded-xl border border-gray-dark p-6 mb-6">
                 <h1 className="font-display text-3xl sm:text-4xl font-light text-white mb-2">
-                  {property.title}
+                  {title}
                 </h1>
                 <p className="flex items-center gap-2 text-sm text-gray-light mb-6">
                   <MapPin size={14} className="text-gold" />
-                  {property.address}, {property.neighborhood}, {property.city}
+                  {property.address}, {neighborhood}, {city}
                 </p>
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 py-6 border-y border-gray-dark mb-6">
@@ -173,7 +178,7 @@ export default function PropertyPageClient({ property, schema }: Props) {
                 </div>
 
                 <h2 className="text-sm font-semibold text-white mb-3">{pd.description_title}</h2>
-                <p className="text-gray-light leading-relaxed text-sm">{property.description}</p>
+                <p className="text-gray-light leading-relaxed text-sm">{description}</p>
               </div>
 
               {/* Map */}
@@ -182,7 +187,7 @@ export default function PropertyPageClient({ property, schema }: Props) {
                   <h2 className="text-sm font-semibold text-white">{pd.location_title}</h2>
                   <p className="text-xs text-gray-light mt-1 flex items-center gap-1">
                     <MapPin size={11} className="text-gold" />
-                    {property.address}, {property.neighborhood}, {property.city}
+                    {property.address}, {neighborhood}, {city}
                   </p>
                 </div>
                 <iframe
@@ -193,7 +198,7 @@ export default function PropertyPageClient({ property, schema }: Props) {
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                  title={`${pd.location_title} ${property.title}`}
+                  title={`${pd.location_title} ${title}`}
                 />
               </div>
             </div>
@@ -219,7 +224,7 @@ export default function PropertyPageClient({ property, schema }: Props) {
 
                 <div className="flex flex-col gap-3">
                   <a
-                    href={`https://wa.me/972549791171?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%A2%D7%99%D7%93%D7%9F%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A9%D7%9E%D7%95%D7%A2%20%D7%A2%D7%95%D7%93%20%D7%A2%D7%9C%20${encodeURIComponent(property.title)}`}
+                    href={`https://wa.me/972549791171?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%A2%D7%99%D7%93%D7%9F%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A9%D7%9E%D7%95%D7%A2%20%D7%A2%D7%95%D7%93%20%D7%A2%D7%9C%20${encodeURIComponent(title)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn-gold px-5 py-3 rounded-lg text-sm flex items-center justify-center gap-2"

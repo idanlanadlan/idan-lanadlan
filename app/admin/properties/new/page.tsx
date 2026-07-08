@@ -2,6 +2,9 @@ import Link from "next/link";
 import { createPropertyAction } from "@/app/actions/properties";
 import PropertyForm from "@/components/admin/PropertyForm";
 
+// Saving now also calls Claude to auto-translate the listing (EN/FR).
+export const maxDuration = 30;
+
 export default function NewPropertyPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-10">

@@ -7,6 +7,7 @@ import {
   updateProperty,
   deleteProperty as dbDeleteProperty,
 } from "@/lib/db";
+import { translatePropertyFields } from "@/lib/translate-property";
 import type { PropertyType, PropertyStatus } from "@/lib/types";
 
 function parseForm(formData: FormData) {
@@ -41,7 +42,8 @@ function parseForm(formData: FormData) {
 
 export async function createPropertyAction(formData: FormData) {
   const data = parseForm(formData);
-  await createProperty(data);
+  const translations = await translatePropertyFields(data);
+  await createProperty({ ...data, ...translations });
   revalidatePath("/");
   revalidatePath("/nadlan");
   revalidatePath("/admin/properties");
@@ -51,7 +53,8 @@ export async function createPropertyAction(formData: FormData) {
 export async function updatePropertyAction(formData: FormData) {
   const id = formData.get("id") as string;
   const data = parseForm(formData);
-  await updateProperty(id, data);
+  const translations = await translatePropertyFields(data);
+  await updateProperty(id, { ...data, ...translations });
   revalidatePath("/");
   revalidatePath("/nadlan");
   revalidatePath(`/nadlan/${id}`);
