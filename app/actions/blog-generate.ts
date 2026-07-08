@@ -105,7 +105,7 @@ export async function generateBlogDraft(mode: GenerateMode, value: string): Prom
 
   try {
     const msg = await client.messages.create({
-      model: "claude-opus-4-8",
+      model: "claude-sonnet-5",
       max_tokens: 4096,
       system: SYSTEM_PROMPT,
       messages: [{ role: "user", content: userMessage }],

@@ -118,7 +118,7 @@ export default function GenerateClient() {
           <Sparkles size={15} />
           {isGenerating ? "כותב טיוטה..." : "צור טיוטה עם AI"}
         </button>
-        <p className="mt-2 text-[11px] text-gray-light/60 text-center">משתמש ב-Claude AI · לוקח כ-10-20 שניות</p>
+        <p className="mt-2 text-[11px] text-gray-light/60 text-center">משתמש ב-Claude AI · עשוי לקחת עד דקה</p>
 
         {error && (
           <p className="mt-3 text-xs text-red-400 bg-red-500/10 rounded-lg px-3 py-2">{error}</p>
