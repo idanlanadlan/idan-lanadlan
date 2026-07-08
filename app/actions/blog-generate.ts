@@ -25,14 +25,30 @@ const SYSTEM_PROMPT = `אתה קופירייטר ומומחה SEO/AEO של "עי
 - excerpt: תקציר/meta description קצר וממוקד, עד כ-155 תווים.
 - keywords: מערך של 5-8 מילות מפתח רלוונטיות (עברית).
 
-החזר אך ורק JSON בפורמט הבא, ללא שום טקסט נוסף:
-{
-  "title": "כותרת המאמר",
-  "slug": "latin-url-slug",
-  "excerpt": "תקציר קצר",
-  "content": "פסקה ראשונה...\\n\\n## כותרת ביניים\\n\\nפסקה שנייה...",
-  "keywords": ["מילת מפתח 1", "מילת מפתח 2"]
-}`;
+קרא לכלי write_article עם הטיוטה המלאה — אל תחזיר טקסט חופשי.`;
+
+const WRITE_ARTICLE_TOOL: Anthropic.Tool = {
+  name: "write_article",
+  description: "שומר את טיוטת המאמר שנכתבה",
+  input_schema: {
+    type: "object",
+    properties: {
+      title: { type: "string", description: "כותרת המאמר" },
+      slug: { type: "string", description: "latin-url-slug, אותיות קטנות ומקפים בלבד" },
+      excerpt: { type: "string", description: "תקציר/meta description קצר, עד כ-155 תווים" },
+      content: {
+        type: "string",
+        description: "גוף המאמר. פסקאות/כותרות מופרדות בשורה ריקה. כותרות ביניים בפורמט '## כותרת'.",
+      },
+      keywords: {
+        type: "array",
+        items: { type: "string" },
+        description: "5-8 מילות מפתח רלוונטיות בעברית",
+      },
+    },
+    required: ["title", "slug", "excerpt", "content", "keywords"],
+  },
+};
 
 function getClient(): Anthropic | null {
   const key = process.env.ANTHROPIC_API_KEY;
@@ -40,62 +56,17 @@ function getClient(): Anthropic | null {
   return new Anthropic({ apiKey: key });
 }
 
-/**
- * Model output for long multi-paragraph fields (like `content`) frequently contains
- * raw newlines inside JSON string values instead of escaped \n, which JSON.parse
- * rejects. Escape control characters while inside a string, leaving structural
- * whitespace between tokens untouched.
- */
-function escapeNewlinesInStrings(raw: string): string {
-  let result = "";
-  let inString = false;
-  let escaped = false;
-  for (const ch of raw) {
-    if (!inString) {
-      if (ch === '"') inString = true;
-      result += ch;
-      continue;
-    }
-    if (escaped) {
-      result += ch;
-      escaped = false;
-      continue;
-    }
-    if (ch === "\\") {
-      result += ch;
-      escaped = true;
-      continue;
-    }
-    if (ch === '"') {
-      inString = false;
-      result += ch;
-      continue;
-    }
-    if (ch === "\n") result += "\\n";
-    else if (ch === "\r") continue;
-    else if (ch === "\t") result += "\\t";
-    else result += ch;
-  }
-  return result;
-}
-
-function extractDraftJSON(text: string): Partial<BlogPost> | null {
-  const blockMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/);
-  const objectMatch = text.match(/\{[\s\S]*\}/);
-  const raw = blockMatch ? blockMatch[1] : objectMatch ? objectMatch[0] : null;
-  if (!raw) return null;
-  try {
-    const parsed = JSON.parse(escapeNewlinesInStrings(raw.trim())) as Record<string, unknown>;
-    return {
-      title: String(parsed.title ?? ""),
-      slug: String(parsed.slug ?? ""),
-      excerpt: String(parsed.excerpt ?? ""),
-      content: String(parsed.content ?? ""),
-      keywords: Array.isArray(parsed.keywords) ? parsed.keywords.map(String) : [],
-    };
-  } catch {
-    return null;
-  }
+function extractDraft(msg: Anthropic.Message): Partial<BlogPost> | null {
+  const toolUse = msg.content.find((b): b is Anthropic.ToolUseBlock => b.type === "tool_use");
+  if (!toolUse) return null;
+  const input = toolUse.input as Record<string, unknown>;
+  return {
+    title: String(input.title ?? ""),
+    slug: String(input.slug ?? ""),
+    excerpt: String(input.excerpt ?? ""),
+    content: String(input.content ?? ""),
+    keywords: Array.isArray(input.keywords) ? input.keywords.map(String) : [],
+  };
 }
 
 /** Strips HTML down to plain text for use as inspiration source, capped to avoid blowing the context window */
@@ -148,10 +119,11 @@ export async function generateBlogDraft(mode: GenerateMode, value: string): Prom
       max_tokens: 4096,
       system: SYSTEM_PROMPT,
       messages: [{ role: "user", content: userMessage }],
+      tools: [WRITE_ARTICLE_TOOL],
+      tool_choice: { type: "tool", name: "write_article" },
     });
 
-    const text = msg.content[0].type === "text" ? msg.content[0].text : "";
-    const draft = extractDraftJSON(text);
+    const draft = extractDraft(msg);
     if (!draft) return { ok: false, error: "parse_error" };
 
     draft.slug = await uniqueSlug(draft.slug ?? "");
