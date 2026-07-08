@@ -24,7 +24,9 @@ function parseForm(formData: FormData) {
     title,
     slug: (formData.get("slug") as string) || slugify(title),
     excerpt: formData.get("excerpt") as string,
-    content: formData.get("content") as string,
+    // Browser <textarea> form submissions normalize line breaks to \r\n,
+    // which breaks the \n\n paragraph-split rendering on the public page.
+    content: (formData.get("content") as string).replace(/\r\n/g, "\n"),
     cover_image: formData.get("cover_image") as string,
     keywords,
     published: formData.get("published") === "on",

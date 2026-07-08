@@ -112,7 +112,7 @@ export default async function BlogPostPage({
 
           <div className="text-gray-light leading-relaxed space-y-5">
             {post.content
-              ? post.content.split("\n\n").map((para, i) => {
+              ? post.content.split(/\r?\n\r?\n/).map((para, i) => {
                   if (para.startsWith("### ")) {
                     return (
                       <h3 key={i} className="font-display text-lg text-white font-normal !mt-10 !mb-1">
