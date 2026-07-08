@@ -33,16 +33,23 @@ export function extractCRMId(input: string): string | null {
 
 export async function fetchCRMProperty(id: string): Promise<CRMProperty | null> {
   const key = process.env.NADLAN_ONE_PROP_KEY;
-  if (!key) return null;
+  const apiKey = process.env.NADLAN_ONE_PROP_API_KEY;
+  if (!key || !apiKey) return null;
 
   try {
-    // The prop API is authorized via the `key` query param only — it is a
-    // different key/endpoint than the Lead API in app/actions/contact.ts,
-    // which takes its own X-API-KEY header (NADLAN_ONE_LEAD_KEY). Sending
-    // that header here was incorrect and likely caused auth failures.
-    const url = `https://int.nadlanone.co.il/apiv1/prop?key=${key}&lang=he&id=${id}`;
+    // The prop API requires two separate secrets at once: `key` as a query
+    // param, and a different token as the X-API-KEY header. This is distinct
+    // from the Lead API in app/actions/contact.ts (NADLAN_ONE_LEAD_KEY) —
+    // don't reuse that value here. `cat` is required on every call per the
+    // integrations docs (the only param not marked optional there), even
+    // when filtering by a specific `id`.
+    const url = `https://int.nadlanone.co.il/apiv1/prop?key=${key}&cat=1&lang=he&id=${id}`;
     const res = await fetch(url, {
-      headers: { Accept: "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "X-API-KEY": apiKey,
+      },
       next: { revalidate: 0 },
     });
     if (!res.ok) {
