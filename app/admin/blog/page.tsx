@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Plus, Pencil, Eye, EyeOff } from "lucide-react";
+import { Plus, Pencil, Eye, EyeOff, Sparkles } from "lucide-react";
 import { getAllBlogPosts } from "@/lib/db";
 import { deleteBlogPost, togglePublished } from "@/app/actions/blog";
 import ConfirmDeleteForm from "@/components/admin/ConfirmDeleteForm";
@@ -17,13 +17,22 @@ export default async function BlogAdmin() {
           <h1 className="font-display text-3xl font-light text-white">מאמרים</h1>
           <p className="text-xs text-gray-light mt-1">{posts.length} מאמרים בסך הכל</p>
         </div>
-        <Link
-          href="/admin/blog/new"
-          className="flex items-center gap-2 bg-gold text-black px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-gold/90 transition-colors"
-        >
-          <Plus size={16} />
-          מאמר חדש
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/admin/blog/generate"
+            className="flex items-center gap-2 border border-gold/40 text-gold px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-gold/10 transition-colors"
+          >
+            <Sparkles size={16} />
+            צור מאמר עם AI
+          </Link>
+          <Link
+            href="/admin/blog/new"
+            className="flex items-center gap-2 bg-gold text-black px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-gold/90 transition-colors"
+          >
+            <Plus size={16} />
+            מאמר חדש
+          </Link>
+        </div>
       </div>
 
       {posts.length === 0 ? (

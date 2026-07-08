@@ -8,13 +8,13 @@ const label = "block text-xs text-gold tracking-wider uppercase mb-1.5";
 
 interface Props {
   action: (formData: FormData) => Promise<void>;
-  post?: BlogPost;
+  post?: Partial<BlogPost>;
 }
 
 export default function BlogForm({ action, post }: Props) {
   return (
     <form action={action} className="flex flex-col gap-6">
-      {post && <input type="hidden" name="id" value={post.id} />}
+      {post?.id && <input type="hidden" name="id" value={post.id} />}
 
       <div>
         <label className={label}>כותרת *</label>
@@ -78,7 +78,7 @@ export default function BlogForm({ action, post }: Props) {
         <input
           className={field}
           name="keywords"
-          defaultValue={post?.keywords.join(", ")}
+          defaultValue={post?.keywords?.join(", ")}
           placeholder="נדל״ן, תל אביב, רכישת דירה"
         />
       </div>

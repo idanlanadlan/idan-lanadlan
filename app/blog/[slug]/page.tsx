@@ -51,7 +51,7 @@ export default async function BlogPostPage({
     },
     datePublished: post.created_at,
     dateModified: post.updated_at,
-    articleBody: post.content || undefined,
+    articleBody: post.content ? post.content.replace(/^#{2,3} /gm, "") : undefined,
     keywords: post.keywords.join(", "),
     publisher: {
       "@type": "Organization",
@@ -112,9 +112,23 @@ export default async function BlogPostPage({
 
           <div className="text-gray-light leading-relaxed space-y-5">
             {post.content
-              ? post.content.split("\n\n").map((para, i) => (
-                  <p key={i}>{para}</p>
-                ))
+              ? post.content.split("\n\n").map((para, i) => {
+                  if (para.startsWith("### ")) {
+                    return (
+                      <h3 key={i} className="font-display text-lg text-white font-normal !mt-10 !mb-1">
+                        {para.slice(4)}
+                      </h3>
+                    );
+                  }
+                  if (para.startsWith("## ")) {
+                    return (
+                      <h2 key={i} className="font-display text-2xl text-white font-light !mt-12 !mb-2">
+                        {para.slice(3)}
+                      </h2>
+                    );
+                  }
+                  return <p key={i}>{para}</p>;
+                })
               : <p>תוכן המאמר יופיע כאן בקרוב.</p>}
           </div>
 
