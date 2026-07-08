@@ -101,7 +101,7 @@ export default function BlogForm({ action, post }: Props) {
           type="submit"
           className="btn-gold flex-1 py-3 rounded-lg text-sm font-semibold"
         >
-          {post ? "שמור שינויים" : "צור מאמר"}
+          {post?.id ? "שמור שינויים" : "צור מאמר"}
         </button>
         <a
           href="/admin/blog"
