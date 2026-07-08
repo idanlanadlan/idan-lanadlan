@@ -40,13 +40,52 @@ function getClient(): Anthropic | null {
   return new Anthropic({ apiKey: key });
 }
 
+/**
+ * Model output for long multi-paragraph fields (like `content`) frequently contains
+ * raw newlines inside JSON string values instead of escaped \n, which JSON.parse
+ * rejects. Escape control characters while inside a string, leaving structural
+ * whitespace between tokens untouched.
+ */
+function escapeNewlinesInStrings(raw: string): string {
+  let result = "";
+  let inString = false;
+  let escaped = false;
+  for (const ch of raw) {
+    if (!inString) {
+      if (ch === '"') inString = true;
+      result += ch;
+      continue;
+    }
+    if (escaped) {
+      result += ch;
+      escaped = false;
+      continue;
+    }
+    if (ch === "\\") {
+      result += ch;
+      escaped = true;
+      continue;
+    }
+    if (ch === '"') {
+      inString = false;
+      result += ch;
+      continue;
+    }
+    if (ch === "\n") result += "\\n";
+    else if (ch === "\r") continue;
+    else if (ch === "\t") result += "\\t";
+    else result += ch;
+  }
+  return result;
+}
+
 function extractDraftJSON(text: string): Partial<BlogPost> | null {
   const blockMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/);
   const objectMatch = text.match(/\{[\s\S]*\}/);
   const raw = blockMatch ? blockMatch[1] : objectMatch ? objectMatch[0] : null;
   if (!raw) return null;
   try {
-    const parsed = JSON.parse(raw.trim()) as Record<string, unknown>;
+    const parsed = JSON.parse(escapeNewlinesInStrings(raw.trim())) as Record<string, unknown>;
     return {
       title: String(parsed.title ?? ""),
       slug: String(parsed.slug ?? ""),
