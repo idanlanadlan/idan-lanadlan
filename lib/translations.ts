@@ -220,11 +220,11 @@ export const translations: Record<Locale, T> = {
 
   en: {
     meta: {
-      site_name: "Idan Real Estate",
-      site_title: "Idan Real Estate — Idan Huli | Luxury Real Estate in Tel Aviv",
+      site_name: "Idan LaNadlan",
+      site_title: "Idan LaNadlan — Idan Huli | Luxury Real Estate in Tel Aviv",
       site_description:
         "Idan Huli — about a decade of experience in luxury real estate brokerage, development and marketing in Tel Aviv and surroundings. Sales, rentals, project marketing and investor advisory.",
-      og_title: "Idan Real Estate — Idan Huli | Luxury Real Estate",
+      og_title: "Idan LaNadlan — Idan Huli | Luxury Real Estate",
       og_description: "About a decade of luxury real estate brokerage and marketing experience in Tel Aviv and surroundings.",
     },
     nav: {
@@ -243,7 +243,7 @@ export const translations: Record<Locale, T> = {
     hero: {
       eyebrow: "319 HaYarkon St., Tel Aviv Port",
       line1: "Idan Huli",
-      line2: "Idan Real Estate",
+      line2: "Idan LaNadlan",
       subtitle: "About a decade of luxury real estate expertise. Full transparency, real results.",
       cta_properties: "View Properties",
       cta_contact: "Talk to Idan",
@@ -325,11 +325,11 @@ export const translations: Record<Locale, T> = {
         rent_badge: "Rent",
         sale_title: "🔒 Quiet VIP Group",
         sale_subtitle: "Hot listings — before everyone else",
-        sale_description: "A closed, exclusive group for Idan Real Estate clients. Get first notice on hot Tel Aviv properties for sale — before they go public. The group is completely silent: no replies, no noise. Just properties.",
+        sale_description: "A closed, exclusive group for Idan LaNadlan clients. Get first notice on hot Tel Aviv properties for sale — before they go public. The group is completely silent: no replies, no noise. Just properties.",
         sale_items: ["Updates before everyone — before public listing", "Exclusive properties not listed on websites", "Silent group with no distractions", "Hundreds of active buyers already inside"],
         rent_title: "🔒 Quiet VIP Group",
         rent_subtitle: "Tel Aviv apartments — before everyone else",
-        rent_description: "A closed, exclusive group for Idan Real Estate clients. Get first notice on top Tel Aviv rentals — before they're listed and taken. The group is completely silent: no replies, no noise. Just apartments.",
+        rent_description: "A closed, exclusive group for Idan LaNadlan clients. Get first notice on top Tel Aviv rentals — before they're listed and taken. The group is completely silent: no replies, no noise. Just apartments.",
         rent_items: ["Updates before everyone — before public listing", "Exclusive apartments not listed on websites", "Silent group with no distractions", "Hundreds of active renters already inside"],
         request_button: "Request Group Access",
         card_footer: "Closed group — access by approval",
@@ -367,7 +367,7 @@ export const translations: Record<Locale, T> = {
       legal: "Legal",
       privacy: "Privacy Policy",
       accessibility: "Accessibility",
-      copyright: "Idan Real Estate — All rights reserved",
+      copyright: "Idan LaNadlan — All rights reserved",
       license: "Broker License No.",
     },
     cookie: {
@@ -414,11 +414,11 @@ export const translations: Record<Locale, T> = {
 
   fr: {
     meta: {
-      site_name: "Idan Immobilier",
-      site_title: "Idan Immobilier — Idan Huli | Immobilier de luxe à Tel Aviv",
+      site_name: "Idan LaNadlan",
+      site_title: "Idan LaNadlan — Idan Huli | Immobilier de luxe à Tel Aviv",
       site_description:
         "Idan Huli — une décennie d'expérience en courtage, promotion et marketing immobilier de luxe à Tel Aviv et ses environs. Vente, location, commercialisation de projets et conseil aux investisseurs.",
-      og_title: "Idan Immobilier — Idan Huli | Immobilier de luxe",
+      og_title: "Idan LaNadlan — Idan Huli | Immobilier de luxe",
       og_description: "Une décennie d'expérience en courtage et marketing immobilier de luxe à Tel Aviv et ses environs.",
     },
     nav: {
@@ -437,7 +437,7 @@ export const translations: Record<Locale, T> = {
     hero: {
       eyebrow: "319 HaYarkon, Port de Tel Aviv",
       line1: "Idan Huli",
-      line2: "Idan Immobilier",
+      line2: "Idan LaNadlan",
       subtitle: "Une décennie d'expertise en immobilier de luxe. Transparence totale, résultats concrets.",
       cta_properties: "Voir les biens",
       cta_contact: "Parler à Idan",
@@ -519,11 +519,11 @@ export const translations: Record<Locale, T> = {
         rent_badge: "Location",
         sale_title: "🔒 Groupe VIP silencieux",
         sale_subtitle: "Biens exclusifs — avant tout le monde",
-        sale_description: "Un groupe fermé et exclusif pour les clients d'Idan Immobilier. Recevez en premier les alertes sur les biens chauds à vendre à Tel Aviv — avant leur publication publique. Le groupe est totalement silencieux : pas de réponses, pas de bruit. Que des biens.",
+        sale_description: "Un groupe fermé et exclusif pour les clients d'Idan LaNadlan. Recevez en premier les alertes sur les biens chauds à vendre à Tel Aviv — avant leur publication publique. Le groupe est totalement silencieux : pas de réponses, pas de bruit. Que des biens.",
         sale_items: ["Alertes avant tout le monde — avant la publication publique", "Biens exclusifs non listés sur les sites", "Groupe silencieux sans interruptions", "Des centaines d'acheteurs actifs déjà présents"],
         rent_title: "🔒 Groupe VIP silencieux",
         rent_subtitle: "Appartements Tel Aviv — avant tout le monde",
-        rent_description: "Un groupe fermé et exclusif pour les clients d'Idan Immobilier. Recevez en premier les alertes sur les meilleurs appartements à louer à Tel Aviv — avant qu'ils soient pris. Le groupe est totalement silencieux : pas de réponses, pas de bruit. Que des appartements.",
+        rent_description: "Un groupe fermé et exclusif pour les clients d'Idan LaNadlan. Recevez en premier les alertes sur les meilleurs appartements à louer à Tel Aviv — avant qu'ils soient pris. Le groupe est totalement silencieux : pas de réponses, pas de bruit. Que des appartements.",
         rent_items: ["Alertes avant tout le monde — avant la publication publique", "Appartements exclusifs non listés sur les sites", "Groupe silencieux sans interruptions", "Des centaines de locataires actifs déjà présents"],
         request_button: "Demander l'accès au groupe",
         card_footer: "Groupe fermé — accès sur approbation",
@@ -561,7 +561,7 @@ export const translations: Record<Locale, T> = {
       legal: "Mentions légales",
       privacy: "Politique de confidentialité",
       accessibility: "Accessibilité",
-      copyright: "Idan Immobilier — Tous droits réservés",
+      copyright: "Idan LaNadlan — Tous droits réservés",
       license: "N° de licence",
     },
     cookie: {

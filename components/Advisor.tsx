@@ -13,10 +13,10 @@ type Message = {
 
 function getWelcome(locale: Locale): string {
   if (locale === "en") {
-    return `Hello! I'm Idan Real Estate's AI advisor 🏠\n\nI can help you with:\n• **Purchase tax** calculations\n• **Mortgage limits** (LTV)\n• **Capital gains tax** & exemptions\n• **Steps of a real estate deal**\n• **Buyer costs** & fees\n\nWhat would you like to know?`;
+    return `Hello! I'm Idan LaNadlan's AI advisor 🏠\n\nI can help you with:\n• **Purchase tax** calculations\n• **Mortgage limits** (LTV)\n• **Capital gains tax** & exemptions\n• **Steps of a real estate deal**\n• **Buyer costs** & fees\n\nWhat would you like to know?`;
   }
   if (locale === "fr") {
-    return `Bonjour! Je suis le conseiller IA d'Idan Immobilier 🏠\n\nJe peux vous aider avec:\n• Calcul de la **taxe d'achat**\n• **Limites de prêt** (LTV)\n• **Taxe sur la plus-value** & exonérations\n• **Étapes d'une transaction** immobilière\n• **Frais** pour l'acheteur\n\nQue souhaitez-vous savoir?`;
+    return `Bonjour! Je suis le conseiller IA d'Idan LaNadlan 🏠\n\nJe peux vous aider avec:\n• Calcul de la **taxe d'achat**\n• **Limites de prêt** (LTV)\n• **Taxe sur la plus-value** & exonérations\n• **Étapes d'une transaction** immobilière\n• **Frais** pour l'acheteur\n\nQue souhaitez-vous savoir?`;
   }
   return `שלום! אני היועץ הנדל"ני של עידן לנדל"ן 🏠\n\nאני יכול לעזור לך עם:\n• חישוב **מס רכישה** לנכס\n• **מגבלות משכנתא** (LTV)\n• **מס שבח** ופטורים\n• **שלבי עסקת נדל"ן**\n• **עלויות נלוות** לרוכש\n\nמה תרצה לדעת?`;
 }
@@ -159,7 +159,7 @@ export default function Advisor() {
                 </div>
                 <div>
                   <p className="text-xs font-semibold text-cream leading-tight">{ad.title}</p>
-                  <p className="text-[10px] text-gold leading-tight">Idan Real Estate</p>
+                  <p className="text-[10px] text-gold leading-tight">Idan LaNadlan</p>
                 </div>
               </div>
               <div className="flex items-center gap-1">
