@@ -1,7 +1,9 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
+import { createContext, useContext, type ReactNode } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { translations, type Locale, type T } from "@/lib/translations";
+import { localizedPath } from "@/lib/locale-path";
 
 
 interface LanguageContextValue {
@@ -16,33 +18,34 @@ const LanguageContext = createContext<LanguageContextValue>({
   setLocale: () => {},
 });
 
-export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>("he");
-
-  useEffect(() => {
-    const saved = localStorage.getItem("locale") as Locale | null;
-    if (saved && saved in translations) {
-      setLocaleState(saved);
-      applyLocale(saved);
-    }
-  }, []);
+/**
+ * Locale is URL-driven: the server passes it down from the [locale] route
+ * segment (Hebrew is served prefix-free via the proxy rewrite). Switching
+ * language navigates to the same page under the new locale's prefix.
+ * The provider is mounted with key={locale}, so navigation remounts it.
+ */
+export function LanguageProvider({
+  children,
+  initialLocale,
+}: {
+  children: ReactNode;
+  initialLocale: Locale;
+}) {
+  const router = useRouter();
+  const pathname = usePathname();
 
   const setLocale = (l: Locale) => {
-    setLocaleState(l);
-    localStorage.setItem("locale", l);
-    applyLocale(l);
+    if (l === initialLocale) return;
+    router.push(localizedPath(pathname, l));
   };
 
   return (
-    <LanguageContext.Provider value={{ locale, t: translations[locale], setLocale }}>
+    <LanguageContext.Provider
+      value={{ locale: initialLocale, t: translations[initialLocale], setLocale }}
+    >
       {children}
     </LanguageContext.Provider>
   );
-}
-
-function applyLocale(l: Locale) {
-  document.documentElement.lang = l;
-  document.documentElement.dir = l === "he" ? "rtl" : "ltr";
 }
 
 export const useLanguage = () => useContext(LanguageContext);

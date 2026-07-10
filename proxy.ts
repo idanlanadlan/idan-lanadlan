@@ -24,21 +24,43 @@ async function verifyToken(token: string): Promise<boolean> {
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (
-    pathname.startsWith("/admin") &&
-    !pathname.startsWith("/admin/login") &&
-    !pathname.startsWith("/admin/forgot-password") &&
-    !pathname.startsWith("/admin/reset")
-  ) {
-    const token = request.cookies.get("admin_session")?.value;
-    if (!token || !(await verifyToken(token))) {
-      return NextResponse.redirect(new URL("/admin/login", request.url));
+  if (pathname.startsWith("/admin")) {
+    if (
+      !pathname.startsWith("/admin/login") &&
+      !pathname.startsWith("/admin/forgot-password") &&
+      !pathname.startsWith("/admin/reset")
+    ) {
+      const token = request.cookies.get("admin_session")?.value;
+      if (!token || !(await verifyToken(token))) {
+        return NextResponse.redirect(new URL("/admin/login", request.url));
+      }
     }
+    return NextResponse.next();
   }
 
-  return NextResponse.next();
+  // Locale routing: Hebrew is served prefix-free (rewritten internally to /he),
+  // while /en and /fr are real URL prefixes handled by the app/[locale] segment.
+  if (pathname === "/he" || pathname.startsWith("/he/")) {
+    // Explicit /he URLs would duplicate the canonical prefix-free Hebrew URLs.
+    const url = request.nextUrl.clone();
+    url.pathname = pathname === "/he" ? "/" : pathname.slice(3);
+    return NextResponse.redirect(url, 308);
+  }
+
+  if (pathname === "/en" || pathname.startsWith("/en/") || pathname === "/fr" || pathname.startsWith("/fr/")) {
+    return NextResponse.next();
+  }
+
+  const url = request.nextUrl.clone();
+  url.pathname = pathname === "/" ? "/he" : `/he${pathname}`;
+  return NextResponse.rewrite(url);
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: [
+    "/admin/:path*",
+    // Everything public except API routes, Next internals, and files with an
+    // extension (public/ assets, favicon.ico, sitemap.xml, robots.txt...).
+    "/((?!api|admin|_next/static|_next/image|.*\\..*).*)",
+  ],
 };

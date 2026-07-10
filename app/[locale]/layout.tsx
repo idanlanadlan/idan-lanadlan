@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { Heebo, Cormorant_Garamond, Frank_Ruhl_Libre } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import CookieBanner from "@/components/CookieBanner";
 import Advisor from "@/components/Advisor";
 import { getSettings } from "@/lib/db";
+import { locales, isLocale } from "@/lib/locale-path";
+import { translations } from "@/lib/translations";
 
 const heebo = Heebo({
   variable: "--font-heebo",
@@ -27,53 +30,73 @@ const frankRuhl = Frank_Ruhl_Libre({
   weight: ["300", "400", "500"],
 });
 
-export const metadata: Metadata = {
-  title: "עידן לנדל\"ן — עידן חולי | תיווך ושיווק נדל\"ן יוקרה",
-  description:
-    "עידן חולי — כעשור של ניסיון בתיווך, יזמות ושיווק נדל\"ן יוקרה בתל אביב וסביבתה. מכירה, השכרה, שיווק פרויקטים וייעוץ משקיעים.",
-  keywords: [
-    "תיווך נדל\"ן תל אביב",
-    "עידן חולי",
-    "נדל\"ן יוקרה תל אביב",
-    "דירות למכירה תל אביב",
-    "נמל תל אביב נדל\"ן",
-    "משרד תיווך",
-    "שיווק פרויקטים",
-    "ייעוץ נדל\"ן",
-  ],
-  authors: [{ name: "עידן חולי", url: "https://idanlanadlan.co.il" }],
-  creator: "עידן חולי",
-  openGraph: {
-    type: "website",
-    locale: "he_IL",
-    url: "https://idanlanadlan.co.il",
-    siteName: "עידן לנדל\"ן",
-    title: "עידן לנדל\"ן — עידן חולי | נדל\"ן יוקרה",
-    description:
-      "כעשור של ניסיון בתיווך, יזמות ושיווק נדל\"ן יוקרה בתל אביב וסביבתה.",
-    images: [
-      {
-        url: "https://idanlanadlan.co.il/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "עידן לנדל\"ן",
-      },
+const BASE = "https://idanlanadlan.co.il";
+const OG_LOCALES: Record<string, string> = { he: "he_IL", en: "en_US", fr: "fr_FR" };
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const l = isLocale(locale) ? locale : "he";
+  const meta = translations[l].meta;
+  const canonical = l === "he" ? BASE : `${BASE}/${l}`;
+  return {
+    title: meta.site_title,
+    description: meta.site_description,
+    keywords: [
+      "תיווך נדל\"ן תל אביב",
+      "עידן חולי",
+      "נדל\"ן יוקרה תל אביב",
+      "דירות למכירה תל אביב",
+      "נמל תל אביב נדל\"ן",
+      "משרד תיווך",
+      "שיווק פרויקטים",
+      "ייעוץ נדל\"ן",
+      "Tel Aviv real estate",
+      "luxury real estate Tel Aviv",
+      "immobilier Tel Aviv",
     ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "עידן לנדל\"ן — נדל\"ן יוקרה",
-    description: "כעשור של ניסיון בתיווך ושיווק נדל\"ן יוקרה בתל אביב וסביבתה.",
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: { index: true, follow: true, "max-image-preview": "large" },
-  },
-  alternates: {
-    canonical: "https://idanlanadlan.co.il",
-  },
-};
+    authors: [{ name: "עידן חולי", url: BASE }],
+    creator: "עידן חולי",
+    openGraph: {
+      type: "website",
+      locale: OG_LOCALES[l],
+      url: canonical,
+      siteName: meta.site_name,
+      title: meta.og_title,
+      description: meta.og_description,
+      images: [
+        {
+          url: `${BASE}/og-image.jpg`,
+          width: 1200,
+          height: 630,
+          alt: meta.site_name,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: meta.og_title,
+      description: meta.og_description,
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: { index: true, follow: true, "max-image-preview": "large" },
+    },
+    alternates: {
+      canonical,
+      languages: {
+        he: BASE,
+        en: `${BASE}/en`,
+        fr: `${BASE}/fr`,
+        "x-default": BASE,
+      },
+    },
+  };
+}
 
 const schemaOrg = {
   "@context": "https://schema.org",
@@ -122,14 +145,21 @@ const schemaOrg = {
   ],
 };
 
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }));
+}
+
 export default async function RootLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+  params,
+}: Readonly<{ children: React.ReactNode; params: Promise<{ locale: string }> }>) {
+  const { locale } = await params;
+  if (!isLocale(locale)) notFound();
   const settings = await getSettings();
   return (
     <html
-      lang="he"
-      dir="rtl"
+      lang={locale}
+      dir={locale === "he" ? "rtl" : "ltr"}
       className={`${heebo.variable} ${cormorant.variable} ${frankRuhl.variable}`}
       suppressHydrationWarning
     >
@@ -151,7 +181,7 @@ export default async function RootLayout({
           דלג לתוכן הראשי
         </a>
         <ThemeProvider>
-          <LanguageProvider>
+          <LanguageProvider key={locale} initialLocale={locale}>
             <SettingsProvider settings={settings}>
               {children}
               <CookieBanner />

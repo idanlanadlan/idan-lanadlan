@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/LocaleLink";
 import {
   BedDouble,
   Bath,
@@ -65,7 +65,7 @@ export default function PropertyPageClient({ property, schema }: Props) {
     ...(property.balcony_sqm
       ? [
           { icon: Maximize2, value: grossSize(property), label: pd.gross_sqm },
-          { icon: Wind, value: property.balcony_sqm, label: pd.balcony },
+          { icon: Wind, value: property.balcony_sqm, label: `${pd.balcony} (${pd.sqm_unit})` },
         ]
       : []),
     ...(property.floor != null ? [{ icon: Layers, value: property.floor, label: pd.floor }] : []),

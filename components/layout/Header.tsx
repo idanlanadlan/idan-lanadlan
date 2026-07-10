@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
+import Link from "@/components/LocaleLink";
 import Image from "next/image";
 import { Menu, X, Phone, Sun, Moon } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -110,7 +110,7 @@ export default function Header() {
             aria-label="התקשר לעידן חולי"
           >
             <Phone size={15} />
-            <span className="hidden lg:inline">054-979-1171</span>
+            <span className="hidden lg:inline whitespace-nowrap">054-979-1171</span>
           </a>
 
           {/* CTA */}

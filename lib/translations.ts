@@ -1,6 +1,7 @@
 export type Locale = "he" | "en" | "fr";
 
 export interface T {
+  meta: { site_name: string; site_title: string; site_description: string; og_title: string; og_description: string; };
   nav: { home: string; properties: string; tools: string; groups: string; sellers: string; blog: string; about: string; contact: string; message: string; close: string; open: string; };
   hero: { eyebrow: string; line1: string; line2: string; subtitle: string; cta_properties: string; cta_contact: string; rating: string; };
   stats: { experience: string; experience_value: string; deals: string; deals_value: string; rating: string; office: string; office_value: string; };
@@ -13,7 +14,7 @@ export interface T {
     social: { eyebrow: string; title: string; facebook_link: string; tiktok_description: string; tiktok_button: string; linkedin_description: string; linkedin_button: string; };
     faq: { eyebrow: string; title: string; subtitle: string; items: { q: string; a: string }[]; };
     groups: { eyebrow: string; title: string; subtitle: string; sale_badge: string; rent_badge: string; sale_title: string; sale_subtitle: string; sale_description: string; sale_items: string[]; rent_title: string; rent_subtitle: string; rent_description: string; rent_items: string[]; request_button: string; card_footer: string; managed_note: string; share_note: string; };
-    property_detail: { rooms: string; bathrooms: string; toilets: string; sqm: string; gross_sqm: string; balcony: string; floor: string; parking: string; mamad: string; shelter: string; elevator: string; price_per_sqm: string; description_title: string; location_title: string; price_label: string; contact_text: string; whatsapp_button: string; per_month: string; type_sale: string; type_rent: string; type_project: string; };
+    property_detail: { rooms: string; bathrooms: string; toilets: string; sqm: string; sqm_unit: string; gross_sqm: string; balcony: string; floor: string; parking: string; mamad: string; shelter: string; elevator: string; price_per_sqm: string; description_title: string; location_title: string; price_label: string; contact_text: string; whatsapp_button: string; per_month: string; type_sale: string; type_rent: string; type_project: string; };
   };
   footer: { tagline: string; quick_nav: string; contact: string; legal: string; privacy: string; accessibility: string; copyright: string; license: string; };
   cookie: { message: string; accept: string; decline: string; privacy_link: string; };
@@ -24,6 +25,14 @@ export interface T {
 
 export const translations: Record<Locale, T> = {
   he: {
+    meta: {
+      site_name: "עידן לנדל\"ן",
+      site_title: "עידן לנדל\"ן — עידן חולי | תיווך ושיווק נדל\"ן יוקרה",
+      site_description:
+        "עידן חולי — כעשור של ניסיון בתיווך, יזמות ושיווק נדל\"ן יוקרה בתל אביב וסביבתה. מכירה, השכרה, שיווק פרויקטים וייעוץ משקיעים.",
+      og_title: "עידן לנדל\"ן — עידן חולי | נדל\"ן יוקרה",
+      og_description: "כעשור של ניסיון בתיווך, יזמות ושיווק נדל\"ן יוקרה בתל אביב וסביבתה.",
+    },
     nav: {
       home: "בית",
       properties: "נכסים",
@@ -138,6 +147,7 @@ export const translations: Record<Locale, T> = {
         bathrooms: "מקלחות",
         toilets: "שירותים",
         sqm: "מ״ר נטו",
+        sqm_unit: "מ״ר",
         gross_sqm: "מ״ר ברוטו",
         balcony: "מרפסת",
         floor: "קומה",
@@ -210,6 +220,14 @@ export const translations: Record<Locale, T> = {
   },
 
   en: {
+    meta: {
+      site_name: "Idan LaNadlan",
+      site_title: "Idan LaNadlan — Idan Huli | Luxury Real Estate in Tel Aviv",
+      site_description:
+        "Idan Huli — about a decade of experience in luxury real estate brokerage, development and marketing in Tel Aviv and surroundings. Sales, rentals, project marketing and investor advisory.",
+      og_title: "Idan LaNadlan — Idan Huli | Luxury Real Estate",
+      og_description: "About a decade of luxury real estate brokerage and marketing experience in Tel Aviv and surroundings.",
+    },
     nav: {
       home: "Home",
       properties: "Properties",
@@ -226,7 +244,7 @@ export const translations: Record<Locale, T> = {
     hero: {
       eyebrow: "319 HaYarkon St., Tel Aviv Port",
       line1: "Idan Huli",
-      line2: "Idan Real Estate",
+      line2: "Idan LaNadlan",
       subtitle: "About a decade of luxury real estate expertise. Full transparency, real results.",
       cta_properties: "View Properties",
       cta_contact: "Talk to Idan",
@@ -308,11 +326,11 @@ export const translations: Record<Locale, T> = {
         rent_badge: "Rent",
         sale_title: "🔒 Quiet VIP Group",
         sale_subtitle: "Hot listings — before everyone else",
-        sale_description: "A closed, exclusive group for Idan Real Estate clients. Get first notice on hot Tel Aviv properties for sale — before they go public. The group is completely silent: no replies, no noise. Just properties.",
+        sale_description: "A closed, exclusive group for Idan LaNadlan clients. Get first notice on hot Tel Aviv properties for sale — before they go public. The group is completely silent: no replies, no noise. Just properties.",
         sale_items: ["Updates before everyone — before public listing", "Exclusive properties not listed on websites", "Silent group with no distractions", "Hundreds of active buyers already inside"],
         rent_title: "🔒 Quiet VIP Group",
         rent_subtitle: "Tel Aviv apartments — before everyone else",
-        rent_description: "A closed, exclusive group for Idan Real Estate clients. Get first notice on top Tel Aviv rentals — before they're listed and taken. The group is completely silent: no replies, no noise. Just apartments.",
+        rent_description: "A closed, exclusive group for Idan LaNadlan clients. Get first notice on top Tel Aviv rentals — before they're listed and taken. The group is completely silent: no replies, no noise. Just apartments.",
         rent_items: ["Updates before everyone — before public listing", "Exclusive apartments not listed on websites", "Silent group with no distractions", "Hundreds of active renters already inside"],
         request_button: "Request Group Access",
         card_footer: "Closed group — access by approval",
@@ -324,6 +342,7 @@ export const translations: Record<Locale, T> = {
         bathrooms: "Bathrooms",
         toilets: "Toilets",
         sqm: "sqm (net)",
+        sqm_unit: "sqm",
         gross_sqm: "sqm (gross)",
         balcony: "Balcony",
         floor: "Floor",
@@ -350,7 +369,7 @@ export const translations: Record<Locale, T> = {
       legal: "Legal",
       privacy: "Privacy Policy",
       accessibility: "Accessibility",
-      copyright: "Idan Real Estate — All rights reserved",
+      copyright: "Idan LaNadlan — All rights reserved",
       license: "Broker License No.",
     },
     cookie: {
@@ -396,6 +415,14 @@ export const translations: Record<Locale, T> = {
   },
 
   fr: {
+    meta: {
+      site_name: "Idan LaNadlan",
+      site_title: "Idan LaNadlan — Idan Huli | Immobilier de luxe à Tel Aviv",
+      site_description:
+        "Idan Huli — une décennie d'expérience en courtage, promotion et marketing immobilier de luxe à Tel Aviv et ses environs. Vente, location, commercialisation de projets et conseil aux investisseurs.",
+      og_title: "Idan LaNadlan — Idan Huli | Immobilier de luxe",
+      og_description: "Une décennie d'expérience en courtage et marketing immobilier de luxe à Tel Aviv et ses environs.",
+    },
     nav: {
       home: "Accueil",
       properties: "Biens",
@@ -412,7 +439,7 @@ export const translations: Record<Locale, T> = {
     hero: {
       eyebrow: "319 HaYarkon, Port de Tel Aviv",
       line1: "Idan Huli",
-      line2: "Idan Immobilier",
+      line2: "Idan LaNadlan",
       subtitle: "Une décennie d'expertise en immobilier de luxe. Transparence totale, résultats concrets.",
       cta_properties: "Voir les biens",
       cta_contact: "Parler à Idan",
@@ -494,11 +521,11 @@ export const translations: Record<Locale, T> = {
         rent_badge: "Location",
         sale_title: "🔒 Groupe VIP silencieux",
         sale_subtitle: "Biens exclusifs — avant tout le monde",
-        sale_description: "Un groupe fermé et exclusif pour les clients d'Idan Immobilier. Recevez en premier les alertes sur les biens chauds à vendre à Tel Aviv — avant leur publication publique. Le groupe est totalement silencieux : pas de réponses, pas de bruit. Que des biens.",
+        sale_description: "Un groupe fermé et exclusif pour les clients d'Idan LaNadlan. Recevez en premier les alertes sur les biens chauds à vendre à Tel Aviv — avant leur publication publique. Le groupe est totalement silencieux : pas de réponses, pas de bruit. Que des biens.",
         sale_items: ["Alertes avant tout le monde — avant la publication publique", "Biens exclusifs non listés sur les sites", "Groupe silencieux sans interruptions", "Des centaines d'acheteurs actifs déjà présents"],
         rent_title: "🔒 Groupe VIP silencieux",
         rent_subtitle: "Appartements Tel Aviv — avant tout le monde",
-        rent_description: "Un groupe fermé et exclusif pour les clients d'Idan Immobilier. Recevez en premier les alertes sur les meilleurs appartements à louer à Tel Aviv — avant qu'ils soient pris. Le groupe est totalement silencieux : pas de réponses, pas de bruit. Que des appartements.",
+        rent_description: "Un groupe fermé et exclusif pour les clients d'Idan LaNadlan. Recevez en premier les alertes sur les meilleurs appartements à louer à Tel Aviv — avant qu'ils soient pris. Le groupe est totalement silencieux : pas de réponses, pas de bruit. Que des appartements.",
         rent_items: ["Alertes avant tout le monde — avant la publication publique", "Appartements exclusifs non listés sur les sites", "Groupe silencieux sans interruptions", "Des centaines de locataires actifs déjà présents"],
         request_button: "Demander l'accès au groupe",
         card_footer: "Groupe fermé — accès sur approbation",
@@ -510,6 +537,7 @@ export const translations: Record<Locale, T> = {
         bathrooms: "Salles de bain",
         toilets: "Toilettes",
         sqm: "m² net",
+        sqm_unit: "m²",
         gross_sqm: "m² brut",
         balcony: "Balcon",
         floor: "Étage",
@@ -536,7 +564,7 @@ export const translations: Record<Locale, T> = {
       legal: "Mentions légales",
       privacy: "Politique de confidentialité",
       accessibility: "Accessibilité",
-      copyright: "Idan Immobilier — Tous droits réservés",
+      copyright: "Idan LaNadlan — Tous droits réservés",
       license: "N° de licence",
     },
     cookie: {
