@@ -1,6 +1,7 @@
 export type Locale = "he" | "en" | "fr";
 
 export interface T {
+  meta: { site_name: string; site_title: string; site_description: string; og_title: string; og_description: string; };
   nav: { home: string; properties: string; tools: string; groups: string; sellers: string; blog: string; about: string; contact: string; message: string; close: string; open: string; };
   hero: { eyebrow: string; line1: string; line2: string; subtitle: string; cta_properties: string; cta_contact: string; rating: string; };
   stats: { experience: string; experience_value: string; deals: string; deals_value: string; rating: string; office: string; office_value: string; };
@@ -24,6 +25,14 @@ export interface T {
 
 export const translations: Record<Locale, T> = {
   he: {
+    meta: {
+      site_name: "עידן לנדל\"ן",
+      site_title: "עידן לנדל\"ן — עידן חולי | תיווך ושיווק נדל\"ן יוקרה",
+      site_description:
+        "עידן חולי — כעשור של ניסיון בתיווך, יזמות ושיווק נדל\"ן יוקרה בתל אביב וסביבתה. מכירה, השכרה, שיווק פרויקטים וייעוץ משקיעים.",
+      og_title: "עידן לנדל\"ן — עידן חולי | נדל\"ן יוקרה",
+      og_description: "כעשור של ניסיון בתיווך, יזמות ושיווק נדל\"ן יוקרה בתל אביב וסביבתה.",
+    },
     nav: {
       home: "בית",
       properties: "נכסים",
@@ -210,6 +219,14 @@ export const translations: Record<Locale, T> = {
   },
 
   en: {
+    meta: {
+      site_name: "Idan Real Estate",
+      site_title: "Idan Real Estate — Idan Huli | Luxury Real Estate in Tel Aviv",
+      site_description:
+        "Idan Huli — about a decade of experience in luxury real estate brokerage, development and marketing in Tel Aviv and surroundings. Sales, rentals, project marketing and investor advisory.",
+      og_title: "Idan Real Estate — Idan Huli | Luxury Real Estate",
+      og_description: "About a decade of luxury real estate brokerage and marketing experience in Tel Aviv and surroundings.",
+    },
     nav: {
       home: "Home",
       properties: "Properties",
@@ -396,6 +413,14 @@ export const translations: Record<Locale, T> = {
   },
 
   fr: {
+    meta: {
+      site_name: "Idan Immobilier",
+      site_title: "Idan Immobilier — Idan Huli | Immobilier de luxe à Tel Aviv",
+      site_description:
+        "Idan Huli — une décennie d'expérience en courtage, promotion et marketing immobilier de luxe à Tel Aviv et ses environs. Vente, location, commercialisation de projets et conseil aux investisseurs.",
+      og_title: "Idan Immobilier — Idan Huli | Immobilier de luxe",
+      og_description: "Une décennie d'expérience en courtage et marketing immobilier de luxe à Tel Aviv et ses environs.",
+    },
     nav: {
       home: "Accueil",
       properties: "Biens",

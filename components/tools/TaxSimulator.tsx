@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import Link from "@/components/LocaleLink";
 
 const label = "block text-xs text-gold tracking-wider uppercase mb-1.5";
 const field =

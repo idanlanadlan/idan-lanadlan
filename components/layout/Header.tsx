@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
+import Link from "@/components/LocaleLink";
 import Image from "next/image";
 import { Menu, X, Phone, Sun, Moon } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import Link from "@/components/LocaleLink";
 import Image from "next/image";
 import { BedDouble, Maximize2, Layers, Wind, Car, Shield, ShieldCheck, Tag } from "lucide-react";
 import type { Property } from "@/lib/types";

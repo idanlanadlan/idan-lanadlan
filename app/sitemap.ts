@@ -3,32 +3,63 @@ import { getProperties, getPublishedBlogPosts } from "@/lib/db";
 
 const BASE = "https://idanlanadlan.co.il";
 
+// Hebrew is prefix-free; en/fr live under a URL prefix (see proxy.ts).
+function urlFor(path: string, locale: "he" | "en" | "fr"): string {
+  const prefix = locale === "he" ? "" : `/${locale}`;
+  return `${BASE}${prefix}${path}`;
+}
+
+function alternatesFor(path: string) {
+  return {
+    languages: {
+      he: urlFor(path, "he"),
+      en: urlFor(path, "en"),
+      fr: urlFor(path, "fr"),
+      "x-default": urlFor(path, "he"),
+    },
+  };
+}
+
+/** One sitemap entry per locale, each carrying the full hreflang set. */
+function localizedEntries(
+  path: string,
+  extra: { changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"]; priority: number; lastModified?: Date }
+): MetadataRoute.Sitemap {
+  return (["he", "en", "fr"] as const).map((locale) => ({
+    url: urlFor(path, locale),
+    alternates: alternatesFor(path),
+    ...extra,
+  }));
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const staticPages = [
-    { url: BASE, changeFrequency: "weekly" as const, priority: 1 },
-    { url: `${BASE}/nadlan`, changeFrequency: "daily" as const, priority: 0.9 },
-    { url: `${BASE}/blog`, changeFrequency: "weekly" as const, priority: 0.8 },
-    { url: `${BASE}/about`, changeFrequency: "monthly" as const, priority: 0.7 },
-    { url: `${BASE}/contact`, changeFrequency: "monthly" as const, priority: 0.7 },
+  const staticPages: MetadataRoute.Sitemap = [
+    ...localizedEntries("", { changeFrequency: "weekly", priority: 1 }),
+    ...localizedEntries("/nadlan", { changeFrequency: "daily", priority: 0.9 }),
+    ...localizedEntries("/blog", { changeFrequency: "weekly", priority: 0.8 }),
+    ...localizedEntries("/about", { changeFrequency: "monthly", priority: 0.7 }),
+    ...localizedEntries("/contact", { changeFrequency: "monthly", priority: 0.7 }),
   ];
 
   const properties = await getProperties();
   const propertyPages = properties
     .filter((p) => p.status === "available")
-    .map((p) => ({
-      url: `${BASE}/nadlan/${p.id}`,
-      changeFrequency: "weekly" as const,
-      priority: 0.8,
-      lastModified: new Date(p.created_at),
-    }));
+    .flatMap((p) =>
+      localizedEntries(`/nadlan/${p.id}`, {
+        changeFrequency: "weekly",
+        priority: 0.8,
+        lastModified: new Date(p.created_at),
+      })
+    );
 
   const blogPosts = await getPublishedBlogPosts();
-  const blogPages = blogPosts.map((p) => ({
-    url: `${BASE}/blog/${p.slug}`,
-    changeFrequency: "monthly" as const,
-    priority: 0.7,
-    lastModified: new Date(p.updated_at),
-  }));
+  const blogPages = blogPosts.flatMap((p) =>
+    localizedEntries(`/blog/${p.slug}`, {
+      changeFrequency: "monthly",
+      priority: 0.7,
+      lastModified: new Date(p.updated_at),
+    })
+  );
 
   return [...staticPages, ...propertyPages, ...blogPages];
 }

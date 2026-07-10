@@ -1,7 +1,34 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { Heebo, Cormorant_Garamond, Frank_Ruhl_Libre } from "next/font/google";
+import "../globals.css";
 import { Home, Plus, List, LogOut, BarChart2, FileText, Settings } from "lucide-react";
+
+const heebo = Heebo({
+  variable: "--font-heebo",
+  subsets: ["hebrew", "latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+});
+
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
+  subsets: ["latin"],
+  weight: ["300", "400", "600", "700"],
+  style: ["normal", "italic"],
+});
+
+const frankRuhl = Frank_Ruhl_Libre({
+  variable: "--font-frankruhl",
+  subsets: ["hebrew", "latin"],
+  weight: ["300", "400", "500"],
+});
+
+export const metadata: Metadata = {
+  title: "ניהול — עידן לנדל\"ן",
+  robots: { index: false, follow: false },
+};
 
 async function logout() {
   "use server";
@@ -11,6 +38,29 @@ async function logout() {
 }
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html
+      lang="he"
+      dir="rtl"
+      className={`${heebo.variable} ${cormorant.variable} ${frankRuhl.variable}`}
+      suppressHydrationWarning
+    >
+      <head>
+        {/* Anti-flash: set theme before first paint (same behavior as the public site) */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();`,
+          }}
+        />
+      </head>
+      <body className="min-h-screen bg-black text-cream antialiased">
+        <AdminChrome>{children}</AdminChrome>
+      </body>
+    </html>
+  );
+}
+
+function AdminChrome({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-black text-cream" dir="rtl">
       {/* Top bar */}
