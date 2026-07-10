@@ -1,8 +1,17 @@
 "use client";
 
-import { loadGovMap } from "./loader";
+import { loadGovMap, ensureGovMapAuth } from "./loader";
 import { itmToWgs84 } from "./itm";
 import type { GovMapGeocodeResponse } from "./types";
+
+const CALL_TIMEOUT_MS = 15_000;
+
+function withTimeout<T>(p: PromiseLike<T>, ms: number): Promise<T> {
+  return Promise.race([
+    Promise.resolve(p),
+    new Promise<T>((_, reject) => setTimeout(() => reject(new Error("govmap call timed out")), ms)),
+  ]);
+}
 
 export type GeocodeAccuracy = "exact" | "partial";
 
@@ -29,8 +38,12 @@ export async function govmapGeocode(address: string): Promise<GeocodeResult | nu
   if (!keyword) return null;
   try {
     const govmap = await loadGovMap();
-    const res = await Promise.resolve(
-      govmap.geocode({ keyword, type: govmap.geocodeType.AccuracyOnly })
+    // Discovery finding: geocode is NOT standalone — the library routes calls
+    // through an iframe message port that only exists after an authed createMap.
+    await ensureGovMapAuth();
+    const res = await withTimeout(
+      govmap.geocode({ keyword, type: govmap.geocodeType.AccuracyOnly }),
+      CALL_TIMEOUT_MS
     );
     const { x, y, code } = extractXY(res as GovMapGeocodeResponse);
     if (!x || !y || code === 3) return null;

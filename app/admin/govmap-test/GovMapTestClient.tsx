@@ -63,9 +63,12 @@ export default function GovMapTestClient() {
   const testGeocodeRaw = () =>
     run("geocode גולמי (פורמט קואורדינטות)", async () => {
       const govmap = await loadGovMap();
-      const res = await Promise.resolve(
-        govmap.geocode({ keyword: OFFICE.address, type: govmap.geocodeType.AccuracyOnly })
-      );
+      await ensureGovMapAuth();
+      append("✓ auth עבר (createMap נסתר עם הטוקן)");
+      const res = await Promise.race([
+        Promise.resolve(govmap.geocode({ keyword: OFFICE.address, type: govmap.geocodeType.AccuracyOnly })),
+        new Promise((_, rej) => setTimeout(() => rej(new Error("timeout 15s — כנראה טוקן נדחה (401) בדומיין הזה")), 15000)),
+      ]);
       appendJson("תשובה גולמית", res);
       const d = ((res as { data?: unknown }).data ?? res) as { X?: number; Y?: number };
       if (d?.X && d?.Y) {
