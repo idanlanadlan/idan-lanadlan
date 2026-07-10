@@ -109,7 +109,7 @@ export default function PropertyCard({ property, variant = "default" }: Property
               {(property.balcony_sqm ?? 0) > 0 && (
                 <span className="flex items-center gap-1.5">
                   <Wind size={12} className="text-gold/70" aria-hidden="true" />
-                  {pd.balcony} {property.balcony_sqm} {pd.sqm}
+                  {pd.balcony} {property.balcony_sqm} {pd.sqm_unit}
                 </span>
               )}
               {(property.parking_spots ?? 0) > 0 && (

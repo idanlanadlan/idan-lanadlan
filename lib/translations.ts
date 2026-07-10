@@ -14,7 +14,7 @@ export interface T {
     social: { eyebrow: string; title: string; facebook_link: string; tiktok_description: string; tiktok_button: string; linkedin_description: string; linkedin_button: string; };
     faq: { eyebrow: string; title: string; subtitle: string; items: { q: string; a: string }[]; };
     groups: { eyebrow: string; title: string; subtitle: string; sale_badge: string; rent_badge: string; sale_title: string; sale_subtitle: string; sale_description: string; sale_items: string[]; rent_title: string; rent_subtitle: string; rent_description: string; rent_items: string[]; request_button: string; card_footer: string; managed_note: string; share_note: string; };
-    property_detail: { rooms: string; bathrooms: string; toilets: string; sqm: string; gross_sqm: string; balcony: string; floor: string; parking: string; mamad: string; shelter: string; elevator: string; price_per_sqm: string; description_title: string; location_title: string; price_label: string; contact_text: string; whatsapp_button: string; per_month: string; type_sale: string; type_rent: string; type_project: string; };
+    property_detail: { rooms: string; bathrooms: string; toilets: string; sqm: string; sqm_unit: string; gross_sqm: string; balcony: string; floor: string; parking: string; mamad: string; shelter: string; elevator: string; price_per_sqm: string; description_title: string; location_title: string; price_label: string; contact_text: string; whatsapp_button: string; per_month: string; type_sale: string; type_rent: string; type_project: string; };
   };
   footer: { tagline: string; quick_nav: string; contact: string; legal: string; privacy: string; accessibility: string; copyright: string; license: string; };
   cookie: { message: string; accept: string; decline: string; privacy_link: string; };
@@ -147,6 +147,7 @@ export const translations: Record<Locale, T> = {
         bathrooms: "מקלחות",
         toilets: "שירותים",
         sqm: "מ״ר נטו",
+        sqm_unit: "מ״ר",
         gross_sqm: "מ״ר ברוטו",
         balcony: "מרפסת",
         floor: "קומה",
@@ -341,6 +342,7 @@ export const translations: Record<Locale, T> = {
         bathrooms: "Bathrooms",
         toilets: "Toilets",
         sqm: "sqm (net)",
+        sqm_unit: "sqm",
         gross_sqm: "sqm (gross)",
         balcony: "Balcony",
         floor: "Floor",
@@ -535,6 +537,7 @@ export const translations: Record<Locale, T> = {
         bathrooms: "Salles de bain",
         toilets: "Toilettes",
         sqm: "m² net",
+        sqm_unit: "m²",
         gross_sqm: "m² brut",
         balcony: "Balcon",
         floor: "Étage",
