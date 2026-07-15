@@ -137,3 +137,14 @@ export function wgs84ToItm(lat: number, lng: number): { x: number; y: number } {
 export function itmDistance(x1: number, y1: number, x2: number, y2: number): number {
   return Math.round(Math.hypot(x2 - x1, y2 - y1));
 }
+
+/**
+ * Web Mercator (EPSG:3857) → WGS84. The GovMap search-service returns
+ * suggestion shapes as "POINT(x y)" in Web Mercator, not ITM.
+ */
+export function mercatorToWgs84(x: number, y: number): { lat: number; lng: number } {
+  const R = 6378137;
+  const lng = (x / R) * (180 / Math.PI);
+  const lat = (2 * Math.atan(Math.exp(y / R)) - Math.PI / 2) * (180 / Math.PI);
+  return { lat, lng };
+}

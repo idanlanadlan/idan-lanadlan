@@ -52,6 +52,11 @@ ALTER TABLE properties
   ADD COLUMN IF NOT EXISTS city_en TEXT,
   ADD COLUMN IF NOT EXISTS city_fr TEXT;`;
 
+const MIGRATION_SQL_COORDS = `-- קואורדינטות לנכס (מיקום במפה — נבחר מהצעות GovMap בטופס הנכס)
+ALTER TABLE properties
+  ADD COLUMN IF NOT EXISTS lat DOUBLE PRECISION,
+  ADD COLUMN IF NOT EXISTS lng DOUBLE PRECISION;`;
+
 export default function SetupPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-10" dir="rtl">
@@ -127,6 +132,15 @@ export default function SetupPage() {
           </p>
           <pre className="bg-black rounded-lg p-4 text-xs text-cream overflow-x-auto leading-relaxed font-mono">
             {MIGRATION_SQL_TRANSLATIONS}
+          </pre>
+        </Step>
+
+        <Step num={7} title="עדכון: מיקום נכס במפה (קואורדינטות)">
+          <p className="text-sm text-gray-light mb-3">
+            כדי שנכסים שנשמרים בטופס (עם בחירת כתובת מהצעות GovMap) יופיעו במפת הנכסים, הרץ ב-<strong className="text-cream">SQL Editor</strong> את זה:
+          </p>
+          <pre className="bg-black rounded-lg p-4 text-xs text-cream overflow-x-auto leading-relaxed font-mono">
+            {MIGRATION_SQL_COORDS}
           </pre>
         </Step>
       </div>

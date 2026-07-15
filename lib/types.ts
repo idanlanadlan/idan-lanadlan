@@ -32,8 +32,8 @@ export interface Property {
   status: PropertyStatus;
   featured: boolean;
   created_at: string;
-  lat?: number;
-  lng?: number;
+  lat?: number | null;
+  lng?: number | null;
   crm_id?: string;
 }
 

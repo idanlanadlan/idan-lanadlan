@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import type { Property } from "@/lib/types";
+import AddressAutocomplete from "@/components/admin/AddressAutocomplete";
 
 const field =
   "w-full bg-black border border-gray-dark rounded-lg px-4 py-2.5 text-sm text-cream placeholder:text-gray focus:border-gold outline-none transition-colors";
@@ -179,15 +180,13 @@ export default function PropertyForm({ action, property }: Props) {
         </label>
       </div>
 
-      {/* Address */}
+      {/* Address — GovMap autocomplete pins the property on the map */}
       <div>
         <label className={label}>כתובת *</label>
-        <input
-          className={field}
-          name="address"
-          required
+        <AddressAutocomplete
           defaultValue={property?.address}
-          placeholder="רחוב הירקון 100"
+          defaultLat={property?.lat}
+          defaultLng={property?.lng}
         />
       </div>
 
