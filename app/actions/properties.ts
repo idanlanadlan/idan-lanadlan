@@ -31,6 +31,10 @@ function parseForm(formData: FormData) {
     has_shelter: formData.get("has_shelter") === "on",
     has_elevator: formData.get("has_elevator") === "on",
     address: formData.get("address") as string,
+    // null (not undefined) so editing the address without re-picking a suggestion
+    // clears stale coordinates in the DB — undefined keys are dropped from the update
+    lat: formData.get("lat") ? Number(formData.get("lat")) : null,
+    lng: formData.get("lng") ? Number(formData.get("lng")) : null,
     neighborhood: formData.get("neighborhood") as string,
     city: (formData.get("city") as string) || "תל אביב",
     description: formData.get("description") as string,

@@ -7,6 +7,8 @@ import type { Property } from "@/lib/types";
 interface Props {
   properties: Property[];
   height?: string;
+  /** Legend labels — defaults to Hebrew (admin screens don't localize) */
+  labels?: { sale: string; rent: string; on_map: string };
 }
 
 // Gold and blue marker SVG as data URLs
@@ -20,7 +22,11 @@ const MARKER_SVG = (color: string) =>
 const SALE_ICON_URL = MARKER_SVG("#C9A96E");
 const RENT_ICON_URL = MARKER_SVG("#60a5fa");
 
-export default function PropertyMap({ properties, height = "480px" }: Props) {
+export default function PropertyMap({
+  properties,
+  height = "480px",
+  labels = { sale: "מכירה", rent: "השכרה", on_map: "נכסים על המפה" },
+}: Props) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<unknown>(null);
 
@@ -123,9 +129,9 @@ export default function PropertyMap({ properties, height = "480px" }: Props) {
       `}</style>
       <div ref={mapRef} style={{ height }} className="rounded-xl overflow-hidden border border-gray-dark" />
       <p className="mt-2 text-xs text-gray-light">
-        <span className="inline-block w-2 h-2 rounded-full bg-gold mr-1" />מכירה
-        <span className="inline-block w-2 h-2 rounded-full bg-blue-400 mr-1 ml-3" />השכרה
-        · {mapped.length} נכסים על המפה
+        <span className="inline-block w-2 h-2 rounded-full bg-gold mr-1" />{labels.sale}
+        <span className="inline-block w-2 h-2 rounded-full bg-blue-400 mr-1 ml-3" />{labels.rent}
+        · {mapped.length} {labels.on_map}
       </p>
     </>
   );

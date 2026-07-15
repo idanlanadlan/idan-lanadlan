@@ -11,6 +11,7 @@ export interface T {
     testimonials: { eyebrow: string; title: string; all: string; google_review: string; };
     cta: { eyebrow: string; title1: string; title2: string; subtitle: string; whatsapp: string; };
     blog: { eyebrow: string; title: string; all: string; };
+    map: { eyebrow: string; title: string; subtitle: string; on_map: string; };
     social: { eyebrow: string; title: string; facebook_link: string; tiktok_description: string; tiktok_button: string; linkedin_description: string; linkedin_button: string; };
     faq: { eyebrow: string; title: string; subtitle: string; items: { q: string; a: string }[]; };
     groups: { eyebrow: string; title: string; subtitle: string; sale_badge: string; rent_badge: string; sale_title: string; sale_subtitle: string; sale_description: string; sale_items: string[]; rent_title: string; rent_subtitle: string; rent_description: string; rent_items: string[]; request_button: string; card_footer: string; managed_note: string; share_note: string; };
@@ -100,6 +101,12 @@ export const translations: Record<Locale, T> = {
         eyebrow: "נכסים של ידע",
         title: "מדריכים ועדכונים חמים",
         all: "כל המדריכים",
+      },
+      map: {
+        eyebrow: "מפת הנכסים",
+        title: "הנכסים שלנו על המפה",
+        subtitle: "כל נכס ממוקם במפה לפי כתובתו המדויקת — לחצו על סמן לפרטי הנכס.",
+        on_map: "נכסים על המפה",
       },
       social: {
         eyebrow: "עקבו אחרינו",
@@ -296,6 +303,12 @@ export const translations: Record<Locale, T> = {
         title: "Guides & Hot Updates",
         all: "All Guides",
       },
+      map: {
+        eyebrow: "Property Map",
+        title: "Our Properties on the Map",
+        subtitle: "Every listing is pinned at its exact address — click a marker for property details.",
+        on_map: "properties on the map",
+      },
       social: {
         eyebrow: "Follow Us",
         title: "On Social Media",
@@ -490,6 +503,12 @@ export const translations: Record<Locale, T> = {
         eyebrow: "Savoir Immo",
         title: "Guides & Actus Chaudes",
         all: "Tous les guides",
+      },
+      map: {
+        eyebrow: "Carte des biens",
+        title: "Nos biens sur la carte",
+        subtitle: "Chaque bien est localisé à son adresse exacte — cliquez sur un marqueur pour voir les détails.",
+        on_map: "biens sur la carte",
       },
       social: {
         eyebrow: "Suivez-nous",
