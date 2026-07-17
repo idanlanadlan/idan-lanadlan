@@ -5,16 +5,14 @@ import { TrendingUp, Key, Search, Building2, ArrowRight } from "lucide-react";
 import { sendContactForm } from "@/app/actions/contact";
 import { isValidPhone, isValidEmail } from "@/lib/validation";
 import ConsentCheckboxes, { type ConsentValue } from "@/components/ConsentCheckboxes";
+import { useLanguage } from "@/contexts/LanguageContext";
 
-const CATEGORIES = [
-  { label: "מעוניין למכור נכס", Icon: TrendingUp },
-  { label: "מעוניין להשכיר נכס", Icon: Key },
-  { label: "מחפש נכס לרכישה", Icon: Search },
-  { label: "מחפש דירה להשכרה", Icon: Building2 },
-];
+const CATEGORY_ICONS = [TrendingUp, Key, Search, Building2];
 
 export function ContactForm() {
   const uid = useId();
+  const { t } = useLanguage();
+  const f = t.contact_form;
   const [step, setStep] = useState<"category" | "details">("category");
   const [category, setCategory] = useState("");
   const [name, setName] = useState("");
@@ -36,25 +34,25 @@ export function ContactForm() {
   function handlePhoneChange(value: string) {
     setPhone(value);
     if (phoneTouched) {
-      setPhoneError(value.trim() && !isValidPhone(value) ? "מספר טלפון לא תקין" : "");
+      setPhoneError(value.trim() && !isValidPhone(value) ? f.phone_error : "");
     }
   }
 
   function handlePhoneBlur() {
     setPhoneTouched(true);
-    setPhoneError(phone.trim() && !isValidPhone(phone) ? "מספר טלפון לא תקין" : "");
+    setPhoneError(phone.trim() && !isValidPhone(phone) ? f.phone_error : "");
   }
 
   function handleEmailChange(value: string) {
     setEmail(value);
     if (emailTouched) {
-      setEmailError(value.trim() && !isValidEmail(value) ? "כתובת מייל לא תקינה" : "");
+      setEmailError(value.trim() && !isValidEmail(value) ? f.email_error : "");
     }
   }
 
   function handleEmailBlur() {
     setEmailTouched(true);
-    setEmailError(email.trim() && !isValidEmail(email) ? "כתובת מייל לא תקינה" : "");
+    setEmailError(email.trim() && !isValidEmail(email) ? f.email_error : "");
   }
 
   const phoneValid = isValidPhone(phone);
@@ -65,8 +63,8 @@ export function ContactForm() {
     e.preventDefault();
     setPhoneTouched(true);
     setEmailTouched(true);
-    if (!phoneValid) { setPhoneError("מספר טלפון לא תקין"); return; }
-    if (!emailOk) { setEmailError("כתובת מייל לא תקינה"); return; }
+    if (!phoneValid) { setPhoneError(f.phone_error); return; }
+    if (!emailOk) { setEmailError(f.email_error); return; }
     if (!name.trim() || !city.trim() || !consent.privacy) return;
 
     setStatus("loading");
@@ -83,10 +81,10 @@ export function ContactForm() {
     if (result.success) {
       setStatus("success");
     } else if (result.error === "phone") {
-      setPhoneError("מספר טלפון לא תקין — אנא בדוק ותקן");
+      setPhoneError(f.phone_error_server);
       setStatus("idle");
     } else if (result.error === "email") {
-      setEmailError("כתובת מייל לא תקינה — אנא בדוק ותקן");
+      setEmailError(f.email_error_server);
       setStatus("idle");
     } else {
       setStatus("error");
@@ -95,44 +93,47 @@ export function ContactForm() {
 
   if (status === "success") {
     return (
-      <div className="text-center py-12" dir="rtl">
+      <div className="text-center py-12">
         <div className="w-20 h-20 bg-gold/10 border border-gold/30 rounded-full flex items-center justify-center mx-auto mb-6">
           <span className="text-4xl">✓</span>
         </div>
         <h3 className="font-display text-3xl font-light text-white mb-2">
-          העידן שלך לנדל״ן
+          {f.success_title}
         </h3>
-        <p className="text-gold text-lg">פנייתך התקבלה</p>
-        <p className="text-sm text-gray-light mt-3">עידן יחזור אליך בהקדם</p>
+        <p className="text-gold text-lg">{f.success_subtitle}</p>
+        <p className="text-sm text-gray-light mt-3">{f.success_note}</p>
       </div>
     );
   }
 
   if (step === "category") {
     return (
-      <div className="space-y-4" dir="rtl">
-        <p className="text-xs tracking-[0.3em] text-gold uppercase mb-4">במה אוכל לעזור?</p>
+      <div className="space-y-4">
+        <p className="text-xs tracking-[0.3em] text-gold uppercase mb-4">{f.help_prompt}</p>
         <div className="grid grid-cols-2 gap-3">
-          {CATEGORIES.map(({ label, Icon }) => (
-            <button
-              key={label}
-              type="button"
-              onClick={() => selectCategory(label)}
-              className="p-5 rounded-xl border border-gray-dark bg-black/40 text-gray-light hover:border-gold hover:text-white transition-all duration-200 text-right group"
-            >
-              <div className="mb-3 text-gray-light group-hover:text-gold transition-colors">
-                <Icon size={22} strokeWidth={1.5} />
-              </div>
-              <span className="text-sm font-medium leading-snug">{label}</span>
-            </button>
-          ))}
+          {f.categories.map((label, i) => {
+            const Icon = CATEGORY_ICONS[i];
+            return (
+              <button
+                key={label}
+                type="button"
+                onClick={() => selectCategory(label)}
+                className="p-5 rounded-xl border border-gray-dark bg-black/40 text-gray-light hover:border-gold hover:text-white transition-all duration-200 text-right group"
+              >
+                <div className="mb-3 text-gray-light group-hover:text-gold transition-colors">
+                  <Icon size={22} strokeWidth={1.5} />
+                </div>
+                <span className="text-sm font-medium leading-snug">{label}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5" dir="rtl">
+    <form onSubmit={handleSubmit} className="space-y-5">
       {/* Selected category indicator */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-sm text-gold">
@@ -144,15 +145,15 @@ export function ContactForm() {
           onClick={() => setStep("category")}
           className="flex items-center gap-1 text-xs text-gray-light hover:text-gold transition-colors"
         >
-          <ArrowRight size={12} />
-          שנה
+          <ArrowRight size={12} className="rtl-flip" />
+          {f.change_button}
         </button>
       </div>
 
       {/* שם מלא — חובה */}
       <div>
         <label htmlFor={`${uid}-name`} className="block text-xs text-gold tracking-widest uppercase mb-2">
-          שם מלא <span className="text-red-400" aria-hidden="true">*</span>
+          {f.name_label} <span className="text-red-400" aria-hidden="true">*</span>
         </label>
         <input
           id={`${uid}-name`}
@@ -169,7 +170,7 @@ export function ContactForm() {
       {/* טלפון — חובה */}
       <div>
         <label htmlFor={`${uid}-phone`} className="block text-xs text-gold tracking-widest uppercase mb-2">
-          טלפון <span className="text-red-400" aria-hidden="true">*</span>
+          {f.phone_label} <span className="text-red-400" aria-hidden="true">*</span>
         </label>
         <input
           id={`${uid}-phone`}
@@ -188,14 +189,14 @@ export function ContactForm() {
         {phoneError ? (
           <p id={`${uid}-phone-hint`} role="alert" className="mt-1.5 text-xs text-red-400">{phoneError}</p>
         ) : (
-          <p id={`${uid}-phone-hint`} className="mt-1.5 text-xs text-gray-light">ישראלי (05X-XXXXXXX) או בינלאומי (+XX...)</p>
+          <p id={`${uid}-phone-hint`} className="mt-1.5 text-xs text-gray-light">{f.phone_hint}</p>
         )}
       </div>
 
       {/* עיר — חובה */}
       <div>
         <label htmlFor={`${uid}-city`} className="block text-xs text-gold tracking-widest uppercase mb-2">
-          עיר <span className="text-red-400" aria-hidden="true">*</span>
+          {f.city_label} <span className="text-red-400" aria-hidden="true">*</span>
         </label>
         <input
           id={`${uid}-city`}
@@ -204,7 +205,7 @@ export function ContactForm() {
           onChange={(e) => setCity(e.target.value)}
           required
           aria-required="true"
-          placeholder="עיר הנכס הקיים או המבוקש"
+          placeholder={f.city_placeholder}
           className="w-full bg-charcoal border border-gray-dark rounded-lg px-4 py-3 text-sm text-cream focus:border-gold outline-none transition-colors"
         />
       </div>
@@ -212,7 +213,7 @@ export function ContactForm() {
       {/* מייל — לא חובה */}
       <div>
         <label htmlFor={`${uid}-email`} className="block text-xs text-gold tracking-widest uppercase mb-2">
-          מייל <span className="text-gray-light text-xs normal-case tracking-normal">(אופציונלי)</span>
+          {f.email_label} <span className="text-gray-light text-xs normal-case tracking-normal">{f.email_optional}</span>
         </label>
         <input
           id={`${uid}-email`}
@@ -235,7 +236,7 @@ export function ContactForm() {
 
       {status === "error" && (
         <p role="alert" className="text-xs text-red-400 text-center">
-          שגיאה בשליחה. נסה שוב או פנה אלינו ישירות.
+          {f.generic_error}
         </p>
       )}
 
@@ -244,7 +245,7 @@ export function ContactForm() {
         disabled={!canSubmit || status === "loading"}
         className="btn-gold w-full py-3.5 rounded-lg text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
       >
-        {status === "loading" ? "שולח..." : "שלח פנייה →"}
+        {status === "loading" ? f.submit_loading : f.submit_button}
       </button>
     </form>
   );
