@@ -32,6 +32,18 @@ function localizedEntries(
   }));
 }
 
+const TOOLBOX_SLUGS = [
+  "roi-calculator",
+  "mortgage-calculator",
+  "tax-simulator",
+  "buy-vs-rent",
+  "inspection-checklist",
+  "property-match",
+  "gush-helka",
+  "glossary",
+  "oleh-tax",
+];
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     ...localizedEntries("", { changeFrequency: "weekly", priority: 1 }),
@@ -39,6 +51,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...localizedEntries("/blog", { changeFrequency: "weekly", priority: 0.8 }),
     ...localizedEntries("/about", { changeFrequency: "monthly", priority: 0.7 }),
     ...localizedEntries("/contact", { changeFrequency: "monthly", priority: 0.7 }),
+    ...localizedEntries("/toolbox", { changeFrequency: "monthly", priority: 0.7 }),
+    ...TOOLBOX_SLUGS.flatMap((slug) =>
+      localizedEntries(`/toolbox/${slug}`, { changeFrequency: "monthly", priority: 0.6 })
+    ),
   ];
 
   const properties = await getProperties();

@@ -9,6 +9,7 @@ import {
   Plane,
   Landmark,
   Receipt,
+  LandPlot,
   ArrowLeft,
 } from "lucide-react";
 import Header from "@/components/layout/Header";
@@ -27,6 +28,7 @@ const TOOLS = [
   { href: "/toolbox/buy-vs-rent", Icon: Scale, title: "קנייה מול שכירות", description: "השוואת שווי נטו בעוד 10 שנים — לקנות או לשכור" },
   { href: "/toolbox/inspection-checklist", Icon: ClipboardCheck, title: "צ'קליסט בדק בית", description: "מה לבדוק בביקור בנכס לפני שרוכשים" },
   { href: "/toolbox/property-match", Icon: Compass, title: "שאלון התאמת נכס", description: "3 שאלות שמאתרות את פרופיל הנכס המתאים לכם" },
+  { href: "/toolbox/gush-helka", Icon: LandPlot, title: "איתור גוש וחלקה", description: "גוש וחלקה לפי כתובת — או מיקום ושטח רשום לפי גוש וחלקה" },
   { href: "/toolbox/glossary", Icon: BookOpen, title: "מילון מונחי נדל״ן", description: "טאבו, הערת אזהרה, מס שבח ועוד — בעברית פשוטה" },
   { href: "/toolbox/oleh-tax", Icon: Plane, title: "סימולטור מס לעולים חדשים", description: "מס רכישה מוזל ומפת דרכים לרכישה בישראל" },
 ];

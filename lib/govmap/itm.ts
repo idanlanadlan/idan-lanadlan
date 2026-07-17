@@ -148,3 +148,11 @@ export function mercatorToWgs84(x: number, y: number): { lat: number; lng: numbe
   const lat = (2 * Math.atan(Math.exp(y / R)) - Math.PI / 2) * (180 / Math.PI);
   return { lat, lng };
 }
+
+/** WGS84 → Web Mercator (EPSG:3857) — the CRS entitiesByPoint expects. */
+export function wgs84ToMercator(lat: number, lng: number): { x: number; y: number } {
+  const R = 6378137;
+  const x = (lng * Math.PI) / 180 * R;
+  const y = R * Math.log(Math.tan(Math.PI / 4 + (lat * Math.PI) / 360));
+  return { x, y };
+}
