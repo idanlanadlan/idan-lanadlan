@@ -17,7 +17,7 @@ export interface T {
     groups: { eyebrow: string; title: string; subtitle: string; sale_badge: string; rent_badge: string; sale_title: string; sale_subtitle: string; sale_description: string; sale_items: string[]; rent_title: string; rent_subtitle: string; rent_description: string; rent_items: string[]; request_button: string; card_footer: string; managed_note: string; share_note: string; };
     property_detail: { rooms: string; bathrooms: string; toilets: string; sqm: string; sqm_unit: string; gross_sqm: string; balcony: string; floor: string; parking: string; mamad: string; shelter: string; elevator: string; price_per_sqm: string; description_title: string; location_title: string; price_label: string; contact_text: string; whatsapp_button: string; per_month: string; type_sale: string; type_rent: string; type_project: string; };
   };
-  footer: { tagline: string; quick_nav: string; contact: string; legal: string; privacy: string; accessibility: string; copyright: string; license: string; };
+  footer: { tagline: string; quick_nav: string; contact: string; legal: string; privacy: string; accessibility: string; terms: string; copyright: string; license: string; };
   cookie: { message: string; accept: string; decline: string; privacy_link: string; };
   theme: { dark: string; light: string; };
   advisor: { trigger_title: string; trigger_subtitle: string; title: string; input_placeholder: string; error: string; disclaimer: string; reset_aria: string; close_aria: string; typing_status: string; ai_disclosure: string; ai_disclosure_link: string; };
@@ -183,11 +183,12 @@ export const translations: Record<Locale, T> = {
       legal: "מידע משפטי",
       privacy: "מדיניות פרטיות",
       accessibility: "הצהרת נגישות",
+      terms: "תנאי שימוש",
       copyright: "עידן לנדל״ן — כל הזכויות שמורות",
       license: "מס׳ רישיון תיווך",
     },
     cookie: {
-      message: "אתר זה משתמש בעוגיות לשיפור חוויית השימוש ולניתוח תנועה.",
+      message: "האתר משתמש באחסון מקומי ובעוגיות פונקציונליות בלבד, לשמירת ההעדפות שלכם (שפה, תצוגה ונגישות). איננו משתמשים בכלי אנליטיקה או מעקב.",
       accept: "אישור",
       decline: "דחה",
       privacy_link: "מדיניות פרטיות",
@@ -405,11 +406,12 @@ export const translations: Record<Locale, T> = {
       legal: "Legal",
       privacy: "Privacy Policy",
       accessibility: "Accessibility",
+      terms: "Terms of Use",
       copyright: "Idan LaNadlan — All rights reserved",
       license: "Broker License No.",
     },
     cookie: {
-      message: "This site uses cookies to improve user experience and analyze traffic.",
+      message: "This site uses local storage and functional cookies only, to save your preferences (language, display, accessibility). We do not use analytics or tracking tools.",
       accept: "Accept",
       decline: "Decline",
       privacy_link: "Privacy Policy",
@@ -627,11 +629,12 @@ export const translations: Record<Locale, T> = {
       legal: "Mentions légales",
       privacy: "Politique de confidentialité",
       accessibility: "Accessibilité",
+      terms: "Conditions d'utilisation",
       copyright: "Idan LaNadlan — Tous droits réservés",
       license: "N° de licence",
     },
     cookie: {
-      message: "Ce site utilise des cookies pour améliorer l'expérience utilisateur et analyser le trafic.",
+      message: "Ce site utilise uniquement le stockage local et des cookies fonctionnels, pour enregistrer vos préférences (langue, affichage, accessibilité). Nous n'utilisons aucun outil d'analyse ou de suivi.",
       accept: "Accepter",
       decline: "Refuser",
       privacy_link: "Confidentialité",

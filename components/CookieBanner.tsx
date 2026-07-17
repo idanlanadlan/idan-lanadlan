@@ -10,19 +10,22 @@ export default function CookieBanner() {
   const c = t.cookie;
 
   useEffect(() => {
+    // Any stored value counts as answered — including the legacy plain-string
+    // format ("accepted"/"declined") from before choices were timestamped.
     const consent = localStorage.getItem("cookie-consent");
     if (!consent) setVisible(true);
   }, []);
 
-  const accept = () => {
-    localStorage.setItem("cookie-consent", "accepted");
+  const store = (choice: "accepted" | "declined") => {
+    localStorage.setItem(
+      "cookie-consent",
+      JSON.stringify({ choice, ts: new Date().toISOString() })
+    );
     setVisible(false);
   };
 
-  const decline = () => {
-    localStorage.setItem("cookie-consent", "declined");
-    setVisible(false);
-  };
+  const accept = () => store("accepted");
+  const decline = () => store("declined");
 
   if (!visible) return null;
 
