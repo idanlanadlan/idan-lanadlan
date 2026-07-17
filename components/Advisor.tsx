@@ -154,7 +154,7 @@ export default function Advisor() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 30, scale: 0.92 }}
             transition={{ duration: 0.22, ease: "easeOut" }}
-            className="fixed bottom-6 left-3 sm:left-6 z-50 w-[calc(100vw-24px)] sm:w-[360px] max-h-[75vh] sm:max-h-[560px] flex flex-col rounded-2xl overflow-hidden shadow-2xl"
+            className="dark-panel fixed bottom-6 left-3 sm:left-6 z-50 w-[calc(100vw-24px)] sm:w-[360px] max-h-[75vh] sm:max-h-[560px] flex flex-col rounded-2xl overflow-hidden shadow-2xl"
             style={{ border: "1px solid rgba(201, 169, 110, 0.3)" }}
           >
             {/* Header */}

@@ -103,7 +103,7 @@ export default function GroupModal({ groupType, onClose }: Props) {
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         transition={{ duration: 0.2 }}
-        className="relative w-full max-w-md rounded-2xl overflow-hidden shadow-2xl flex flex-col"
+        className="dark-panel relative w-full max-w-md rounded-2xl overflow-hidden shadow-2xl flex flex-col"
         style={{ background: "#111", border: "1px solid rgba(201,169,110,0.25)", maxHeight: "90vh" }}
       >
         {/* Header */}

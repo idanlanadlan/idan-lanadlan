@@ -107,7 +107,7 @@ export default function AccessibilityWidget() {
         aria-label={w.open_aria}
         aria-haspopup="dialog"
         aria-expanded={open}
-        className="fixed bottom-6 end-3 sm:end-6 z-50 w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shadow-2xl transition-transform hover:scale-105 active:scale-95"
+        className="fixed bottom-6 right-3 sm:right-6 z-50 w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shadow-2xl transition-transform hover:scale-105 active:scale-95"
         style={{
           background: "linear-gradient(135deg, #C9A96E, #a07840)",
           boxShadow: "0 4px 28px rgba(201, 169, 110, 0.45)",
@@ -121,7 +121,7 @@ export default function AccessibilityWidget() {
           ref={panelRef}
           role="dialog"
           aria-labelledby={`${uid}-title`}
-          className="fixed bottom-20 sm:bottom-22 end-3 sm:end-6 z-50 w-[calc(100vw-24px)] max-w-[300px] rounded-2xl overflow-hidden shadow-2xl"
+          className="dark-panel fixed bottom-20 sm:bottom-22 right-3 sm:right-6 z-50 w-[calc(100vw-24px)] max-w-[300px] rounded-2xl overflow-hidden shadow-2xl"
           style={{ background: "#111", border: "1px solid rgba(201,169,110,0.3)" }}
         >
           <div

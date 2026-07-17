@@ -166,6 +166,17 @@ body {
 }
 [data-theme="light"] .btn-outline-gold { color: #6F5628; border-color: rgba(111,86,40,0.5); }
 [data-theme="light"] .btn-outline-gold:hover { color: #6F5628; border-color: #6F5628; background: rgba(111,86,40,0.08); }
+/* Hero headline shimmer is an inline style — needs !important to re-color */
+[data-theme="light"] .hero-shimmer {
+  background-image: linear-gradient(110deg, #6F5628 0%, #6F5628 20%, #9B7A45 45%, #A98950 50%, #9B7A45 55%, #6F5628 80%, #6F5628 100%) !important;
+}
+/* Floating panels (advisor, group modal, a11y widget) keep a dark background
+   in both themes — exempt their text from the light-mode remaps. */
+[data-theme="light"] .dark-panel .text-cream { color: #F5F5F0 !important; }
+[data-theme="light"] .dark-panel .text-white { color: #FFFFFF !important; }
+[data-theme="light"] .dark-panel .text-gray-light { color: #9A9A9A !important; }
+[data-theme="light"] .dark-panel .text-gold { color: #C9A96E !important; }
+[data-theme="light"] .dark-panel .border-gray-dark { border-color: #2A2A2A !important; }
 
 
 /* ── Focus ring (WCAG 2.4.7) ── */

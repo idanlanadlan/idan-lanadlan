@@ -76,7 +76,7 @@ export default function Hero() {
 
           {/* Line 2 — gold shimmer sweep */}
           <motion.em
-            className="not-italic block"
+            className="not-italic block hero-shimmer"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.05, duration: 0.7 }}
