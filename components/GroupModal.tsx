@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, CheckCircle, ExternalLink } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -18,18 +18,34 @@ interface Props {
 }
 
 export default function GroupModal({ groupType, onClose }: Props) {
+  const uid = useId();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [looking, setLooking] = useState("");
   const [budget, setBudget] = useState("");
   const [hasProperty, setHasProperty] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const firstFieldRef = useRef<HTMLInputElement>(null);
 
   const { t } = useLanguage();
   const m = t.groups_modal;
   const g = t.sections.groups;
   const link = GROUP_LINKS[groupType];
   const label = groupType === "sale" ? g.sale_title : g.rent_title;
+
+  // Dialog behavior: Esc closes, focus moves in on open and back on close.
+  useEffect(() => {
+    const opener = document.activeElement as HTMLElement | null;
+    firstFieldRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      opener?.focus();
+    };
+  }, [onClose]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,6 +88,9 @@ export default function GroupModal({ groupType, onClose }: Props) {
 
       {/* Panel */}
       <motion.div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={`${uid}-title`}
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -88,7 +107,7 @@ export default function GroupModal({ groupType, onClose }: Props) {
             <p className="text-[11px] tracking-[0.25em] text-gold uppercase mb-0.5">
               {groupType === "sale" ? g.sale_badge : g.rent_badge}
             </p>
-            <h2 className="text-white font-semibold text-base">{label}</h2>
+            <h2 id={`${uid}-title`} className="text-white font-semibold text-base">{label}</h2>
           </div>
           <button
             onClick={onClose}
@@ -115,10 +134,13 @@ export default function GroupModal({ groupType, onClose }: Props) {
 
               <div className="flex flex-col gap-3">
                 <div>
-                  <label className="text-xs text-gold mb-1 block">{m.name_label}</label>
+                  <label htmlFor={`${uid}-name`} className="text-xs text-gold mb-1 block">{m.name_label}</label>
                   <input
+                    id={`${uid}-name`}
+                    ref={firstFieldRef}
                     type="text"
                     required
+                    aria-required="true"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder={m.name_placeholder}
@@ -127,10 +149,12 @@ export default function GroupModal({ groupType, onClose }: Props) {
                 </div>
 
                 <div>
-                  <label className="text-xs text-gold mb-1 block">{m.phone_label}</label>
+                  <label htmlFor={`${uid}-phone`} className="text-xs text-gold mb-1 block">{m.phone_label}</label>
                   <input
+                    id={`${uid}-phone`}
                     type="tel"
                     required
+                    aria-required="true"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="05X-XXX-XXXX"
@@ -140,10 +164,11 @@ export default function GroupModal({ groupType, onClose }: Props) {
                 </div>
 
                 <div>
-                  <label className="text-xs text-gold mb-1 block">
+                  <label htmlFor={`${uid}-looking`} className="text-xs text-gold mb-1 block">
                     {groupType === "sale" ? m.looking_label_sale : m.looking_label_rent}
                   </label>
                   <input
+                    id={`${uid}-looking`}
                     type="text"
                     value={looking}
                     onChange={(e) => setLooking(e.target.value)}
@@ -153,8 +178,9 @@ export default function GroupModal({ groupType, onClose }: Props) {
                 </div>
 
                 <div>
-                  <label className="text-xs text-gold mb-1 block">{m.budget_label}</label>
+                  <label htmlFor={`${uid}-budget`} className="text-xs text-gold mb-1 block">{m.budget_label}</label>
                   <input
+                    id={`${uid}-budget`}
                     type="text"
                     value={budget}
                     onChange={(e) => setBudget(e.target.value)}
@@ -164,10 +190,11 @@ export default function GroupModal({ groupType, onClose }: Props) {
                 </div>
 
                 <div>
-                  <label className="text-xs text-gold mb-1 block">
+                  <label htmlFor={`${uid}-purpose`} className="text-xs text-gold mb-1 block">
                     {m.purpose_label}
                   </label>
                   <select
+                    id={`${uid}-purpose`}
                     value={hasProperty}
                     onChange={(e) => setHasProperty(e.target.value)}
                     className="w-full bg-[#111] border border-gray-dark/60 rounded-lg px-4 py-2.5 text-sm text-cream focus:outline-none focus:border-gold/50 transition-colors"

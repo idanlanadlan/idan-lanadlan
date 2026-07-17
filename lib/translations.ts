@@ -20,7 +20,7 @@ export interface T {
   footer: { tagline: string; quick_nav: string; contact: string; legal: string; privacy: string; accessibility: string; copyright: string; license: string; };
   cookie: { message: string; accept: string; decline: string; privacy_link: string; };
   theme: { dark: string; light: string; };
-  advisor: { trigger_title: string; trigger_subtitle: string; title: string; input_placeholder: string; error: string; disclaimer: string; reset_aria: string; close_aria: string; };
+  advisor: { trigger_title: string; trigger_subtitle: string; title: string; input_placeholder: string; error: string; disclaimer: string; reset_aria: string; close_aria: string; typing_status: string; ai_disclosure: string; ai_disclosure_link: string; };
   groups_modal: { description: string; name_label: string; name_placeholder: string; phone_label: string; looking_label_sale: string; looking_label_rent: string; looking_placeholder_sale: string; looking_placeholder_rent: string; budget_label: string; budget_placeholder_sale: string; budget_placeholder_rent: string; purpose_label: string; purpose_placeholder: string; purpose_investment: string; purpose_living: string; purpose_both: string; submit_button: string; disclaimer: string; success_title: string; success_message: string; success_button: string; };
 }
 
@@ -200,6 +200,9 @@ export const translations: Record<Locale, T> = {
       disclaimer: "ייעוץ כללי בלבד. לייעוץ מקצועי:",
       reset_aria: "אפס שיחה",
       close_aria: "סגור יועץ",
+      typing_status: "היועץ מקליד תשובה…",
+      ai_disclosure: "השיחה מעובדת באמצעות בינה מלאכותית (Anthropic) ואינה נשמרת אצלנו לאחר סגירת החלון. אין למסור מידע אישי רגיש.",
+      ai_disclosure_link: "מדיניות פרטיות",
     },
     groups_modal: {
       description: "מלא את הפרטים ונוודא שהקבוצה מתאימה לך. לאחר השליחה תעבור ישירות לקבוצה.",
@@ -401,6 +404,9 @@ export const translations: Record<Locale, T> = {
       disclaimer: "General advice only. For professional guidance:",
       reset_aria: "Reset conversation",
       close_aria: "Close advisor",
+      typing_status: "The advisor is typing a reply…",
+      ai_disclosure: "This chat is processed by AI (Anthropic) and is not stored by us after the window is closed. Please do not share sensitive personal information.",
+      ai_disclosure_link: "Privacy policy",
     },
     groups_modal: {
       description: "Fill in your details and we'll confirm the group is right for you. After submitting you'll go straight to the group.",
@@ -602,6 +608,9 @@ export const translations: Record<Locale, T> = {
       disclaimer: "Conseil général uniquement. Pour un conseil professionnel :",
       reset_aria: "Réinitialiser la conversation",
       close_aria: "Fermer le conseiller",
+      typing_status: "Le conseiller rédige une réponse…",
+      ai_disclosure: "Cette conversation est traitée par une IA (Anthropic) et n'est pas conservée par nous après la fermeture de la fenêtre. Ne partagez pas d'informations personnelles sensibles.",
+      ai_disclosure_link: "Politique de confidentialité",
     },
     groups_modal: {
       description: "Remplissez vos coordonnées et nous confirmerons que le groupe vous convient. Après l'envoi, vous accéderez directement au groupe.",

@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Send, RotateCcw, MessageCircle } from "lucide-react";
+import LocaleLink from "@/components/LocaleLink";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { Locale } from "@/lib/translations";
 
@@ -30,13 +31,22 @@ export default function Advisor() {
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
   useEffect(() => {
-    if (open) inputRef.current?.focus();
+    if (open) {
+      inputRef.current?.focus();
+      const onKey = (e: KeyboardEvent) => {
+        if (e.key === "Escape") setOpen(false);
+      };
+      document.addEventListener("keydown", onKey);
+      return () => document.removeEventListener("keydown", onKey);
+    }
+    triggerRef.current?.focus();
   }, [open]);
 
   const reset = () => setMessages([]);
@@ -116,8 +126,11 @@ export default function Advisor() {
     <>
       {/* Floating trigger button */}
       <button
+        ref={triggerRef}
         onClick={() => setOpen(true)}
         aria-label={ad.trigger_title}
+        aria-haspopup="dialog"
+        aria-expanded={open}
         className={`fixed bottom-6 left-3 sm:left-6 z-50 flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-2xl shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95 ${open ? "opacity-0 pointer-events-none" : "opacity-100"}`}
         style={{
           background: "linear-gradient(135deg, #C9A96E, #a07840)",
@@ -135,6 +148,8 @@ export default function Advisor() {
       <AnimatePresence>
         {open && (
           <motion.div
+            role="dialog"
+            aria-label={ad.title}
             initial={{ opacity: 0, y: 30, scale: 0.92 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 30, scale: 0.92 }}
@@ -244,6 +259,17 @@ export default function Advisor() {
               <div ref={bottomRef} />
             </div>
 
+            {/* Screen-reader status: announces typing, then the final reply once
+                streaming ends (live-region on the stream itself would announce
+                every token). */}
+            <div role="status" aria-live="polite" className="sr-only">
+              {loading
+                ? ad.typing_status
+                : messages.length > 0 && messages[messages.length - 1].role === "assistant"
+                  ? messages[messages.length - 1].content
+                  : ""}
+            </div>
+
             {/* Input */}
             <div
               className="px-3 py-3 shrink-0 flex items-end gap-2"
@@ -301,6 +327,12 @@ export default function Advisor() {
                 >
                   WhatsApp
                 </a>
+              </p>
+              <p className="text-[10px] text-gray-light/80 mt-1 leading-relaxed">
+                {ad.ai_disclosure}{" "}
+                <LocaleLink href="/privacy" className="text-gold hover:underline">
+                  {ad.ai_disclosure_link}
+                </LocaleLink>
               </p>
             </div>
           </motion.div>
