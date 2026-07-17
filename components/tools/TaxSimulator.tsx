@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Link from "@/components/LocaleLink";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { numberLocale } from "@/lib/locale-format";
 
 const label = "block text-xs text-gold tracking-wider uppercase mb-1.5";
 const field =
@@ -13,12 +15,6 @@ function num(v: string): number {
 }
 
 type BuyerStatus = "first" | "additional" | "foreign";
-
-const BUYER_LABEL: Record<BuyerStatus, string> = {
-  first: "דירה יחידה (תושב ישראל)",
-  additional: "דירה נוספת / משקיע (תושב ישראל)",
-  foreign: "תושב חוץ (גם אם דירה יחידה)",
-};
 
 // 2026 brackets — מוקפאות לפי רשות המסים עד ינואר 2028 עבור דירה יחידה. יש לאמת מול רשות המסים לפני כל החלטה.
 const FIRST_APARTMENT_BRACKETS: [number, number][] = [
@@ -54,6 +50,16 @@ function calcPurchaseTax(price: number, brackets: [number, number][]) {
 }
 
 export default function TaxSimulator() {
+  const { t, locale } = useLanguage();
+  const c = t.tools_ui.tax_simulator;
+  const nl = numberLocale(locale);
+
+  const BUYER_LABEL: Record<BuyerStatus, string> = {
+    first: c.buyer_first,
+    additional: c.buyer_additional,
+    foreign: c.buyer_foreign,
+  };
+
   const [price, setPrice] = useState("");
   const [buyerStatus, setBuyerStatus] = useState<BuyerStatus>("first");
 
@@ -78,21 +84,21 @@ export default function TaxSimulator() {
   return (
     <div className="space-y-10">
       <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 text-xs text-amber-300 leading-relaxed">
-        המדרגות מעודכנות לשנת 2026 (מוקפאות לפי רשות המסים עד ינואר 2028 לגבי דירה יחידה). עולה חדש? יש לכם סימולטור ייעודי —{" "}
-        <Link href="/toolbox/oleh-tax" className="underline hover:text-amber-200">מס לעולים חדשים</Link>. יש לאמת מדרגות עדכניות מול רשות המסים לפני כל החלטה.
+        {c.banner_prefix}{" "}
+        <Link href="/toolbox/oleh-tax" className="underline hover:text-amber-200">{c.banner_link_text}</Link>. {c.banner_suffix}
       </div>
 
-      {/* Section A — מס רכישה */}
+      {/* Section A — Purchase tax */}
       <div className="space-y-6">
-        <h3 className="text-white font-semibold">מס רכישה — בעת הקנייה</h3>
+        <h3 className="text-white font-semibold">{c.section_a_title}</h3>
 
         <div className="grid sm:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="taxsimulator-f0" className={label}>מחיר הנכס (₪)</label>
+            <label htmlFor="taxsimulator-f0" className={label}>{c.label_price}</label>
             <input id="taxsimulator-f0" className={field} inputMode="numeric" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="2,500,000" />
           </div>
           <div>
-            <label htmlFor="taxsimulator-f1" className={label}>סטטוס הרוכש</label>
+            <label htmlFor="taxsimulator-f1" className={label}>{c.label_buyer_status}</label>
             <select id="taxsimulator-f1" className={field} value={buyerStatus} onChange={(e) => setBuyerStatus(e.target.value as BuyerStatus)}>
               {(Object.keys(BUYER_LABEL) as BuyerStatus[]).map((key) => (
                 <option key={key} value={key}>{BUYER_LABEL[key]}</option>
@@ -102,24 +108,22 @@ export default function TaxSimulator() {
         </div>
 
         {buyerStatus === "foreign" && (
-          <p className="text-xs text-gray-light leading-relaxed">
-            תושב חוץ ממוסה לפי מדרגות "דירה נוספת" גם כשמדובר בדירתו היחידה בישראל. אם יהפוך לתושב ישראל תוך 27 חודשים מהרכישה, ייתכן שיהיה זכאי בדיעבד למדרגות דירה יחידה — בכפוף לתנאים.
-          </p>
+          <p className="text-xs text-gray-light leading-relaxed">{c.foreign_note}</p>
         )}
 
         {hasPurchaseInput && (
           <div className="space-y-4 pt-4 border-t border-gray-dark">
             <div className="text-center">
-              <p className="text-xs tracking-widest text-gold uppercase mb-2">סה״כ מס רכישה</p>
-              <p className="font-display text-4xl font-light text-white">₪{Math.round(totalTax).toLocaleString("he-IL")}</p>
-              <p className="text-xs text-gray-light mt-1">שיעור אפקטיבי: {effectiveRate.toFixed(2)}%</p>
+              <p className="text-xs tracking-widest text-gold uppercase mb-2">{c.result_total_tax_label}</p>
+              <p className="font-display text-4xl font-light text-white">₪{Math.round(totalTax).toLocaleString(nl)}</p>
+              <p className="text-xs text-gray-light mt-1">{c.effective_rate_label} {effectiveRate.toFixed(2)}%</p>
             </div>
 
             <div className="bg-black/40 border border-gray-dark rounded-lg p-4 text-sm text-gray-light space-y-1.5">
               {rows.map((row) => (
                 <div key={row.from} className="flex justify-between">
-                  <span>{(row.rate * 100).toFixed(1)}% על ₪{Math.round(row.taxable).toLocaleString("he-IL")}</span>
-                  <span className="text-cream">₪{Math.round(row.tax).toLocaleString("he-IL")}</span>
+                  <span>{(row.rate * 100).toFixed(1)}% {c.bracket_on} ₪{Math.round(row.taxable).toLocaleString(nl)}</span>
+                  <span className="text-cream">₪{Math.round(row.tax).toLocaleString(nl)}</span>
                 </div>
               ))}
             </div>
@@ -127,13 +131,11 @@ export default function TaxSimulator() {
         )}
       </div>
 
-      {/* Section B — מס שבח */}
+      {/* Section B — Capital gains tax */}
       <div className="space-y-6 pt-6 border-t border-gray-dark">
         <div>
-          <h3 className="text-white font-semibold mb-1.5">מס שבח — בעת מכירה עתידית</h3>
-          <p className="text-xs text-gray-light leading-relaxed">
-            מס שבח משולם ע״י המוכר בעת המכירה, בשיעור 25% מהרווח הריאלי (לאחר ניכוי הוצאות מוכרות). דירת מגורים יחידה שהוחזקה לפחות 18 חודשים פטורה בדרך כלל באופן מלא.
-          </p>
+          <h3 className="text-white font-semibold mb-1.5">{c.section_b_title}</h3>
+          <p className="text-xs text-gray-light leading-relaxed">{c.section_b_intro}</p>
         </div>
 
         <label className="flex items-start gap-2.5 text-sm text-gray-light cursor-pointer">
@@ -143,26 +145,26 @@ export default function TaxSimulator() {
             checked={singleHomeExempt}
             onChange={(e) => setSingleHomeExempt(e.target.checked)}
           />
-          זו דירת המגורים היחידה שלי, ואני מחזיק/ה בה 18 חודשים ומעלה
+          {c.exempt_checkbox_label}
         </label>
 
         {singleHomeExempt ? (
           <div className="bg-black/40 border border-gray-dark rounded-lg p-4 text-center text-white font-semibold">
-            פטור מלא ממס שבח (בכפוף לעמידה בתנאי הפטור בחוק)
+            {c.exempt_result}
           </div>
         ) : (
           <>
             <div className="grid sm:grid-cols-3 gap-4">
               <div>
-                <label htmlFor="taxsimulator-f2" className={label}>מחיר רכישה מקורי (₪)</label>
+                <label htmlFor="taxsimulator-f2" className={label}>{c.label_original_price}</label>
                 <input id="taxsimulator-f2" className={field} inputMode="numeric" value={originalPrice} onChange={(e) => setOriginalPrice(e.target.value)} placeholder="2,000,000" />
               </div>
               <div>
-                <label htmlFor="taxsimulator-f3" className={label}>מחיר מכירה משוער (₪)</label>
+                <label htmlFor="taxsimulator-f3" className={label}>{c.label_sale_price}</label>
                 <input id="taxsimulator-f3" className={field} inputMode="numeric" value={salePrice} onChange={(e) => setSalePrice(e.target.value)} placeholder="2,800,000" />
               </div>
               <div>
-                <label htmlFor="taxsimulator-f4" className={label}>הוצאות מוכרות (₪, אופציונלי)</label>
+                <label htmlFor="taxsimulator-f4" className={label}>{c.label_selling_expenses}</label>
                 <input id="taxsimulator-f4" className={field} inputMode="numeric" value={sellingExpenses} onChange={(e) => setSellingExpenses(e.target.value)} placeholder="60,000" />
               </div>
             </div>
@@ -170,18 +172,16 @@ export default function TaxSimulator() {
             {hasGainInput && (
               <div className="space-y-4 pt-4 border-t border-gray-dark">
                 <div className="text-center">
-                  <p className="text-xs tracking-widest text-gold uppercase mb-2">הערכת מס שבח (25% מהרווח)</p>
-                  <p className="font-display text-4xl font-light text-white">₪{Math.round(capitalGainsTax).toLocaleString("he-IL")}</p>
+                  <p className="text-xs tracking-widest text-gold uppercase mb-2">{c.result_capital_gains_label}</p>
+                  <p className="font-display text-4xl font-light text-white">₪{Math.round(capitalGainsTax).toLocaleString(nl)}</p>
                 </div>
                 <div className="bg-black/40 border border-gray-dark rounded-lg p-4 text-sm text-gray-light">
                   <div className="flex justify-between">
-                    <span>רווח משוער (לפני הצמדה)</span>
-                    <span className="text-cream">₪{Math.round(gain).toLocaleString("he-IL")}</span>
+                    <span>{c.gain_label}</span>
+                    <span className="text-cream">₪{Math.round(gain).toLocaleString(nl)}</span>
                   </div>
                 </div>
-                <p className="text-xs text-gray-light leading-relaxed">
-                  הערכה גסה בלבד — אינה כוללת הצמדה למדד, ניכויים מוכרים נוספים (השבחות, שכ״ט עו״ד ותיווך במכירה), או פטורים נוספים (ירושה, מתנה). יש להתייעץ עם רו״ח או עו״ד מקרקעין לחישוב מדויק.
-                </p>
+                <p className="text-xs text-gray-light leading-relaxed">{c.gain_disclaimer}</p>
               </div>
             )}
           </>

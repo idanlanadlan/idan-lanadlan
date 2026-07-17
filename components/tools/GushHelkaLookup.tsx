@@ -5,6 +5,8 @@ import { MapPin, Search, Copy, Check, ExternalLink, LoaderCircle } from "lucide-
 import { govmapAutocomplete, type AddressSuggestion } from "@/lib/govmap/autocomplete";
 import { parcelByPoint, findParcel, govmapSiteLink, type ParcelInfo } from "@/lib/govmap/parcel";
 import LeadCaptureForm from "./LeadCaptureForm";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { numberLocale } from "@/lib/locale-format";
 
 const field =
   "w-full bg-black border border-gray-dark rounded-lg px-4 py-3 text-sm text-cream focus:border-gold outline-none transition-colors";
@@ -14,6 +16,9 @@ type Mode = "address" | "parcel";
 type Status = "idle" | "loading" | "done" | "notfound";
 
 export default function GushHelkaLookup() {
+  const { t, locale } = useLanguage();
+  const c = t.tools_ui.gush_helka;
+  const nl = numberLocale(locale);
   const uid = useId();
   const listboxId = `${uid}-listbox`;
   const [mode, setMode] = useState<Mode>("address");
@@ -117,7 +122,7 @@ export default function GushHelkaLookup() {
   }
 
   const parcelLabel = result
-    ? `גוש ${result.gush}${result.gushSuffix ? `/${result.gushSuffix}` : ""} חלקה ${result.helka}`
+    ? `${c.parcel_label_gush} ${result.gush}${result.gushSuffix ? `/${result.gushSuffix}` : ""} ${c.parcel_label_helka} ${result.helka}`
     : "";
 
   async function copyResult() {
@@ -132,7 +137,7 @@ export default function GushHelkaLookup() {
   }
 
   const leadDetails = result
-    ? `כלי גוש/חלקה — ${sourceAddress ? `כתובת שחופשה: ${sourceAddress}` : `חיפוש לפי מספרים`}\nתוצאה: ${parcelLabel}${result.legalAreaSqm ? `, שטח רשום ${result.legalAreaSqm.toLocaleString("he-IL")} מ"ר` : ""}`
+    ? `${c.tool_name} — ${sourceAddress ? `${c.lead_details_address_prefix} ${sourceAddress}` : c.lead_details_numbers}\n${c.lead_details_result_prefix} ${parcelLabel}${result.legalAreaSqm ? `, ${c.lead_details_area_suffix.replace("{area}", result.legalAreaSqm.toLocaleString(nl))}` : ""}`
     : undefined;
 
   return (
@@ -141,8 +146,8 @@ export default function GushHelkaLookup() {
       <div className="grid grid-cols-2 gap-2 bg-black/40 border border-gray-dark rounded-lg p-1">
         {(
           [
-            ["address", "כתובת ← גוש/חלקה"],
-            ["parcel", "גוש/חלקה ← מיקום"],
+            ["address", c.mode_address_to_parcel],
+            ["parcel", c.mode_parcel_to_address],
           ] as [Mode, string][]
         ).map(([m, text]) => (
           <button
@@ -161,7 +166,7 @@ export default function GushHelkaLookup() {
 
       {mode === "address" ? (
         <div ref={rootRef} className="relative">
-          <label htmlFor={`${uid}-address`} className={label}>כתובת הנכס</label>
+          <label htmlFor={`${uid}-address`} className={label}>{c.address_label}</label>
           <input
             id={`${uid}-address`}
             className={field}
@@ -169,7 +174,7 @@ export default function GushHelkaLookup() {
             onChange={(e) => setAddress(e.target.value)}
             onKeyDown={onKeyDown}
             onFocus={() => suggestions.length > 0 && setOpen(true)}
-            placeholder="התחילו להקליד כתובת ובחרו מההצעות…"
+            placeholder={c.address_placeholder}
             autoComplete="off"
             role="combobox"
             aria-expanded={open}
@@ -181,7 +186,7 @@ export default function GushHelkaLookup() {
             <ul
               id={listboxId}
               role="listbox"
-              aria-label="הצעות כתובת"
+              aria-label={c.suggestions_aria}
               className="absolute z-30 mt-1 w-full bg-charcoal border border-gray-dark rounded-lg shadow-xl overflow-hidden"
             >
               {suggestions.map((s, i) => (
@@ -203,15 +208,13 @@ export default function GushHelkaLookup() {
               ))}
             </ul>
           )}
-          <p className="mt-2 text-xs text-gray-light">
-            בחירת כתובת מההצעות מאתרת את החלקה הרשומה שהכתובת יושבת עליה.
-          </p>
+          <p className="mt-2 text-xs text-gray-light">{c.address_hint}</p>
         </div>
       ) : (
         <form onSubmit={lookupByNumbers} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor={`${uid}-gush`} className={label}>מספר גוש</label>
+              <label htmlFor={`${uid}-gush`} className={label}>{c.gush_label}</label>
               <input
                 id={`${uid}-gush`}
                 className={field}
@@ -224,7 +227,7 @@ export default function GushHelkaLookup() {
               />
             </div>
             <div>
-              <label htmlFor={`${uid}-helka`} className={label}>מספר חלקה</label>
+              <label htmlFor={`${uid}-helka`} className={label}>{c.helka_label}</label>
               <input
                 id={`${uid}-helka`}
                 className={field}
@@ -243,7 +246,7 @@ export default function GushHelkaLookup() {
             className="btn-gold w-full py-3.5 rounded-lg text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-opacity flex items-center justify-center gap-2"
           >
             <Search size={15} />
-            אתרו את החלקה
+            {c.submit_button}
           </button>
         </form>
       )}
@@ -253,18 +256,18 @@ export default function GushHelkaLookup() {
         {status === "loading" && (
           <div className="flex items-center justify-center gap-2 py-6 text-sm text-gray-light">
             <LoaderCircle size={16} className="animate-spin text-gold" aria-hidden="true" />
-            מאתר מול נתוני המרכז למיפוי ישראל…
+            {c.loading_text}
           </div>
         )}
 
         {status === "notfound" && (
           <div className="bg-black/40 border border-gray-dark rounded-lg p-5 text-sm text-gray-light text-center">
-            לא נמצאה חלקה רשומה עבור החיפוש הזה. בדקו את הפרטים ונסו שוב, או השאירו פרטים ונבדוק עבורכם.
+            {c.notfound_text}
           </div>
         )}
 
         {status === "done" && result && (
-          <p className="sr-only">נמצאה תוצאה: {parcelLabel}</p>
+          <p className="sr-only">{c.found_sr_prefix} {parcelLabel}</p>
         )}
       </div>
 
@@ -272,7 +275,7 @@ export default function GushHelkaLookup() {
         <div className="space-y-4 pt-2">
           <div className="text-center">
             <p className="text-xs tracking-widest text-gold uppercase mb-2">
-              {sourceAddress ? sourceAddress : "מיקום החלקה אותר"}
+              {sourceAddress ? sourceAddress : c.located_label}
             </p>
             <p className="font-display text-3xl sm:text-4xl font-light text-white">{parcelLabel}</p>
           </div>
@@ -280,18 +283,18 @@ export default function GushHelkaLookup() {
           <div className="bg-black/40 border border-gray-dark rounded-lg p-4 text-sm space-y-1.5">
             {result.legalAreaSqm !== null && (
               <div className="flex justify-between">
-                <span className="text-gray-light">שטח רשום</span>
-                <span className="text-cream">{result.legalAreaSqm.toLocaleString("he-IL")} מ"ר</span>
+                <span className="text-gray-light">{c.area_label}</span>
+                <span className="text-cream">{result.legalAreaSqm.toLocaleString(nl)} {t.sections.property_detail.sqm_unit}</span>
               </div>
             )}
             {result.status && (
               <div className="flex justify-between">
-                <span className="text-gray-light">סטטוס רישום</span>
+                <span className="text-gray-light">{c.status_label}</span>
                 <span className="text-cream">{result.status}</span>
               </div>
             )}
             <div className="flex justify-between">
-              <span className="text-gray-light">נ"צ מרכז החלקה</span>
+              <span className="text-gray-light">{c.coords_label}</span>
               <span className="text-cream" dir="ltr">
                 {result.lat.toFixed(5)}, {result.lng.toFixed(5)}
               </span>
@@ -305,7 +308,7 @@ export default function GushHelkaLookup() {
               className="flex items-center justify-center gap-2 py-3 rounded-lg text-sm border border-gray-dark text-cream hover:border-gold hover:text-gold transition-colors"
             >
               {copied ? <Check size={15} className="text-gold" /> : <Copy size={15} />}
-              {copied ? "הועתק" : "העתקת גוש/חלקה"}
+              {copied ? c.copied_button : c.copy_button}
             </button>
             <a
               href={govmapSiteLink(result.lat, result.lng)}
@@ -314,7 +317,7 @@ export default function GushHelkaLookup() {
               className="flex items-center justify-center gap-2 py-3 rounded-lg text-sm border border-gray-dark text-cream hover:border-gold hover:text-gold transition-colors"
             >
               <ExternalLink size={15} />
-              צפייה במפה הרשמית
+              {c.map_link}
             </a>
           </div>
         </div>
@@ -323,9 +326,9 @@ export default function GushHelkaLookup() {
       {(status === "done" || status === "notfound") && (
         <div className="pt-6 border-t border-gray-dark">
           <LeadCaptureForm
-            toolName="איתור גוש וחלקה"
+            toolName={c.tool_name}
             details={leadDetails}
-            ctaLabel="רוצים לדעת מה שווה הנכס או מה ניתן לבנות בחלקה? השאירו פרטים"
+            ctaLabel={c.lead_cta}
           />
         </div>
       )}

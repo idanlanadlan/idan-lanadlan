@@ -145,7 +145,7 @@ export function ContactForm() {
           onClick={() => setStep("category")}
           className="flex items-center gap-1 text-xs text-gray-light hover:text-gold transition-colors"
         >
-          <ArrowRight size={12} className="rtl-flip" />
+          <ArrowRight size={12} />
           {f.change_button}
         </button>
       </div>

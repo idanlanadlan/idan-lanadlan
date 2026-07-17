@@ -2,56 +2,11 @@
 
 import { useState } from "react";
 import LeadCaptureForm from "./LeadCaptureForm";
-
-const CATEGORIES = [
-  {
-    title: "סדקים מבניים",
-    items: [
-      "סדקים אלכסוניים ליד פתחי דלתות וחלונות",
-      "סדקים אנכיים או אופקיים בקירות חיצוניים",
-      "סימני שקיעה או שיפוע ברצפה",
-      "פערים בין קיר לתקרה או בין קיר לרצפה",
-    ],
-  },
-  {
-    title: "רטיבות",
-    items: [
-      "כתמי רטיבות בתקרה או בקירות",
-      "ריח עובש בחדרים סגורים",
-      "התקלפות צבע או טיח נפוח",
-      "רטיבות סביב חלונות, מקלחת או מטבח",
-    ],
-  },
-  {
-    title: "אינסטלציה",
-    items: [
-      "לחץ מים חלש בברזים",
-      "כתמי חלודה על צנרת גלויה",
-      "ניקוז איטי בכיורים ובאמבטיה",
-      "רעשים חריגים במערכת המים",
-    ],
-  },
-  {
-    title: "חשמל",
-    items: [
-      "לוח חשמל ישן או ללא תקן נוכחי",
-      "שקעים רופפים, חמים או שרופים",
-      "היעדר הארקה בשקעים",
-      "תאורה מהבהבת או נתיכים שקופצים",
-    ],
-  },
-  {
-    title: "כללי",
-    items: [
-      "מצב איטום חלונות ותריסים",
-      "תפקוד תקין של דלתות ומנעולים",
-      "מצב חדר מדרגות ותחזוקת הבניין",
-      "גיל הבניין ותאריך שיפוץ אחרון של חזית/גג",
-    ],
-  },
-];
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function InspectionChecklist() {
+  const { t } = useLanguage();
+  const c = t.tools_ui.inspection_checklist;
   const [checked, setChecked] = useState<Record<string, boolean>>({});
 
   function toggle(item: string) {
@@ -63,16 +18,14 @@ export default function InspectionChecklist() {
     .map(([k]) => k);
 
   const details = checkedItems.length
-    ? `סימן ${checkedItems.length} ליקויים אפשריים:\n${checkedItems.join("\n")}`
-    : "לא סימן ליקויים ספציפיים";
+    ? `${c.lead_details_prefix.replace("{n}", String(checkedItems.length))}\n${checkedItems.join("\n")}`
+    : c.lead_details_none;
 
   return (
     <div className="space-y-8">
-      <p className="text-sm text-gray-light">
-        סמנו כל דבר שראיתם או חוששים ממנו בביקור בנכס. בסוף — נשלח לכם את המדריך המלא כ-PDF עם הסברים והמלצות לכל סעיף.
-      </p>
+      <p className="text-sm text-gray-light">{c.intro}</p>
 
-      {CATEGORIES.map((cat) => (
+      {c.categories.map((cat) => (
         <div key={cat.title}>
           <p className="text-xs tracking-widest text-gold uppercase mb-3">{cat.title}</p>
           <div className="space-y-2">
@@ -96,10 +49,10 @@ export default function InspectionChecklist() {
 
       <div className="border-t border-gray-dark pt-6">
         <LeadCaptureForm
-          toolName="צ'קליסט בדק בית"
+          toolName={c.tool_name}
           details={details}
-          ctaLabel="שלח לי את המדריך המלא ב-PDF"
-          submitLabel="שלח לי את המדריך →"
+          ctaLabel={c.cta_label}
+          submitLabel={c.submit_label}
         />
       </div>
     </div>
