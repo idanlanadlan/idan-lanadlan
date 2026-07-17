@@ -2,7 +2,8 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { createBlogPost, updateBlogPost, deleteBlogPost as dbDeleteBlogPost } from "@/lib/db";
+import { createBlogPost, updateBlogPost, deleteBlogPost as dbDeleteBlogPost, getBlogPostById } from "@/lib/db";
+import { translateBlogPostFields } from "@/lib/translate-blogpost";
 
 function slugify(text: string): string {
   return text
@@ -35,7 +36,8 @@ function parseForm(formData: FormData) {
 
 export async function createBlogPostAction(formData: FormData) {
   const data = parseForm(formData);
-  await createBlogPost(data);
+  const translations = await translateBlogPostFields(data);
+  await createBlogPost({ ...data, ...translations });
   revalidatePath("/blog");
   revalidatePath("/");
   revalidatePath("/admin/blog");
@@ -45,12 +47,34 @@ export async function createBlogPostAction(formData: FormData) {
 export async function updateBlogPostAction(formData: FormData) {
   const id = formData.get("id") as string;
   const data = parseForm(formData);
-  await updateBlogPost(id, data);
+  const translations = await translateBlogPostFields(data);
+  await updateBlogPost(id, { ...data, ...translations });
   revalidatePath("/blog");
   revalidatePath(`/blog/${data.slug}`);
   revalidatePath("/");
   revalidatePath("/admin/blog");
   redirect("/admin/blog");
+}
+
+/**
+ * Manual backfill for posts published before auto-translation existed (or
+ * whose translation failed silently). Re-translates from the current Hebrew
+ * fields and updates in place — does not touch published/slug/etc.
+ */
+export async function translateExistingPost(formData: FormData) {
+  const id = formData.get("id") as string;
+  const post = await getBlogPostById(id);
+  if (!post) return;
+  const translations = await translateBlogPostFields({
+    title: post.title,
+    excerpt: post.excerpt,
+    content: post.content,
+    keywords: post.keywords,
+  });
+  if (translations) await updateBlogPost(id, translations);
+  revalidatePath("/blog");
+  revalidatePath(`/blog/${post.slug}`);
+  revalidatePath("/admin/blog");
 }
 
 export async function deleteBlogPost(formData: FormData) {

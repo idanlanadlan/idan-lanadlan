@@ -52,6 +52,18 @@ export interface BlogPost {
   published: boolean;
   created_at: string;
   updated_at: string;
+  title_en?: string;
+  title_fr?: string;
+  title_es?: string;
+  excerpt_en?: string;
+  excerpt_fr?: string;
+  excerpt_es?: string;
+  content_en?: string;
+  content_fr?: string;
+  content_es?: string;
+  keywords_en?: string[];
+  keywords_fr?: string[];
+  keywords_es?: string[];
 }
 
 export interface Testimonial {

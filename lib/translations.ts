@@ -132,6 +132,8 @@ export interface T {
       parcel_label_gush: string; parcel_label_helka: string;
     };
   };
+  blog_page: { meta_title: string; meta_description: string; eyebrow: string; title: string; subtitle: string; read_more: string };
+  blog_post: { questions_eyebrow: string; questions_title: string; whatsapp_button: string; content_coming_soon: string };
 }
 
 export const translations: Record<Locale, T> = {
@@ -760,6 +762,20 @@ export const translations: Record<Locale, T> = {
         parcel_label_helka: "חלקה",
       },
     },
+    blog_page: {
+      meta_title: "מדריכים ועדכונים | עידן לנדל״ן",
+      meta_description: "מדריכים, טיפים ועדכונים חמים מעולם הנדל״ן מאת עידן חולי — נכסים של ידע לעסקה חכמה.",
+      eyebrow: "נכסים של ידע",
+      title: "מדריכים ועדכונים חמים",
+      subtitle: "מדריכים מקצועיים, טיפים ועדכונים חמים מעולם הנדל״ן — כדי שתיכנסו לכל עסקה עם ידע אמיתי.",
+      read_more: "קרא עוד",
+    },
+    blog_post: {
+      questions_eyebrow: "יש לכם שאלות?",
+      questions_title: "דברו ישירות עם עידן",
+      whatsapp_button: "שלח הודעה ב-WhatsApp",
+      content_coming_soon: "תוכן המאמר יופיע כאן בקרוב.",
+    },
   },
 
   en: {
@@ -1386,6 +1402,20 @@ export const translations: Record<Locale, T> = {
         parcel_label_gush: "Block",
         parcel_label_helka: "Parcel",
       },
+    },
+    blog_page: {
+      meta_title: "Guides & Updates | Idan LaNadlan",
+      meta_description: "Guides, tips and hot updates from the real estate world by Idan Huli — knowledge for a smart deal.",
+      eyebrow: "Knowledge Hub",
+      title: "Guides & Hot Updates",
+      subtitle: "Professional guides, tips and hot updates from the real estate world — so you go into every deal with real knowledge.",
+      read_more: "Read more",
+    },
+    blog_post: {
+      questions_eyebrow: "Have questions?",
+      questions_title: "Talk directly to Idan",
+      whatsapp_button: "Send a WhatsApp message",
+      content_coming_soon: "The article content will appear here soon.",
     },
   },
 
@@ -2014,6 +2044,20 @@ export const translations: Record<Locale, T> = {
         parcel_label_helka: "Parcelle",
       },
     },
+    blog_page: {
+      meta_title: "Guides et actualités | Idan LaNadlan",
+      meta_description: "Guides, conseils et actualités chaudes du monde de l'immobilier par Idan Huli — du savoir pour une transaction intelligente.",
+      eyebrow: "Savoir Immo",
+      title: "Guides & Actus Chaudes",
+      subtitle: "Guides professionnels, conseils et actualités chaudes du monde de l'immobilier — pour aborder chaque transaction avec de vraies connaissances.",
+      read_more: "Lire la suite",
+    },
+    blog_post: {
+      questions_eyebrow: "Vous avez des questions?",
+      questions_title: "Parlez directement à Idan",
+      whatsapp_button: "Envoyer un message WhatsApp",
+      content_coming_soon: "Le contenu de l'article apparaîtra ici bientôt.",
+    },
   },
 
   es: {
@@ -2640,6 +2684,20 @@ export const translations: Record<Locale, T> = {
         parcel_label_gush: "Manzana",
         parcel_label_helka: "Parcela",
       },
+    },
+    blog_page: {
+      meta_title: "Guías y novedades | Idan LaNadlan",
+      meta_description: "Guías, consejos y novedades del mundo inmobiliario por Idan Huli — conocimiento para una operación inteligente.",
+      eyebrow: "Conocimiento",
+      title: "Guías y novedades del mercado",
+      subtitle: "Guías profesionales, consejos y novedades del mundo inmobiliario — para que entres a cada operación con conocimiento real.",
+      read_more: "Leer más",
+    },
+    blog_post: {
+      questions_eyebrow: "¿Tienes preguntas?",
+      questions_title: "Habla directamente con Idan",
+      whatsapp_button: "Enviar mensaje por WhatsApp",
+      content_coming_soon: "El contenido del artículo aparecerá aquí pronto.",
     },
   },
 };

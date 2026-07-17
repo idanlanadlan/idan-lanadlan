@@ -1,10 +1,13 @@
 import Link from "next/link";
-import { Plus, Pencil, Eye, EyeOff, Sparkles } from "lucide-react";
+import { Plus, Pencil, Eye, EyeOff, Sparkles, Languages } from "lucide-react";
 import { getAllBlogPosts } from "@/lib/db";
-import { deleteBlogPost, togglePublished } from "@/app/actions/blog";
+import { deleteBlogPost, togglePublished, translateExistingPost } from "@/app/actions/blog";
 import ConfirmDeleteForm from "@/components/admin/ConfirmDeleteForm";
 
 export const dynamic = "force-dynamic";
+// translateExistingPost can call Claude on a full article — same timeout
+// headroom as the create/edit forms.
+export const maxDuration = 120;
 
 export default async function BlogAdmin() {
   const posts = await getAllBlogPosts();
@@ -89,6 +92,17 @@ export default async function BlogAdmin() {
               >
                 <Eye size={15} />
               </Link>
+
+              <form action={translateExistingPost}>
+                <input type="hidden" name="id" value={post.id} />
+                <button
+                  type="submit"
+                  className="p-1.5 text-gray-light hover:text-gold transition-colors"
+                  title="תרגם מחדש לאנגלית/צרפתית/ספרדית"
+                >
+                  <Languages size={15} />
+                </button>
+              </form>
 
               <Link
                 href={`/admin/blog/${post.id}/edit`}
