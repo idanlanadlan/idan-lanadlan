@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { numberLocale } from "@/lib/locale-format";
 
 const label = "block text-xs text-gold tracking-wider uppercase mb-1.5";
 const field =
-  "w-full bg-black border border-gray-dark rounded-lg px-4 py-2.5 text-sm text-cream placeholder:text-gray focus:border-gold outline-none transition-colors";
+  "w-full bg-black border border-gray-dark rounded-lg px-4 py-2.5 text-sm text-cream focus:border-gold outline-none transition-colors";
 
 function num(v: string): number {
   const n = Number(v.replace(/,/g, ""));
@@ -19,13 +21,17 @@ const MAX_LTV: Record<BuyerStatus, number> = {
   investment: 0.5,
 };
 
-const BUYER_LABEL: Record<BuyerStatus, string> = {
-  first: "דירה ראשונה / יחידה",
-  replacement: "החלפת דירה (מכירת הקיימת)",
-  investment: "משקיע / דירה נוספת",
-};
-
 export default function MortgageCalculator() {
+  const { t, locale } = useLanguage();
+  const c = t.tools_ui.mortgage_calculator;
+  const nl = numberLocale(locale);
+
+  const BUYER_LABEL: Record<BuyerStatus, string> = {
+    first: c.buyer_first,
+    replacement: c.buyer_replacement,
+    investment: c.buyer_investment,
+  };
+
   const [price, setPrice] = useState("");
   const [downPayment, setDownPayment] = useState("");
   const [rate, setRate] = useState("");
@@ -57,24 +63,24 @@ export default function MortgageCalculator() {
     <div className="space-y-6">
       <div className="grid sm:grid-cols-2 gap-4">
         <div>
-          <label className={label}>מחיר הנכס (₪)</label>
-          <input className={field} inputMode="numeric" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="2,000,000" />
+          <label htmlFor="mortgagecalculator-f0" className={label}>{c.label_price}</label>
+          <input id="mortgagecalculator-f0" className={field} inputMode="numeric" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="2,000,000" />
         </div>
         <div>
-          <label className={label}>הון עצמי / מקדמה (₪)</label>
-          <input className={field} inputMode="numeric" value={downPayment} onChange={(e) => setDownPayment(e.target.value)} placeholder="500,000" />
+          <label htmlFor="mortgagecalculator-f1" className={label}>{c.label_down_payment}</label>
+          <input id="mortgagecalculator-f1" className={field} inputMode="numeric" value={downPayment} onChange={(e) => setDownPayment(e.target.value)} placeholder="500,000" />
         </div>
         <div>
-          <label className={label}>ריבית שנתית (%)</label>
-          <input className={field} inputMode="decimal" value={rate} onChange={(e) => setRate(e.target.value)} placeholder="4.5" />
+          <label htmlFor="mortgagecalculator-f2" className={label}>{c.label_rate}</label>
+          <input id="mortgagecalculator-f2" className={field} inputMode="decimal" value={rate} onChange={(e) => setRate(e.target.value)} placeholder="4.5" />
         </div>
         <div>
-          <label className={label}>תקופת המשכנתא (שנים)</label>
-          <input className={field} inputMode="numeric" value={years} onChange={(e) => setYears(e.target.value)} placeholder="25" />
+          <label htmlFor="mortgagecalculator-f3" className={label}>{c.label_years}</label>
+          <input id="mortgagecalculator-f3" className={field} inputMode="numeric" value={years} onChange={(e) => setYears(e.target.value)} placeholder="25" />
         </div>
         <div className="sm:col-span-2">
-          <label className={label}>סטטוס הרוכש</label>
-          <select className={field} value={buyerStatus} onChange={(e) => setBuyerStatus(e.target.value as BuyerStatus)}>
+          <label htmlFor="mortgagecalculator-f4" className={label}>{c.label_buyer_status}</label>
+          <select id="mortgagecalculator-f4" className={field} value={buyerStatus} onChange={(e) => setBuyerStatus(e.target.value as BuyerStatus)}>
             {(Object.keys(BUYER_LABEL) as BuyerStatus[]).map((key) => (
               <option key={key} value={key}>{BUYER_LABEL[key]}</option>
             ))}
@@ -85,38 +91,36 @@ export default function MortgageCalculator() {
       {hasInput && (
         <div className="space-y-4 pt-6 border-t border-gray-dark">
           <div className="text-center">
-            <p className="text-xs tracking-widest text-gold uppercase mb-2">תשלום חודשי משוער</p>
-            <p className="font-display text-5xl font-light text-white">₪{Math.round(monthlyPayment).toLocaleString("he-IL")}</p>
+            <p className="text-xs tracking-widest text-gold uppercase mb-2">{c.result_monthly_label}</p>
+            <p className="font-display text-5xl font-light text-white">₪{Math.round(monthlyPayment).toLocaleString(nl)}</p>
           </div>
 
           <div className="grid sm:grid-cols-3 gap-4 text-sm">
             <div className="bg-black/40 border border-gray-dark rounded-lg p-4">
-              <p className="text-xs text-gray-light mb-1">גובה ההלוואה</p>
-              <p className="text-white font-semibold">₪{Math.round(loanAmount).toLocaleString("he-IL")}</p>
+              <p className="text-xs text-gray-light mb-1">{c.result_loan_label}</p>
+              <p className="text-white font-semibold">₪{Math.round(loanAmount).toLocaleString(nl)}</p>
             </div>
             <div className="bg-black/40 border border-gray-dark rounded-lg p-4">
-              <p className="text-xs text-gray-light mb-1">סה״כ ריבית לאורך התקופה</p>
-              <p className="text-white font-semibold">₪{Math.round(totalInterest).toLocaleString("he-IL")}</p>
+              <p className="text-xs text-gray-light mb-1">{c.result_interest_label}</p>
+              <p className="text-white font-semibold">₪{Math.round(totalInterest).toLocaleString(nl)}</p>
             </div>
             <div className="bg-black/40 border border-gray-dark rounded-lg p-4">
-              <p className="text-xs text-gray-light mb-1">סה״כ החזר לאורך התקופה</p>
-              <p className="text-white font-semibold">₪{Math.round(totalPayment).toLocaleString("he-IL")}</p>
+              <p className="text-xs text-gray-light mb-1">{c.result_total_label}</p>
+              <p className="text-white font-semibold">₪{Math.round(totalPayment).toLocaleString(nl)}</p>
             </div>
           </div>
 
           <div className="bg-black/40 border border-gray-dark rounded-lg p-4 text-sm text-gray-light space-y-1.5">
             <div className="flex justify-between">
-              <span>אחוז מימון (LTV)</span>
+              <span>{c.ltv_label}</span>
               <span className={ltv > maxLtv ? "text-amber-400 font-semibold" : "text-cream"}>{(ltv * 100).toFixed(1)}%</span>
             </div>
             <div className="flex justify-between">
-              <span>מגבלת בנק ישראל עבור {BUYER_LABEL[buyerStatus]}</span>
-              <span className="text-cream">עד {(maxLtv * 100).toFixed(0)}%</span>
+              <span>{c.ltv_limit_prefix} {BUYER_LABEL[buyerStatus]}</span>
+              <span className="text-cream">{c.ltv_limit_up_to} {(maxLtv * 100).toFixed(0)}%</span>
             </div>
             {ltv > maxLtv && (
-              <p className="text-amber-400 pt-1">
-                אחוז המימון הנדרש גבוה מהמגבלה הרגולטורית לסטטוס הנבחר — כנראה יידרש הון עצמי גבוה יותר.
-              </p>
+              <p className="text-amber-400 pt-1">{c.ltv_warning}</p>
             )}
           </div>
         </div>

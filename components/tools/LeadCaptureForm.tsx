@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { sendToolLead } from "@/app/actions/tool-leads";
 import { isValidPhone, isValidEmail } from "@/lib/validation";
+import ConsentCheckboxes, { type ConsentValue } from "@/components/ConsentCheckboxes";
 
 const field =
-  "w-full bg-black border border-gray-dark rounded-lg px-4 py-3 text-sm text-cream placeholder:text-gray focus:border-gold outline-none transition-colors";
+  "w-full bg-black border border-gray-dark rounded-lg px-4 py-3 text-sm text-cream focus:border-gold outline-none transition-colors";
 const label = "block text-xs text-gold tracking-widest uppercase mb-2";
 
 interface Props {
@@ -21,16 +22,18 @@ export default function LeadCaptureForm({
   ctaLabel = "השאירו פרטים ונחזור אליכם",
   submitLabel = "שלח →",
 }: Props) {
+  const uid = useId();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [phoneError, setPhoneError] = useState("");
   const [phoneTouched, setPhoneTouched] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [consent, setConsent] = useState<ConsentValue>({ privacy: false, marketing: false });
 
   const phoneValid = isValidPhone(phone);
   const emailOk = !email.trim() || isValidEmail(email);
-  const canSubmit = name.trim() && phoneValid && emailOk;
+  const canSubmit = name.trim() && phoneValid && emailOk && consent.privacy;
 
   function handlePhoneBlur() {
     setPhoneTouched(true);
@@ -44,7 +47,7 @@ export default function LeadCaptureForm({
       setPhoneError("מספר טלפון לא תקין");
       return;
     }
-    if (!name.trim()) return;
+    if (!name.trim() || !consent.privacy) return;
 
     setStatus("loading");
     const result = await sendToolLead({
@@ -53,6 +56,8 @@ export default function LeadCaptureForm({
       phone: phone.trim(),
       email: email.trim() || undefined,
       details,
+      privacyConsent: consent.privacy,
+      marketingConsent: consent.marketing,
     });
 
     setStatus(result.success ? "success" : "error");
@@ -75,37 +80,46 @@ export default function LeadCaptureForm({
       <p className="text-sm font-semibold text-white mb-1">{ctaLabel}</p>
 
       <div>
-        <label className={label}>
-          שם מלא <span className="text-red-400">*</span>
+        <label htmlFor={`${uid}-name`} className={label}>
+          שם מלא <span className="text-red-400" aria-hidden="true">*</span>
         </label>
         <input
+          id={`${uid}-name`}
           className={field}
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
+          aria-required="true"
         />
       </div>
 
       <div>
-        <label className={label}>
-          טלפון <span className="text-red-400">*</span>
+        <label htmlFor={`${uid}-phone`} className={label}>
+          טלפון <span className="text-red-400" aria-hidden="true">*</span>
         </label>
         <input
+          id={`${uid}-phone`}
           className={`${field} ${phoneError ? "border-red-500/70" : ""}`}
           type="tel"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           onBlur={handlePhoneBlur}
           required
+          aria-required="true"
+          aria-invalid={phoneTouched && phoneError ? true : undefined}
+          aria-describedby={phoneTouched && phoneError ? `${uid}-phone-err` : undefined}
         />
-        {phoneTouched && phoneError && <p className="mt-1.5 text-xs text-red-400">{phoneError}</p>}
+        {phoneTouched && phoneError && (
+          <p id={`${uid}-phone-err`} role="alert" className="mt-1.5 text-xs text-red-400">{phoneError}</p>
+        )}
       </div>
 
       <div>
-        <label className={label}>
+        <label htmlFor={`${uid}-email`} className={label}>
           מייל <span className="text-gray-light text-xs normal-case tracking-normal">(אופציונלי)</span>
         </label>
         <input
+          id={`${uid}-email`}
           className={field}
           type="email"
           value={email}
@@ -113,8 +127,10 @@ export default function LeadCaptureForm({
         />
       </div>
 
+      <ConsentCheckboxes value={consent} onChange={setConsent} />
+
       {status === "error" && (
-        <p className="text-xs text-red-400 text-center">שגיאה בשליחה. נסה שוב או פנה ב-WhatsApp.</p>
+        <p role="alert" className="text-xs text-red-400 text-center">שגיאה בשליחה. נסה שוב או פנה ב-WhatsApp.</p>
       )}
 
       <button

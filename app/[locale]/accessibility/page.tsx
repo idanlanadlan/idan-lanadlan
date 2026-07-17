@@ -20,7 +20,7 @@ export default function AccessibilityPage() {
             <h1 className="font-display text-4xl sm:text-5xl font-light text-white mb-4">
               הצהרת נגישות
             </h1>
-            <p className="text-gray-light text-sm">עדכון אחרון: יוני 2025</p>
+            <p className="text-gray-light text-sm">עדכון אחרון: יולי 2026</p>
           </div>
         </section>
 
@@ -49,29 +49,41 @@ export default function AccessibilityPage() {
               <div>
                 <h2 className="font-display text-2xl text-white font-light mb-4">3. מה בוצע לשיפור הנגישות</h2>
                 <ul className="text-sm leading-[2.2] list-disc list-inside space-y-2 marker:text-gold">
-                  <li>תוויות <code className="text-gold text-xs bg-charcoal px-1.5 py-0.5 rounded">aria-label</code> על כל האלמנטים האינטראקטיביים</li>
-                  <li>טקסט חלופי (<code className="text-gold text-xs bg-charcoal px-1.5 py-0.5 rounded">alt</code>) תיאורי לכל התמונות</li>
-                  <li>ניגודיות צבעים העומדת ביחס מינימלי של 4.5:1</li>
-                  <li>ניווט מקלדת מלא — כל אלמנט אינטראקטיבי ניתן לגישה ב-Tab</li>
+                  <li><strong className="text-cream">רכיב נגישות ייעודי</strong> — כפתור צף בפינת המסך המאפשר הגדלת טקסט (עד 125%), מצב ניגודיות גבוהה, עצירת אנימציות והדגשת קישורים; ההעדפות נשמרות בין ביקורים</li>
+                  <li>מצב תצוגה בהיר/כהה לבחירת המשתמש</li>
+                  <li>תוויות נגישות (aria) על הרכיבים האינטראקטיביים, כולל טפסים, חלונות דו-שיח ורשימות הצעות</li>
+                  <li>טקסט חלופי (alt) תיאורי לתמונות התוכן באתר</li>
+                  <li>ניגודיות צבעים העומדת בדרישות רמת AA, ובנוסף מצב ניגודיות גבוהה ייעודי ברכיב הנגישות</li>
+                  <li>ניווט מקלדת — האלמנטים האינטראקטיביים נגישים ב-Tab, עם סימון פוקוס נראה; חלונות נסגרים ב-Escape</li>
                   <li>קישור "דלג לתוכן" בראש העמוד לניווט מהיר לקוראי מסך</li>
-                  <li>מבנה כותרות היררכי ומסודר (<code className="text-gold text-xs bg-charcoal px-1.5 py-0.5 rounded">h1</code> → <code className="text-gold text-xs bg-charcoal px-1.5 py-0.5 rounded">h2</code> → <code className="text-gold text-xs bg-charcoal px-1.5 py-0.5 rounded">h3</code>)</li>
-                  <li>תמיכה בכיוון RTL (עברית) ו-LTR (אנגלית, צרפתית)</li>
-                  <li>אנימציות מכבדות את הגדרת <code className="text-gold text-xs bg-charcoal px-1.5 py-0.5 rounded">prefers-reduced-motion</code></li>
-                  <li>הטפסים וכפתורי הפעולה מסומנים בבירור</li>
-                  <li>גופנים ניתנים להגדלה עד 200% ללא שבירת הפריסה</li>
+                  <li>תוויות מקושרות לשדות בכל הטפסים והכרזת שגיאות לקוראי מסך</li>
+                  <li>מבנה כותרות היררכי ותמיכה בכיוון RTL (עברית) ו-LTR (אנגלית, צרפתית)</li>
+                  <li>אנימציות מכבדות את הגדרת מערכת ההפעלה (prefers-reduced-motion) וניתנות לעצירה מלאה דרך רכיב הנגישות</li>
+                  <li>גופנים ניתנים להגדלה ללא שבירת הפריסה</li>
                 </ul>
               </div>
 
               <div>
-                <h2 className="font-display text-2xl text-white font-light mb-4">4. מגבלות ידועות</h2>
+                <h2 className="font-display text-2xl text-white font-light mb-4">4. הסדרי נגישות באתר</h2>
                 <p className="text-sm leading-[2]">
-                  אנו עובדים באופן שוטף לשיפור הנגישות. ייתכנו תכנים שנוצרו על ידי גורמים חיצוניים
-                  (כגון הטמעת מפת גוגל) שאינם בשליטתנו הישירה.
+                  לפתיחת רכיב הנגישות לחצו על כפתור הנגישות העגול (סמל אדם) בפינה התחתונה של המסך,
+                  או נווטו אליו באמצעות מקש Tab. מהרכיב ניתן להגדיל את הטקסט, להפעיל ניגודיות
+                  גבוהה, לעצור אנימציות ולהדגיש קישורים — וההגדרות נשמרות לביקורים הבאים.
                 </p>
               </div>
 
               <div>
-                <h2 className="font-display text-2xl text-white font-light mb-4">5. דיווח על בעיות נגישות</h2>
+                <h2 className="font-display text-2xl text-white font-light mb-4">5. מגבלות ידועות</h2>
+                <p className="text-sm leading-[2]">
+                  אנו עובדים באופן שוטף לשיפור הנגישות, וייתכן שחלקים מסוימים טרם הונגשו במלואם.
+                  בנוסף, האתר משלב תכנים ושירותים של גורמים חיצוניים שאינם בשליטתנו הישירה — כגון
+                  מפות מוטמעות (Google Maps, GovMap), נגני רשתות חברתיות ושירות WhatsApp — ונגישותם
+                  תלויה בספקים אלה. נתקלתם בקושי? דווחו לנו ונדאג לחלופה נגישה.
+                </p>
+              </div>
+
+              <div>
+                <h2 className="font-display text-2xl text-white font-light mb-4">6. רכז הנגישות — דיווח על בעיות</h2>
                 <p className="text-sm leading-[2] mb-4">
                   נתקלתם בבעיית נגישות? נשמח לדעת כדי לפתור אותה בהקדם.
                 </p>
@@ -81,13 +93,17 @@ export default function AccessibilityPage() {
                     <span className="text-gold">טלפון / WhatsApp:</span>{" "}
                     <a href="tel:+972549791171" className="hover:text-gold transition-colors">054-979-1171</a>
                   </p>
+                  <p className="text-sm">
+                    <span className="text-gold">מייל:</span>{" "}
+                    <a href="mailto:idanlanadlan@gmail.com" className="hover:text-gold transition-colors">idanlanadlan@gmail.com</a>
+                  </p>
                   <p className="text-sm"><span className="text-gold">כתובת:</span> הירקון 319, נמל ת"א</p>
-                  <p className="text-sm text-gray/60 mt-2">אנו מתחייבים לחזור תוך 5 ימי עסקים.</p>
+                  <p className="text-sm text-gray-light mt-2">אנו מתחייבים לחזור תוך 5 ימי עסקים.</p>
                 </div>
               </div>
 
               <div>
-                <h2 className="font-display text-2xl text-white font-light mb-4">6. רשות לנגישות</h2>
+                <h2 className="font-display text-2xl text-white font-light mb-4">7. רשות לנגישות</h2>
                 <p className="text-sm leading-[2]">
                   אם לא קיבלתם מענה מספק, ניתן לפנות ל
                   <a

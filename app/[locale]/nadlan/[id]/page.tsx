@@ -48,6 +48,7 @@ export async function generateMetadata({
         he: propertyUrl(p.id, "he"),
         en: propertyUrl(p.id, "en"),
         fr: propertyUrl(p.id, "fr"),
+        es: propertyUrl(p.id, "es"),
         "x-default": propertyUrl(p.id, "he"),
       },
     },

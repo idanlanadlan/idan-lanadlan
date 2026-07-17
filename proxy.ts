@@ -39,7 +39,7 @@ export async function proxy(request: NextRequest) {
   }
 
   // Locale routing: Hebrew is served prefix-free (rewritten internally to /he),
-  // while /en and /fr are real URL prefixes handled by the app/[locale] segment.
+  // while /en, /fr and /es are real URL prefixes handled by the app/[locale] segment.
   if (pathname === "/he" || pathname.startsWith("/he/")) {
     // Explicit /he URLs would duplicate the canonical prefix-free Hebrew URLs.
     const url = request.nextUrl.clone();
@@ -47,7 +47,8 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(url, 308);
   }
 
-  if (pathname === "/en" || pathname.startsWith("/en/") || pathname === "/fr" || pathname.startsWith("/fr/")) {
+  const prefixedLocales = ["en", "fr", "es"];
+  if (prefixedLocales.some((l) => pathname === `/${l}` || pathname.startsWith(`/${l}/`))) {
     return NextResponse.next();
   }
 

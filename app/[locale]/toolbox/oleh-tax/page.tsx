@@ -4,21 +4,33 @@ import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import ToolShell from "@/components/tools/ToolShell";
 import OlehTaxSimulator from "@/components/tools/OlehTaxSimulator";
+import { translations } from "@/lib/translations";
+import { isLocale } from "@/lib/locale-path";
 
-export const metadata: Metadata = {
-  title: "סימולטור מס לעולים חדשים | עידן לנדל״ן",
-  description: "אמדו את מס הרכישה המוזל לעולים חדשים ומפת דרכים לרכישת נכס בישראל.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const l = isLocale(locale) ? locale : "he";
+  const t = translations[l].toolbox.tools.oleh_tax;
+  return { title: t.meta_title, description: t.meta_description };
+}
 
-export default function OlehTaxPage() {
+export default async function OlehTaxPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const l = isLocale(locale) ? locale : "he";
+  const t = translations[l].toolbox.tools.oleh_tax;
+
   return (
     <>
       <Header />
-      <ToolShell
-        title="סימולטור מס עולים חדשים"
-        description="הזינו את מחיר הנכס והמטבע — קבלו אומדן למס הרכישה המוזל לעולים חדשים ומפת דרכים לרכישה."
-        disclaimer="אומדן להמחשה בלבד ואינו מהווה ייעוץ מס או משפטי."
-      >
+      <ToolShell title={t.shell_title} description={t.shell_description} disclaimer={t.shell_disclaimer}>
         <OlehTaxSimulator />
       </ToolShell>
       <Footer />

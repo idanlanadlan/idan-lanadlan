@@ -7,6 +7,7 @@ const LOCALES: { code: Locale; countryCode: string; label: string }[] = [
   { code: "he", countryCode: "il", label: "עברית" },
   { code: "en", countryCode: "gb", label: "English" },
   { code: "fr", countryCode: "fr", label: "Français" },
+  { code: "es", countryCode: "es", label: "Español" },
 ];
 
 interface Props {

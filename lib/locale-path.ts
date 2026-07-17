@@ -1,6 +1,6 @@
 import type { Locale } from "@/lib/translations";
 
-export const locales: Locale[] = ["he", "en", "fr"];
+export const locales: Locale[] = ["he", "en", "fr", "es"];
 export const defaultLocale: Locale = "he";
 
 export function isLocale(value: string): value is Locale {

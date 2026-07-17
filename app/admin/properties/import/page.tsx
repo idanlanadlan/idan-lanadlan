@@ -261,7 +261,7 @@ export default function ImportPage() {
                   onKeyDown={(e) => e.key === "Enter" && handleCRMFetch()}
                   placeholder="https://mls.nadlanone.co.il/... או מספר ID"
                   dir="ltr"
-                  className="w-full bg-black/30 border border-gray-dark rounded-lg pr-8 pl-4 py-3 text-sm text-cream placeholder:text-gray-light/40 focus:border-gold outline-none transition-colors"
+                  className="w-full bg-black/30 border border-gray-dark rounded-lg pr-8 pl-4 py-3 text-sm text-cream focus:border-gold outline-none transition-colors"
                 />
               </div>
               <button
@@ -327,7 +327,7 @@ export default function ImportPage() {
               value={textInput} onChange={(e) => setTextInput(e.target.value)}
               placeholder={`הדבק כאן טקסט מכל מקור — Nadlan One, Yad2, WhatsApp, מייל...\n\nלדוגמה:\nדירת 4 חדרים, 120 מ"ר, קומה 5, נמל תל אביב\nמחיר: 4,500,000 ₪\nרחוב הירקון 100`}
               rows={7} dir="rtl"
-              className="w-full bg-black/30 border border-gray-dark rounded-xl px-4 py-3 text-sm text-cream placeholder:text-gray-light/40 focus:border-gold outline-none transition-colors resize-none"
+              className="w-full bg-black/30 border border-gray-dark rounded-xl px-4 py-3 text-sm text-cream focus:border-gold outline-none transition-colors resize-none"
             />
             <button
               onClick={handleTextAnalyze} disabled={!textInput.trim() || isParsing}

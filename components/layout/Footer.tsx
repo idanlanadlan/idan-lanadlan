@@ -136,6 +136,12 @@ export default function Footer() {
             >
               {f.accessibility}
             </Link>
+            <Link
+              href="/terms"
+              className="text-sm text-gray-light hover:text-gold transition-colors"
+            >
+              {f.terms}
+            </Link>
           </div>
         </div>
 

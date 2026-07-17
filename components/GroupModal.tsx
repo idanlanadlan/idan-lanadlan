@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, CheckCircle, ExternalLink } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import ConsentCheckboxes, { type ConsentValue } from "@/components/ConsentCheckboxes";
 
 type GroupType = "sale" | "rent";
 
@@ -18,12 +19,15 @@ interface Props {
 }
 
 export default function GroupModal({ groupType, onClose }: Props) {
+  const uid = useId();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [looking, setLooking] = useState("");
   const [budget, setBudget] = useState("");
   const [hasProperty, setHasProperty] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [consent, setConsent] = useState<ConsentValue>({ privacy: false, marketing: false });
+  const firstFieldRef = useRef<HTMLInputElement>(null);
 
   const { t } = useLanguage();
   const m = t.groups_modal;
@@ -31,14 +35,31 @@ export default function GroupModal({ groupType, onClose }: Props) {
   const link = GROUP_LINKS[groupType];
   const label = groupType === "sale" ? g.sale_title : g.rent_title;
 
+  // Dialog behavior: Esc closes, focus moves in on open and back on close.
+  useEffect(() => {
+    const opener = document.activeElement as HTMLElement | null;
+    firstFieldRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      opener?.focus();
+    };
+  }, [onClose]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!consent.privacy) return;
 
     const typeLabel = groupType === "sale" ? "מכירה" : "השכרה";
     const purposeLabel = hasProperty === "investment" ? m.purpose_investment
       : hasProperty === "living" ? m.purpose_living
       : hasProperty === "both" ? m.purpose_both
       : "—";
+    // Consent facts ride along in the WhatsApp message — its timestamp is the
+    // record (this flow has no server action to log through).
     const msg = [
       `🏠 בקשת הצטרפות — קבוצת ${typeLabel}`,
       ``,
@@ -47,6 +68,9 @@ export default function GroupModal({ groupType, onClose }: Props) {
       `🔍 מחפש: ${looking}`,
       `💰 תקציב: ${budget}`,
       `🏡 מטרת הנכס: ${purposeLabel}`,
+      ``,
+      `✅ אישור מדיניות פרטיות: כן`,
+      `📨 הסכמה לעדכונים שיווקיים: ${consent.marketing ? "כן" : "לא"}`,
     ].join("\n");
 
     window.open(
@@ -72,11 +96,14 @@ export default function GroupModal({ groupType, onClose }: Props) {
 
       {/* Panel */}
       <motion.div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={`${uid}-title`}
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         transition={{ duration: 0.2 }}
-        className="relative w-full max-w-md rounded-2xl overflow-hidden shadow-2xl flex flex-col"
+        className="dark-panel relative w-full max-w-md rounded-2xl overflow-hidden shadow-2xl flex flex-col"
         style={{ background: "#111", border: "1px solid rgba(201,169,110,0.25)", maxHeight: "90vh" }}
       >
         {/* Header */}
@@ -88,7 +115,7 @@ export default function GroupModal({ groupType, onClose }: Props) {
             <p className="text-[11px] tracking-[0.25em] text-gold uppercase mb-0.5">
               {groupType === "sale" ? g.sale_badge : g.rent_badge}
             </p>
-            <h2 className="text-white font-semibold text-base">{label}</h2>
+            <h2 id={`${uid}-title`} className="text-white font-semibold text-base">{label}</h2>
           </div>
           <button
             onClick={onClose}
@@ -115,59 +142,67 @@ export default function GroupModal({ groupType, onClose }: Props) {
 
               <div className="flex flex-col gap-3">
                 <div>
-                  <label className="text-xs text-gold mb-1 block">{m.name_label}</label>
+                  <label htmlFor={`${uid}-name`} className="text-xs text-gold mb-1 block">{m.name_label}</label>
                   <input
+                    id={`${uid}-name`}
+                    ref={firstFieldRef}
                     type="text"
                     required
+                    aria-required="true"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder={m.name_placeholder}
-                    className="w-full bg-white/5 border border-gray-dark/60 rounded-lg px-4 py-2.5 text-sm text-cream placeholder-gray-light focus:outline-none focus:border-gold/50 transition-colors"
+                    className="w-full bg-white/5 border border-gray-dark/60 rounded-lg px-4 py-2.5 text-sm text-cream focus:outline-none focus:border-gold/50 transition-colors"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs text-gold mb-1 block">{m.phone_label}</label>
+                  <label htmlFor={`${uid}-phone`} className="text-xs text-gold mb-1 block">{m.phone_label}</label>
                   <input
+                    id={`${uid}-phone`}
                     type="tel"
                     required
+                    aria-required="true"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="05X-XXX-XXXX"
                     dir="ltr"
-                    className="w-full bg-white/5 border border-gray-dark/60 rounded-lg px-4 py-2.5 text-sm text-cream placeholder-gray-light focus:outline-none focus:border-gold/50 transition-colors"
+                    className="w-full bg-white/5 border border-gray-dark/60 rounded-lg px-4 py-2.5 text-sm text-cream focus:outline-none focus:border-gold/50 transition-colors"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs text-gold mb-1 block">
+                  <label htmlFor={`${uid}-looking`} className="text-xs text-gold mb-1 block">
                     {groupType === "sale" ? m.looking_label_sale : m.looking_label_rent}
                   </label>
                   <input
+                    id={`${uid}-looking`}
                     type="text"
                     value={looking}
                     onChange={(e) => setLooking(e.target.value)}
                     placeholder={groupType === "sale" ? m.looking_placeholder_sale : m.looking_placeholder_rent}
-                    className="w-full bg-white/5 border border-gray-dark/60 rounded-lg px-4 py-2.5 text-sm text-cream placeholder-gray-light focus:outline-none focus:border-gold/50 transition-colors"
+                    className="w-full bg-white/5 border border-gray-dark/60 rounded-lg px-4 py-2.5 text-sm text-cream focus:outline-none focus:border-gold/50 transition-colors"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs text-gold mb-1 block">{m.budget_label}</label>
+                  <label htmlFor={`${uid}-budget`} className="text-xs text-gold mb-1 block">{m.budget_label}</label>
                   <input
+                    id={`${uid}-budget`}
                     type="text"
                     value={budget}
                     onChange={(e) => setBudget(e.target.value)}
                     placeholder={groupType === "sale" ? m.budget_placeholder_sale : m.budget_placeholder_rent}
-                    className="w-full bg-white/5 border border-gray-dark/60 rounded-lg px-4 py-2.5 text-sm text-cream placeholder-gray-light focus:outline-none focus:border-gold/50 transition-colors"
+                    className="w-full bg-white/5 border border-gray-dark/60 rounded-lg px-4 py-2.5 text-sm text-cream focus:outline-none focus:border-gold/50 transition-colors"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs text-gold mb-1 block">
+                  <label htmlFor={`${uid}-purpose`} className="text-xs text-gold mb-1 block">
                     {m.purpose_label}
                   </label>
                   <select
+                    id={`${uid}-purpose`}
                     value={hasProperty}
                     onChange={(e) => setHasProperty(e.target.value)}
                     className="w-full bg-[#111] border border-gray-dark/60 rounded-lg px-4 py-2.5 text-sm text-cream focus:outline-none focus:border-gold/50 transition-colors"
@@ -180,9 +215,12 @@ export default function GroupModal({ groupType, onClose }: Props) {
                 </div>
               </div>
 
+              <ConsentCheckboxes value={consent} onChange={setConsent} />
+
               <button
                 type="submit"
-                className="btn-gold w-full py-3 rounded-xl text-sm font-semibold mt-1 hover:opacity-90 transition-opacity"
+                disabled={!consent.privacy}
+                className="btn-gold w-full py-3 rounded-xl text-sm font-semibold mt-1 hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {m.submit_button}
               </button>

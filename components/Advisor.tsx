@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Send, RotateCcw, MessageCircle } from "lucide-react";
+import LocaleLink from "@/components/LocaleLink";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { Locale } from "@/lib/translations";
 
@@ -18,6 +19,9 @@ function getWelcome(locale: Locale): string {
   if (locale === "fr") {
     return `Bonjour! Je suis le conseiller IA d'Idan LaNadlan 🏠\n\nJe peux vous aider avec:\n• Calcul de la **taxe d'achat**\n• **Limites de prêt** (LTV)\n• **Taxe sur la plus-value** & exonérations\n• **Étapes d'une transaction** immobilière\n• **Frais** pour l'acheteur\n\nQue souhaitez-vous savoir?`;
   }
+  if (locale === "es") {
+    return `¡Hola! Soy el asesor inmobiliario IA de Idan LaNadlan 🏠\n\nPuedo ayudarte con:\n• Cálculo del **impuesto de compra**\n• **Límites de hipoteca** (LTV)\n• **Impuesto sobre la plusvalía** y exenciones\n• **Pasos de una operación** inmobiliaria\n• **Costos** para el comprador\n\n¿Qué te gustaría saber?`;
+  }
   return `שלום! אני היועץ הנדל"ני של עידן לנדל"ן 🏠\n\nאני יכול לעזור לך עם:\n• חישוב **מס רכישה** לנכס\n• **מגבלות משכנתא** (LTV)\n• **מס שבח** ופטורים\n• **שלבי עסקת נדל"ן**\n• **עלויות נלוות** לרוכש\n\nמה תרצה לדעת?`;
 }
 
@@ -30,13 +34,22 @@ export default function Advisor() {
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
   useEffect(() => {
-    if (open) inputRef.current?.focus();
+    if (open) {
+      inputRef.current?.focus();
+      const onKey = (e: KeyboardEvent) => {
+        if (e.key === "Escape") setOpen(false);
+      };
+      document.addEventListener("keydown", onKey);
+      return () => document.removeEventListener("keydown", onKey);
+    }
+    triggerRef.current?.focus();
   }, [open]);
 
   const reset = () => setMessages([]);
@@ -116,8 +129,11 @@ export default function Advisor() {
     <>
       {/* Floating trigger button */}
       <button
+        ref={triggerRef}
         onClick={() => setOpen(true)}
         aria-label={ad.trigger_title}
+        aria-haspopup="dialog"
+        aria-expanded={open}
         className={`fixed bottom-6 left-3 sm:left-6 z-50 flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-2xl shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95 ${open ? "opacity-0 pointer-events-none" : "opacity-100"}`}
         style={{
           background: "linear-gradient(135deg, #C9A96E, #a07840)",
@@ -135,11 +151,13 @@ export default function Advisor() {
       <AnimatePresence>
         {open && (
           <motion.div
+            role="dialog"
+            aria-label={ad.title}
             initial={{ opacity: 0, y: 30, scale: 0.92 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 30, scale: 0.92 }}
             transition={{ duration: 0.22, ease: "easeOut" }}
-            className="fixed bottom-6 left-3 sm:left-6 z-50 w-[calc(100vw-24px)] sm:w-[360px] max-h-[75vh] sm:max-h-[560px] flex flex-col rounded-2xl overflow-hidden shadow-2xl"
+            className="dark-panel fixed bottom-6 left-3 sm:left-6 z-50 w-[calc(100vw-24px)] sm:w-[360px] max-h-[75vh] sm:max-h-[560px] flex flex-col rounded-2xl overflow-hidden shadow-2xl"
             style={{ border: "1px solid rgba(201, 169, 110, 0.3)" }}
           >
             {/* Header */}
@@ -244,6 +262,17 @@ export default function Advisor() {
               <div ref={bottomRef} />
             </div>
 
+            {/* Screen-reader status: announces typing, then the final reply once
+                streaming ends (live-region on the stream itself would announce
+                every token). */}
+            <div role="status" aria-live="polite" className="sr-only">
+              {loading
+                ? ad.typing_status
+                : messages.length > 0 && messages[messages.length - 1].role === "assistant"
+                  ? messages[messages.length - 1].content
+                  : ""}
+            </div>
+
             {/* Input */}
             <div
               className="px-3 py-3 shrink-0 flex items-end gap-2"
@@ -261,7 +290,7 @@ export default function Advisor() {
                 rows={1}
                 disabled={loading}
                 aria-label="הודעה ליועץ"
-                className="flex-1 resize-none bg-transparent text-cream text-sm placeholder-gray-light focus:outline-none py-1.5 leading-relaxed max-h-24 overflow-y-auto"
+                className="flex-1 resize-none bg-transparent text-cream text-sm focus:outline-none py-1.5 leading-relaxed max-h-24 overflow-y-auto"
                 style={{ direction: "rtl" }}
               />
               <button
@@ -301,6 +330,12 @@ export default function Advisor() {
                 >
                   WhatsApp
                 </a>
+              </p>
+              <p className="text-[10px] text-gray-light/80 mt-1 leading-relaxed">
+                {ad.ai_disclosure}{" "}
+                <LocaleLink href="/privacy" className="text-gold hover:underline">
+                  {ad.ai_disclosure_link}
+                </LocaleLink>
               </p>
             </div>
           </motion.div>

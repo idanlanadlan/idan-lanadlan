@@ -4,13 +4,29 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import { ContactForm } from "@/components/contact/ContactForm";
+import { translations } from "@/lib/translations";
+import { isLocale } from "@/lib/locale-path";
 
-export const metadata: Metadata = {
-  title: "צור קשר | עידן לנדל״ן",
-  description: "צרו קשר עם עידן חולי — מומחה נדל״ן. שלחו פנייה, WhatsApp, טלפון ועוד.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const l = isLocale(locale) ? locale : "he";
+  const c = translations[l].contact_page;
+  return { title: c.meta_title, description: c.meta_description };
+}
 
-export default function ContactPage() {
+export default async function ContactPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const l = isLocale(locale) ? locale : "he";
+  const c = translations[l].contact_page;
+
   return (
     <>
       <Header />
@@ -18,14 +34,12 @@ export default function ContactPage() {
         {/* Header */}
         <section className="py-16 bg-charcoal border-b border-gray-dark">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
-            <p className="text-xs tracking-[0.3em] text-gold uppercase mb-3">בואו נדבר</p>
+            <p className="text-xs tracking-[0.3em] text-gold uppercase mb-3">{c.eyebrow}</p>
             <div className="divider-gold mb-4" />
             <h1 className="font-display text-4xl sm:text-5xl font-light text-white mb-4">
-              צור קשר
+              {c.title}
             </h1>
-            <p className="text-gray-light max-w-xl">
-              יש לכם שאלה? מחפשים נכס? רוצים למכור? עידן ישמח לעזור.
-            </p>
+            <p className="text-gray-light max-w-xl">{c.subtitle}</p>
           </div>
         </section>
 
@@ -37,7 +51,7 @@ export default function ContactPage() {
               {/* Contact Form */}
               <div className="bg-charcoal border border-gray-dark rounded-2xl p-8">
                 <h2 className="font-display text-2xl text-white font-light mb-6">
-                  שלחו פנייה
+                  {c.form_title}
                 </h2>
                 <ContactForm />
               </div>
@@ -45,7 +59,7 @@ export default function ContactPage() {
               {/* Contact options */}
               <div className="flex flex-col gap-4">
                 <h2 className="font-display text-2xl text-white font-light mb-2">
-                  דרכי יצירת קשר
+                  {c.methods_title}
                 </h2>
 
                 <a
@@ -58,8 +72,8 @@ export default function ContactPage() {
                     <MessageCircle size={20} className="text-white" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-white group-hover:text-gold transition-colors">WhatsApp</p>
-                    <p className="text-xs text-gray-light mt-0.5">הדרך המהירה ביותר לדבר עם עידן</p>
+                    <p className="text-sm font-semibold text-white group-hover:text-gold transition-colors">{c.whatsapp_title}</p>
+                    <p className="text-xs text-gray-light mt-0.5">{c.whatsapp_desc}</p>
                   </div>
                 </a>
 
@@ -73,8 +87,8 @@ export default function ContactPage() {
                     <BookOpen size={18} className="text-white" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-white group-hover:text-gold transition-colors">קטלוג נכסים ב-WhatsApp</p>
-                    <p className="text-xs text-gray-light mt-0.5">עיינו בכל הנכסים הזמינים</p>
+                    <p className="text-sm font-semibold text-white group-hover:text-gold transition-colors">{c.whatsapp_catalog_title}</p>
+                    <p className="text-xs text-gray-light mt-0.5">{c.whatsapp_catalog_desc}</p>
                   </div>
                 </a>
 
@@ -87,7 +101,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-white group-hover:text-gold transition-colors">054-979-1171</p>
-                    <p className="text-xs text-gray-light mt-0.5">שיחה טלפונית ישירה</p>
+                    <p className="text-xs text-gray-light mt-0.5">{c.phone_desc}</p>
                   </div>
                 </a>
 
@@ -100,7 +114,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-white group-hover:text-gold transition-colors">idanlanadlan@gmail.com</p>
-                    <p className="text-xs text-gray-light mt-0.5">שלחו מייל ישירות</p>
+                    <p className="text-xs text-gray-light mt-0.5">{c.email_desc}</p>
                   </div>
                 </a>
 
@@ -114,8 +128,8 @@ export default function ContactPage() {
                     <MapPin size={18} className="text-gold" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-white group-hover:text-gold transition-colors">הירקון 319, נמל ת"א</p>
-                    <p className="text-xs text-gray-light mt-0.5">נווט עם Waze ←</p>
+                    <p className="text-sm font-semibold text-white group-hover:text-gold transition-colors">{c.address}</p>
+                    <p className="text-xs text-gray-light mt-0.5">{c.waze_desc}</p>
                   </div>
                 </a>
               </div>
@@ -132,7 +146,7 @@ export default function ContactPage() {
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                  title="מפת מיקום עידן לנדל״ן — הירקון 319, תל אביב"
+                  title={c.map_title}
                 />
               </div>
               <div className="mt-3 text-center">
@@ -142,7 +156,7 @@ export default function ContactPage() {
                   rel="noopener noreferrer"
                   className="text-xs text-gold hover:text-gold-light transition-colors"
                 >
-                  פתח בגוגל מפות ←
+                  {c.map_link}
                 </a>
               </div>
             </div>

@@ -108,7 +108,7 @@ export default function GenerateClient() {
           placeholder={activeTab.placeholder}
           rows={tab === "content" ? 8 : 4}
           dir={tab === "link" ? "ltr" : "rtl"}
-          className="w-full bg-black/30 border border-gray-dark rounded-xl px-4 py-3 text-sm text-cream placeholder:text-gray-light/40 focus:border-gold outline-none transition-colors resize-none"
+          className="w-full bg-black/30 border border-gray-dark rounded-xl px-4 py-3 text-sm text-cream focus:border-gold outline-none transition-colors resize-none"
         />
         <button
           onClick={handleGenerate}

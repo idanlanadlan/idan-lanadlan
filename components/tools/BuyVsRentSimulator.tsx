@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { numberLocale } from "@/lib/locale-format";
 
 const field =
-  "w-full bg-black border border-gray-dark rounded-lg px-4 py-2.5 text-sm text-cream placeholder:text-gray focus:border-gold outline-none transition-colors";
+  "w-full bg-black border border-gray-dark rounded-lg px-4 py-2.5 text-sm text-cream focus:border-gold outline-none transition-colors";
 const label = "block text-xs text-gold tracking-wider uppercase mb-1.5";
 
 // Editable assumptions
@@ -18,6 +20,10 @@ function num(v: string): number {
 }
 
 export default function BuyVsRentSimulator() {
+  const { t, locale } = useLanguage();
+  const c = t.tools_ui.buy_vs_rent;
+  const nl = numberLocale(locale);
+
   const [capital, setCapital] = useState("");
   const [rate, setRate] = useState("");
   const [rent, setRent] = useState("");
@@ -66,30 +72,28 @@ export default function BuyVsRentSimulator() {
     <div className="space-y-6">
       <div className="grid sm:grid-cols-3 gap-4">
         <div>
-          <label className={label}>הון עצמי זמין (₪)</label>
-          <input className={field} inputMode="numeric" value={capital} onChange={(e) => setCapital(e.target.value)} placeholder="500,000" />
+          <label htmlFor="buyvsrentsimulator-f0" className={label}>{c.label_capital}</label>
+          <input id="buyvsrentsimulator-f0" className={field} inputMode="numeric" value={capital} onChange={(e) => setCapital(e.target.value)} placeholder="500,000" />
         </div>
         <div>
-          <label className={label}>ריבית משכנתא שנתית (%)</label>
-          <input className={field} inputMode="decimal" value={rate} onChange={(e) => setRate(e.target.value)} placeholder="4.5" />
+          <label htmlFor="buyvsrentsimulator-f1" className={label}>{c.label_rate}</label>
+          <input id="buyvsrentsimulator-f1" className={field} inputMode="decimal" value={rate} onChange={(e) => setRate(e.target.value)} placeholder="4.5" />
         </div>
         <div>
-          <label className={label}>שכ״ד חודשי חלופי (₪)</label>
-          <input className={field} inputMode="numeric" value={rent} onChange={(e) => setRent(e.target.value)} placeholder="6,500" />
+          <label htmlFor="buyvsrentsimulator-f2" className={label}>{c.label_rent}</label>
+          <input id="buyvsrentsimulator-f2" className={field} inputMode="numeric" value={rent} onChange={(e) => setRent(e.target.value)} placeholder="6,500" />
         </div>
       </div>
 
       {hasInput && (
         <div className="space-y-5 pt-4 border-t border-gray-dark">
-          <p className="text-xs text-gray-light text-center">
-            השוואה לאחר {YEARS_AHEAD} שנים — הון עצמי כמקדמה מול השכ״ד המוצג כתשלום משכנתא חודשי שווה-ערך
-          </p>
+          <p className="text-xs text-gray-light text-center">{c.comparison_intro}</p>
 
           {/* Buying bar */}
           <div>
             <div className="flex items-center justify-between text-sm mb-1.5">
-              <span className="text-white font-medium">קנייה</span>
-              <span className="text-gold font-semibold">₪{Math.round(buyingNetWorth).toLocaleString("he-IL")}</span>
+              <span className="text-white font-medium">{c.buying_label}</span>
+              <span className="text-gold font-semibold">₪{Math.round(buyingNetWorth).toLocaleString(nl)}</span>
             </div>
             <div className="h-3 bg-black/40 rounded-full overflow-hidden">
               <div
@@ -102,8 +106,8 @@ export default function BuyVsRentSimulator() {
           {/* Renting bar */}
           <div>
             <div className="flex items-center justify-between text-sm mb-1.5">
-              <span className="text-white font-medium">שכירות + השקעת ההון</span>
-              <span className="text-gold font-semibold">₪{Math.round(rentingNetWorth).toLocaleString("he-IL")}</span>
+              <span className="text-white font-medium">{c.renting_label}</span>
+              <span className="text-gold font-semibold">₪{Math.round(rentingNetWorth).toLocaleString(nl)}</span>
             </div>
             <div className="h-3 bg-black/40 rounded-full overflow-hidden">
               <div
@@ -114,14 +118,14 @@ export default function BuyVsRentSimulator() {
           </div>
 
           <p className="text-center text-sm text-white pt-2">
-            {buyingNetWorth > rentingNetWorth
-              ? "לפי ההנחות שהוזנו — קנייה משאירה אתכם עם שווי נטו גבוה יותר."
-              : "לפי ההנחות שהוזנו — שכירות והשקעת ההון העצמי משאירות אתכם עם שווי נטו גבוה יותר."}
+            {buyingNetWorth > rentingNetWorth ? c.result_buying_wins : c.result_renting_wins}
           </p>
 
           <div className="bg-black/40 border border-gray-dark rounded-lg p-4 text-xs text-gray-light leading-relaxed">
-            <p className="text-gold mb-1">הנחות החישוב (ניתנות לשינוי):</p>
-            <p>תקופת משכנתא: {MORTGAGE_TERM_YEARS} שנה · מחיר נכס משוער: ₪{Math.round(propertyPrice).toLocaleString("he-IL")} (הון + הלוואה של ₪{Math.round(loanAmount).toLocaleString("he-IL")}) · ייסוף נדל״ן שנתי: {(ANNUAL_APPRECIATION * 100).toFixed(0)}% · תשואת השקעה חלופית שנתית: {(ANNUAL_INVESTMENT_RETURN * 100).toFixed(0)}%</p>
+            <p className="text-gold mb-1">{c.assumptions_label}</p>
+            <p>
+              {c.assumptions_term} · {c.assumptions_price}: ₪{Math.round(propertyPrice).toLocaleString(nl)} ({c.assumptions_loan} ₪{Math.round(loanAmount).toLocaleString(nl)}) · {c.assumptions_appreciation}: {(ANNUAL_APPRECIATION * 100).toFixed(0)}% · {c.assumptions_return}: {(ANNUAL_INVESTMENT_RETURN * 100).toFixed(0)}%
+            </p>
           </div>
         </div>
       )}

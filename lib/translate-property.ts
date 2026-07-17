@@ -5,7 +5,7 @@ type SourceFields = Pick<Property, "title" | "description" | "neighborhood" | "c
 
 const TRANSLATE_TOOL: Anthropic.Tool = {
   name: "translate_property",
-  description: "שומר את תרגום פרטי הנכס לאנגלית ולצרפתית",
+  description: "שומר את תרגום פרטי הנכס לאנגלית, לצרפתית ולספרדית",
   input_schema: {
     type: "object",
     properties: {
@@ -29,8 +29,18 @@ const TRANSLATE_TOOL: Anthropic.Tool = {
         },
         required: ["title", "description", "neighborhood", "city"],
       },
+      es: {
+        type: "object",
+        properties: {
+          title: { type: "string" },
+          description: { type: "string" },
+          neighborhood: { type: "string" },
+          city: { type: "string" },
+        },
+        required: ["title", "description", "neighborhood", "city"],
+      },
     },
-    required: ["en", "fr"],
+    required: ["en", "fr", "es"],
   },
 };
 
@@ -56,7 +66,7 @@ export async function translatePropertyFields(
       model: "claude-sonnet-5",
       max_tokens: 1024,
       system:
-        "אתה מתרגם מקצועי לתחום הנדל\"ן היוקרתי. תרגם את פרטי הנכס לאנגלית ולצרפתית באופן טבעי ושיווקי (לא תרגום מילולי מכני) — כמו שסוכנות נדל\"ן יוקרתית בתל אביב הייתה כותבת בשפת היעד. שמור על שמות מקומות מוכרים (Tel Aviv, לא תעתיק מלאכותי). קרא לכלי translate_property עם התוצאה.",
+        "אתה מתרגם מקצועי לתחום הנדל\"ן היוקרתי. תרגם את פרטי הנכס לאנגלית, לצרפתית ולספרדית באופן טבעי ושיווקי (לא תרגום מילולי מכני) — כמו שסוכנות נדל\"ן יוקרתית בתל אביב הייתה כותבת בשפת היעד. שמור על שמות מקומות מוכרים (Tel Aviv, לא תעתיק מלאכותי). קרא לכלי translate_property עם התוצאה.",
       messages: [
         {
           role: "user",
@@ -72,8 +82,9 @@ export async function translatePropertyFields(
     const input = toolUse.input as {
       en?: Partial<SourceFields>;
       fr?: Partial<SourceFields>;
+      es?: Partial<SourceFields>;
     };
-    if (!input.en || !input.fr) return null;
+    if (!input.en || !input.fr || !input.es) return null;
 
     return {
       title_en: String(input.en.title ?? ""),
@@ -84,6 +95,10 @@ export async function translatePropertyFields(
       description_fr: String(input.fr.description ?? ""),
       neighborhood_fr: String(input.fr.neighborhood ?? ""),
       city_fr: String(input.fr.city ?? ""),
+      title_es: String(input.es.title ?? ""),
+      description_es: String(input.es.description ?? ""),
+      neighborhood_es: String(input.es.neighborhood ?? ""),
+      city_es: String(input.es.city ?? ""),
     };
   } catch {
     return null;

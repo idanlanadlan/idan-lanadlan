@@ -4,21 +4,33 @@ import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import ToolShell from "@/components/tools/ToolShell";
 import MortgageCalculator from "@/components/tools/MortgageCalculator";
+import { translations } from "@/lib/translations";
+import { isLocale } from "@/lib/locale-path";
 
-export const metadata: Metadata = {
-  title: "מחשבון משכנתא | עידן לנדל״ן",
-  description: "חשבו את ההחזר החודשי הצפוי למשכנתא, סך הריבית לאורך התקופה ואחוז המימון מול מגבלות בנק ישראל.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const l = isLocale(locale) ? locale : "he";
+  const t = translations[l].toolbox.tools.mortgage_calculator;
+  return { title: t.meta_title, description: t.meta_description };
+}
 
-export default function MortgageCalculatorPage() {
+export default async function MortgageCalculatorPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const l = isLocale(locale) ? locale : "he";
+  const t = translations[l].toolbox.tools.mortgage_calculator;
+
   return (
     <>
       <Header />
-      <ToolShell
-        title="מחשבון משכנתא"
-        description="הזינו את פרטי הנכס וההלוואה וקבלו את ההחזר החודשי הצפוי, סך הריבית ואחוז המימון הנדרש."
-        disclaimer="אומדן להמחשה בלבד ואינו מהווה ייעוץ משכנתאות — האישור הסופי וגובה הריבית נקבעים מול הבנק."
-      >
+      <ToolShell title={t.shell_title} description={t.shell_description} disclaimer={t.shell_disclaimer}>
         <MortgageCalculator />
       </ToolShell>
       <Footer />

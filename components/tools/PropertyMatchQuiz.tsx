@@ -3,70 +3,40 @@
 import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import LeadCaptureForm from "./LeadCaptureForm";
+import { useLanguage } from "@/contexts/LanguageContext";
 
-const LIFE_STAGES = [
-  {
-    id: "investor",
-    label: "משקיע",
-    profile: "נכס להשקעה עם פוטנציאל השבחה — דירות 2–3 חדרים באזורים מתפתחים או נכסים במסלול תמ״א 38, עם דגש על תשואה ותזרים.",
-  },
-  {
-    id: "family",
-    label: "משפחה מתרחבת",
-    profile: "דירת 4–5 חדרים עם חדרים נוספים, קרבה לבתי ספר וגנים, ועדיפות למרפסת או גינה.",
-  },
-  {
-    id: "young",
-    label: "זוג צעיר",
-    profile: "דירת 2–3 חדרים ראשונה, במיקום נוח לתחבורה ולמרכזי עניין, עם פוטנציאל עליית ערך.",
-  },
-  {
-    id: "downsize",
-    label: "דאון-סייזינג / גיל הזהב",
-    profile: "דירה קומפקטית ונוחה, בקומה נמוכה או עם מעלית, בקרבה לשירותים ולים.",
-  },
-] as const;
-
-const VIBES = [
-  { id: "modern", label: "מודרני / בוטיק", note: "בבניין בוטיק חדש עם עיצוב מודרני ומפרט טכני גבוה" },
-  { id: "classic", label: "קלאסי / יוקרתי", note: "בבניין לשימור או ברחוב וותיק עם אופי ואדריכלות ייחודית" },
-  { id: "quiet", label: "שקט / משפחתי", note: "ברחוב שקט, בשכונה משפחתית ורגועה" },
-  { id: "lively", label: "תוסס / מרכז העיר", note: "במרכז האקשן, קרוב לבתי קפה, מסעדות וחיי לילה" },
-] as const;
-
-const BUDGETS = [
-  { id: "b1", label: "עד 2 מיליון ₪", note: "בטווח הזה נתמקד בשכונות מתפתחות עם פוטנציאל עתידי" },
-  { id: "b2", label: "2–4 מיליון ₪", note: "טווח שמאפשר מגוון רחב של אפשרויות באזורי ביקוש מרכזיים" },
-  { id: "b3", label: "4–7 מיליון ₪", note: "טווח שפותח דלת לנכסי יוקרה ברחובות המבוקשים ביותר" },
-  { id: "b4", label: "מעל 7 מיליון ₪", note: "טווח שמתאים לנכסי פרימיום, פנטהאוזים ובתים פרטיים" },
-] as const;
+type Stage = { id: string; label: string; profile: string };
+type Vibe = { id: string; label: string; note: string };
+type Budget = { id: string; label: string; note: string };
 
 export default function PropertyMatchQuiz() {
+  const { t } = useLanguage();
+  const c = t.tools_ui.property_match;
   const [step, setStep] = useState(1);
-  const [stage, setStage] = useState<(typeof LIFE_STAGES)[number] | null>(null);
-  const [vibe, setVibe] = useState<(typeof VIBES)[number] | null>(null);
-  const [budget, setBudget] = useState<(typeof BUDGETS)[number] | null>(null);
+  const [stage, setStage] = useState<Stage | null>(null);
+  const [vibe, setVibe] = useState<Vibe | null>(null);
+  const [budget, setBudget] = useState<Budget | null>(null);
 
   const recommendation =
     stage && vibe && budget ? `${stage.profile} ${vibe.note}. ${budget.note}.` : "";
 
   const details = stage && vibe && budget
-    ? `שלב חיים: ${stage.label}\nוייב מבוקש: ${vibe.label}\nתקציב: ${budget.label}\n\nפרופיל מומלץ: ${recommendation}`
+    ? `${c.details_stage_label} ${stage.label}\n${c.details_vibe_label} ${vibe.label}\n${c.details_budget_label} ${budget.label}\n\n${c.details_profile_label} ${recommendation}`
     : undefined;
 
   if (step === 4 && stage && vibe && budget) {
     return (
       <div className="space-y-6">
         <div className="text-center">
-          <p className="text-xs tracking-widest text-gold uppercase mb-3">הפרופיל המומלץ עבורכם</p>
+          <p className="text-xs tracking-widest text-gold uppercase mb-3">{c.result_label}</p>
           <p className="text-white leading-relaxed">{recommendation}</p>
         </div>
         <div className="border-t border-gray-dark pt-6">
           <LeadCaptureForm
-            toolName="שאלון התאמת נכס"
+            toolName={c.tool_name}
             details={details}
-            ctaLabel="קבע פגישת ייעוץ עם עידן"
-            submitLabel="קבע פגישה →"
+            ctaLabel={c.cta_label}
+            submitLabel={c.submit_label}
           />
         </div>
       </div>
@@ -83,9 +53,9 @@ export default function PropertyMatchQuiz() {
 
       {step === 1 && (
         <div>
-          <p className="text-sm font-semibold text-white mb-4">באיזה שלב חיים אתם נמצאים?</p>
+          <p className="text-sm font-semibold text-white mb-4">{c.step1_question}</p>
           <div className="grid grid-cols-2 gap-3">
-            {LIFE_STAGES.map((s) => (
+            {c.life_stages.map((s) => (
               <button
                 key={s.id}
                 type="button"
@@ -104,9 +74,9 @@ export default function PropertyMatchQuiz() {
 
       {step === 2 && (
         <div>
-          <p className="text-sm font-semibold text-white mb-4">איזה וייב מדבר אליכם?</p>
+          <p className="text-sm font-semibold text-white mb-4">{c.step2_question}</p>
           <div className="grid grid-cols-2 gap-3">
-            {VIBES.map((v) => (
+            {c.vibes.map((v) => (
               <button
                 key={v.id}
                 type="button"
@@ -125,9 +95,9 @@ export default function PropertyMatchQuiz() {
 
       {step === 3 && (
         <div>
-          <p className="text-sm font-semibold text-white mb-4">מה טווח התקציב?</p>
+          <p className="text-sm font-semibold text-white mb-4">{c.step3_question}</p>
           <div className="grid grid-cols-2 gap-3">
-            {BUDGETS.map((b) => (
+            {c.budgets.map((b) => (
               <button
                 key={b.id}
                 type="button"
@@ -151,7 +121,7 @@ export default function PropertyMatchQuiz() {
           className="flex items-center gap-1 text-xs text-gray-light hover:text-gold transition-colors"
         >
           <ArrowRight size={12} />
-          חזרה
+          {c.back_button}
         </button>
       )}
     </div>

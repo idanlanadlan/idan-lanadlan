@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { numberLocale } from "@/lib/locale-format";
 
 const label = "block text-xs text-gold tracking-wider uppercase mb-1.5";
 const field =
-  "w-full bg-black border border-gray-dark rounded-lg px-4 py-2.5 text-sm text-cream placeholder:text-gray focus:border-gold outline-none transition-colors";
+  "w-full bg-black border border-gray-dark rounded-lg px-4 py-2.5 text-sm text-cream focus:border-gold outline-none transition-colors";
 
 // 2026 brackets under Regulation 12a (reformed track, in force since 15.8.2024, frozen at 2025
 // levels until Jan 2028) — uses the same thresholds as the regular single-home table, at reduced
@@ -38,17 +40,17 @@ function calcOlehTax(price: number) {
   return { totalTax, rows };
 }
 
-const ROADMAP = [
-  "קבלת תעודת עולה מרשות האוכלוסין וההגירה",
-  "פתיחת חשבון בנק בישראל",
-  "אישור זכאות למדרגות מס רכישה לעולים ברשות המסים",
-  "ליווי עורך דין מקרקעין לבדיקת הנכס והחוזה",
-  "חתימה על חוזה רכישה",
-  "תשלום מס הרכישה תוך 60 יום מהחתימה",
-  "רישום הזכויות בטאבו על שם הרוכש",
-];
-
 export default function OlehTaxSimulator() {
+  const { t, locale } = useLanguage();
+  const c = t.tools_ui.oleh_tax;
+  const nl = numberLocale(locale);
+
+  const CURRENCY_LABEL: Record<string, string> = {
+    ILS: c.currency_ils,
+    USD: c.currency_usd,
+    EUR: c.currency_eur,
+  };
+
   const [price, setPrice] = useState("");
   const [currency, setCurrency] = useState<"ILS" | "USD" | "EUR">("ILS");
 
@@ -61,24 +63,25 @@ export default function OlehTaxSimulator() {
   return (
     <div className="space-y-6">
       <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 text-xs text-amber-300 leading-relaxed">
-        המדרגות והשערים המוצגים הם אומדן המבוסס על נתונים כלליים ומתעדכנים מדי שנה — יש לאמת מול רשות המסים או רו״ח לפני כל החלטה.
+        {c.banner}
       </div>
 
       <div className="grid sm:grid-cols-2 gap-4">
         <div>
-          <label className={label}>מחיר הנכס</label>
-          <input className={field} inputMode="numeric" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="1,800,000" />
+          <label htmlFor="olehtaxsimulator-f0" className={label}>{c.label_price}</label>
+          <input id="olehtaxsimulator-f0" className={field} inputMode="numeric" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="1,800,000" />
         </div>
         <div>
-          <label className={label}>מטבע</label>
+          <label htmlFor="olehtax-currency" className={label}>{c.label_currency}</label>
           <select
+            id="olehtax-currency"
             className={field}
             value={currency}
             onChange={(e) => setCurrency(e.target.value as "ILS" | "USD" | "EUR")}
           >
-            <option value="ILS">₪ שקל</option>
-            <option value="USD">$ דולר</option>
-            <option value="EUR">€ יורו</option>
+            <option value="ILS">{CURRENCY_LABEL.ILS}</option>
+            <option value="USD">{CURRENCY_LABEL.USD}</option>
+            <option value="EUR">{CURRENCY_LABEL.EUR}</option>
           </select>
         </div>
       </div>
@@ -87,34 +90,32 @@ export default function OlehTaxSimulator() {
         <div className="border-t border-gray-dark pt-6 space-y-4">
           {currency !== "ILS" && (
             <p className="text-sm text-gray-light text-center">
-              מחיר בשקלים (שער משוער {CURRENCY_SYMBOL[currency]}1 = ₪{FX_TO_ILS[currency]}): ₪{Math.round(priceInILS).toLocaleString("he-IL")}
+              {c.price_in_ils_prefix} ({c.price_in_ils_rate_word} {CURRENCY_SYMBOL[currency]}1 = ₪{FX_TO_ILS[currency]}): ₪{Math.round(priceInILS).toLocaleString(nl)}
             </p>
           )}
 
           <div className="text-center">
-            <p className="text-xs tracking-widest text-gold uppercase mb-2">סה״כ מס רכישה משוער לעולה חדש</p>
+            <p className="text-xs tracking-widest text-gold uppercase mb-2">{c.result_label}</p>
             <p className="font-display text-3xl sm:text-4xl font-light text-white">
-              ₪{Math.round(totalTax).toLocaleString("he-IL")}
+              ₪{Math.round(totalTax).toLocaleString(nl)}
             </p>
           </div>
 
           <div className="bg-black/40 border border-gray-dark rounded-lg p-4 text-sm text-gray-light space-y-1.5">
             {rows.map((row) => (
               <div key={row.rate} className="flex justify-between">
-                <span>{row.rate * 100}% על ₪{Math.round(row.taxable).toLocaleString("he-IL")}</span>
-                <span className="text-cream">₪{Math.round(row.tax).toLocaleString("he-IL")}</span>
+                <span>{row.rate * 100}% {c.bracket_on} ₪{Math.round(row.taxable).toLocaleString(nl)}</span>
+                <span className="text-cream">₪{Math.round(row.tax).toLocaleString(nl)}</span>
               </div>
             ))}
           </div>
 
-          <p className="text-xs text-gray-light leading-relaxed">
-            המדרגות לעיל הן מסלול תקנה 12א (בתוקף מ-15.8.2024). עולים שעלו לפני מועד זה עשויים להיות כפופים למסלול שונה — יש לאמת מול רשות המסים.
-          </p>
+          <p className="text-xs text-gray-light leading-relaxed">{c.disclaimer2}</p>
 
           <div>
-            <p className="text-xs tracking-widest text-gold uppercase mb-3">מפת דרכים לרכישה</p>
+            <p className="text-xs tracking-widest text-gold uppercase mb-3">{c.roadmap_label}</p>
             <ol className="space-y-2">
-              {ROADMAP.map((step, i) => (
+              {c.roadmap.map((step, i) => (
                 <li key={step} className="flex items-start gap-3 text-sm text-gray-light">
                   <span className="shrink-0 w-6 h-6 rounded-full bg-gold/10 border border-gold/30 text-gold text-xs flex items-center justify-center">
                     {i + 1}

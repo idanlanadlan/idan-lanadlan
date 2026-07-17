@@ -5,6 +5,10 @@ import { updateBlogPostAction, deleteBlogPost } from "@/app/actions/blog";
 import BlogForm from "@/components/admin/BlogForm";
 import ConfirmDeleteForm from "@/components/admin/ConfirmDeleteForm";
 
+// Translating a full article into 3 languages via Claude can exceed Vercel's
+// default Server Action timeout — same fix as the AI blog generator.
+export const maxDuration = 120;
+
 export default async function EditBlogPostPage({
   params,
 }: {
