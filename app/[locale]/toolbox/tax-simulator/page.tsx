@@ -4,21 +4,33 @@ import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import ToolShell from "@/components/tools/ToolShell";
 import TaxSimulator from "@/components/tools/TaxSimulator";
+import { translations } from "@/lib/translations";
+import { isLocale } from "@/lib/locale-path";
 
-export const metadata: Metadata = {
-  title: "סימולטור מיסים בעסקת נדל״ן | עידן לנדל״ן",
-  description: "מס רכישה מלא לפי סטטוס הרוכש (דירה יחידה, דירה נוספת, תושב חוץ) והערכת מס שבח עתידי בעת מכירה.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const l = isLocale(locale) ? locale : "he";
+  const t = translations[l].toolbox.tools.tax_simulator;
+  return { title: t.meta_title, description: t.meta_description };
+}
 
-export default function TaxSimulatorPage() {
+export default async function TaxSimulatorPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const l = isLocale(locale) ? locale : "he";
+  const t = translations[l].toolbox.tools.tax_simulator;
+
   return (
     <>
       <Header />
-      <ToolShell
-        title="סימולטור מיסים בעסקת נדל״ן"
-        description="חשבו את מס הרכישה הצפוי בעת הקנייה, והבינו מהו מס השבח שיחול בעת מכירה עתידית."
-        disclaimer="אומדן להמחשה בלבד ואינו מהווה ייעוץ מס — יש לאמת מדרגות עדכניות מול רשות המסים או רו״ח."
-      >
+      <ToolShell title={t.shell_title} description={t.shell_description} disclaimer={t.shell_disclaimer}>
         <TaxSimulator />
       </ToolShell>
       <Footer />

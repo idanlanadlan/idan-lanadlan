@@ -4,22 +4,33 @@ import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import ToolShell from "@/components/tools/ToolShell";
 import GushHelkaLookup from "@/components/tools/GushHelkaLookup";
+import { translations } from "@/lib/translations";
+import { isLocale } from "@/lib/locale-path";
 
-export const metadata: Metadata = {
-  title: "איתור גוש וחלקה לפי כתובת | עידן לנדל״ן",
-  description:
-    "מצאו גוש וחלקה לפי כתובת — או אתרו מיקום, שטח רשום וסטטוס לפי מספרי גוש וחלקה. נתונים רשמיים מהמרכז למיפוי ישראל (GovMap), בחינם וללא הרשמה.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const l = isLocale(locale) ? locale : "he";
+  const t = translations[l].toolbox.tools.gush_helka;
+  return { title: t.meta_title, description: t.meta_description };
+}
 
-export default function GushHelkaPage() {
+export default async function GushHelkaPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const l = isLocale(locale) ? locale : "he";
+  const t = translations[l].toolbox.tools.gush_helka;
+
   return (
     <>
       <Header />
-      <ToolShell
-        title="איתור גוש וחלקה"
-        description="הקלידו כתובת וקבלו את מספרי הגוש והחלקה הרשומים, או הזינו גוש וחלקה ואתרו את המיקום, השטח הרשום וסטטוס הרישום — ישירות מנתוני המרכז למיפוי ישראל."
-        disclaimer="הנתונים מוצגים כפי שהם ממערכות GovMap של המרכז למיפוי ישראל ואינם תחליף לנסח טאבו או לבדיקה משפטית. לצורך עסקה יש להסתמך על נסח רישום עדכני."
-      >
+      <ToolShell title={t.shell_title} description={t.shell_description} disclaimer={t.shell_disclaimer}>
         <GushHelkaLookup />
       </ToolShell>
       <Footer />

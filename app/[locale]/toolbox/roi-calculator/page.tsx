@@ -4,21 +4,33 @@ import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import ToolShell from "@/components/tools/ToolShell";
 import RoiCalculator from "@/components/tools/RoiCalculator";
+import { translations } from "@/lib/translations";
+import { isLocale } from "@/lib/locale-path";
 
-export const metadata: Metadata = {
-  title: "מחשבון תשואה להשקעה | עידן לנדל״ן",
-  description: "חשבו את התשואה השנתית הנטו הצפויה מנכס להשקעה — מחיר, שכ״ד, ניהול ומס רכישה.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const l = isLocale(locale) ? locale : "he";
+  const t = translations[l].toolbox.tools.roi_calculator;
+  return { title: t.meta_title, description: t.meta_description };
+}
 
-export default function RoiCalculatorPage() {
+export default async function RoiCalculatorPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const l = isLocale(locale) ? locale : "he";
+  const t = translations[l].toolbox.tools.roi_calculator;
+
   return (
     <>
       <Header />
-      <ToolShell
-        title="מחשבון תשואה להשקעה"
-        description="הזינו את פרטי הנכס וקבלו את אחוז התשואה השנתי הנטו הצפוי מהשקעה."
-        disclaimer="אומדן להמחשה בלבד ואינו מהווה ייעוץ פיננסי או השקעתי."
-      >
+      <ToolShell title={t.shell_title} description={t.shell_description} disclaimer={t.shell_disclaimer}>
         <RoiCalculator />
       </ToolShell>
       <Footer />
