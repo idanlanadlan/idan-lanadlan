@@ -4,6 +4,7 @@ import { useId, useState } from "react";
 import { TrendingUp, Key, Search, Building2, ArrowRight } from "lucide-react";
 import { sendContactForm } from "@/app/actions/contact";
 import { isValidPhone, isValidEmail } from "@/lib/validation";
+import ConsentCheckboxes, { type ConsentValue } from "@/components/ConsentCheckboxes";
 
 const CATEGORIES = [
   { label: "מעוניין למכור נכס", Icon: TrendingUp },
@@ -25,6 +26,7 @@ export function ContactForm() {
   const [phoneTouched, setPhoneTouched] = useState(false);
   const [emailTouched, setEmailTouched] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [consent, setConsent] = useState<ConsentValue>({ privacy: false, marketing: false });
 
   function selectCategory(label: string) {
     setCategory(label);
@@ -57,7 +59,7 @@ export function ContactForm() {
 
   const phoneValid = isValidPhone(phone);
   const emailOk = !email.trim() || isValidEmail(email);
-  const canSubmit = name.trim() && city.trim() && phoneValid && emailOk;
+  const canSubmit = name.trim() && city.trim() && phoneValid && emailOk && consent.privacy;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -65,7 +67,7 @@ export function ContactForm() {
     setEmailTouched(true);
     if (!phoneValid) { setPhoneError("מספר טלפון לא תקין"); return; }
     if (!emailOk) { setEmailError("כתובת מייל לא תקינה"); return; }
-    if (!name.trim() || !city.trim()) return;
+    if (!name.trim() || !city.trim() || !consent.privacy) return;
 
     setStatus("loading");
     const result = await sendContactForm({
@@ -74,6 +76,8 @@ export function ContactForm() {
       phone: phone.trim(),
       email: email.trim() || undefined,
       city: city.trim(),
+      privacyConsent: consent.privacy,
+      marketingConsent: consent.marketing,
     });
 
     if (result.success) {
@@ -226,6 +230,8 @@ export function ContactForm() {
           <p id={`${uid}-email-err`} role="alert" className="mt-1.5 text-xs text-red-400">{emailError}</p>
         )}
       </div>
+
+      <ConsentCheckboxes value={consent} onChange={setConsent} />
 
       {status === "error" && (
         <p role="alert" className="text-xs text-red-400 text-center">

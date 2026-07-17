@@ -21,6 +21,7 @@ export interface T {
   cookie: { message: string; accept: string; decline: string; privacy_link: string; };
   theme: { dark: string; light: string; };
   advisor: { trigger_title: string; trigger_subtitle: string; title: string; input_placeholder: string; error: string; disclaimer: string; reset_aria: string; close_aria: string; typing_status: string; ai_disclosure: string; ai_disclosure_link: string; };
+  consent: { privacy_prefix: string; privacy_link: string; privacy_suffix: string; marketing_label: string; };
   groups_modal: { description: string; name_label: string; name_placeholder: string; phone_label: string; looking_label_sale: string; looking_label_rent: string; looking_placeholder_sale: string; looking_placeholder_rent: string; budget_label: string; budget_placeholder_sale: string; budget_placeholder_rent: string; purpose_label: string; purpose_placeholder: string; purpose_investment: string; purpose_living: string; purpose_both: string; submit_button: string; disclaimer: string; success_title: string; success_message: string; success_button: string; };
 }
 
@@ -203,6 +204,12 @@ export const translations: Record<Locale, T> = {
       typing_status: "היועץ מקליד תשובה…",
       ai_disclosure: "השיחה מעובדת באמצעות בינה מלאכותית (Anthropic) ואינה נשמרת אצלנו לאחר סגירת החלון. אין למסור מידע אישי רגיש.",
       ai_disclosure_link: "מדיניות פרטיות",
+    },
+    consent: {
+      privacy_prefix: "קראתי ואני מאשר/ת את",
+      privacy_link: "מדיניות הפרטיות",
+      privacy_suffix: "",
+      marketing_label: "אני מאשר/ת קבלת עדכונים שיווקיים מעידן לנדל\"ן בטלפון, בוואטסאפ ובמייל (ניתן לבטל בכל עת)",
     },
     groups_modal: {
       description: "מלא את הפרטים ונוודא שהקבוצה מתאימה לך. לאחר השליחה תעבור ישירות לקבוצה.",
@@ -408,6 +415,12 @@ export const translations: Record<Locale, T> = {
       ai_disclosure: "This chat is processed by AI (Anthropic) and is not stored by us after the window is closed. Please do not share sensitive personal information.",
       ai_disclosure_link: "Privacy policy",
     },
+    consent: {
+      privacy_prefix: "I have read and accept the",
+      privacy_link: "privacy policy",
+      privacy_suffix: "",
+      marketing_label: "I agree to receive marketing updates from Idan LaNadlan by phone, WhatsApp and email (you can opt out at any time)",
+    },
     groups_modal: {
       description: "Fill in your details and we'll confirm the group is right for you. After submitting you'll go straight to the group.",
       name_label: "Full name *",
@@ -611,6 +624,12 @@ export const translations: Record<Locale, T> = {
       typing_status: "Le conseiller rédige une réponse…",
       ai_disclosure: "Cette conversation est traitée par une IA (Anthropic) et n'est pas conservée par nous après la fermeture de la fenêtre. Ne partagez pas d'informations personnelles sensibles.",
       ai_disclosure_link: "Politique de confidentialité",
+    },
+    consent: {
+      privacy_prefix: "J'ai lu et j'accepte la",
+      privacy_link: "politique de confidentialité",
+      privacy_suffix: "",
+      marketing_label: "J'accepte de recevoir des mises à jour marketing d'Idan LaNadlan par téléphone, WhatsApp et e-mail (désinscription possible à tout moment)",
     },
     groups_modal: {
       description: "Remplissez vos coordonnées et nous confirmerons que le groupe vous convient. Après l'envoi, vous accéderez directement au groupe.",

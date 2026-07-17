@@ -1,6 +1,7 @@
 "use server";
 
 import { isValidPhone, isValidEmail } from "@/lib/validation";
+import { consentTimestamp, consentEmailRows } from "@/lib/consent";
 
 export async function sendContactForm(data: {
   category: string;
@@ -8,13 +9,19 @@ export async function sendContactForm(data: {
   phone: string;
   email?: string;
   city: string;
+  privacyConsent: boolean;
+  marketingConsent: boolean;
 }): Promise<{ success: boolean; error?: "phone" | "email" | "validation" | "server" }> {
   if (!data.name.trim() || !data.city.trim()) return { success: false, error: "validation" };
+  // Amendment 13: no processing without an explicit, affirmative consent.
+  if (data.privacyConsent !== true) return { success: false, error: "validation" };
   if (!isValidPhone(data.phone)) return { success: false, error: "phone" };
   if (data.email && !isValidEmail(data.email)) return { success: false, error: "email" };
 
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) return { success: false, error: "server" };
+
+  const ts = consentTimestamp();
 
   const emailRow = data.email
     ? `<tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;">מייל:</td><td style="padding:10px 0;"><a href="mailto:${data.email}" style="color:#F5F5F0;">${data.email}</a></td></tr>`
@@ -39,6 +46,7 @@ export async function sendContactForm(data: {
             <tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;">טלפון:</td><td style="padding:10px 0;"><a href="tel:${data.phone}" style="color:#F5F5F0;">${data.phone}</a></td></tr>
             ${emailRow}
             <tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;">עיר:</td><td style="padding:10px 0;">${data.city}</td></tr>
+            ${consentEmailRows(data.marketingConsent, ts)}
           </table>
         </div>
       `,
@@ -57,7 +65,7 @@ export async function sendContactForm(data: {
         email: data.email ?? "",
         Description: `${data.category} — ${data.city}`,
         ParseDescription: true,
-        Notes: data.city,
+        Notes: `${data.city} | דיוור שיווקי: ${data.marketingConsent ? "כן" : "לא"} (${ts})`,
         Source: "אתר עידן לנדל״ן",
       }),
     }).catch(() => {/* silent — CRM failure doesn't affect UX */});

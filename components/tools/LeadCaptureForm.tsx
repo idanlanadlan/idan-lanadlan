@@ -3,6 +3,7 @@
 import { useId, useState } from "react";
 import { sendToolLead } from "@/app/actions/tool-leads";
 import { isValidPhone, isValidEmail } from "@/lib/validation";
+import ConsentCheckboxes, { type ConsentValue } from "@/components/ConsentCheckboxes";
 
 const field =
   "w-full bg-black border border-gray-dark rounded-lg px-4 py-3 text-sm text-cream focus:border-gold outline-none transition-colors";
@@ -28,10 +29,11 @@ export default function LeadCaptureForm({
   const [phoneError, setPhoneError] = useState("");
   const [phoneTouched, setPhoneTouched] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [consent, setConsent] = useState<ConsentValue>({ privacy: false, marketing: false });
 
   const phoneValid = isValidPhone(phone);
   const emailOk = !email.trim() || isValidEmail(email);
-  const canSubmit = name.trim() && phoneValid && emailOk;
+  const canSubmit = name.trim() && phoneValid && emailOk && consent.privacy;
 
   function handlePhoneBlur() {
     setPhoneTouched(true);
@@ -45,7 +47,7 @@ export default function LeadCaptureForm({
       setPhoneError("מספר טלפון לא תקין");
       return;
     }
-    if (!name.trim()) return;
+    if (!name.trim() || !consent.privacy) return;
 
     setStatus("loading");
     const result = await sendToolLead({
@@ -54,6 +56,8 @@ export default function LeadCaptureForm({
       phone: phone.trim(),
       email: email.trim() || undefined,
       details,
+      privacyConsent: consent.privacy,
+      marketingConsent: consent.marketing,
     });
 
     setStatus(result.success ? "success" : "error");
@@ -122,6 +126,8 @@ export default function LeadCaptureForm({
           onChange={(e) => setEmail(e.target.value)}
         />
       </div>
+
+      <ConsentCheckboxes value={consent} onChange={setConsent} />
 
       {status === "error" && (
         <p role="alert" className="text-xs text-red-400 text-center">שגיאה בשליחה. נסה שוב או פנה ב-WhatsApp.</p>

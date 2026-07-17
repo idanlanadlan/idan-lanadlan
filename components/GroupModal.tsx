@@ -4,6 +4,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, CheckCircle, ExternalLink } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import ConsentCheckboxes, { type ConsentValue } from "@/components/ConsentCheckboxes";
 
 type GroupType = "sale" | "rent";
 
@@ -25,6 +26,7 @@ export default function GroupModal({ groupType, onClose }: Props) {
   const [budget, setBudget] = useState("");
   const [hasProperty, setHasProperty] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [consent, setConsent] = useState<ConsentValue>({ privacy: false, marketing: false });
   const firstFieldRef = useRef<HTMLInputElement>(null);
 
   const { t } = useLanguage();
@@ -49,12 +51,15 @@ export default function GroupModal({ groupType, onClose }: Props) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!consent.privacy) return;
 
     const typeLabel = groupType === "sale" ? "מכירה" : "השכרה";
     const purposeLabel = hasProperty === "investment" ? m.purpose_investment
       : hasProperty === "living" ? m.purpose_living
       : hasProperty === "both" ? m.purpose_both
       : "—";
+    // Consent facts ride along in the WhatsApp message — its timestamp is the
+    // record (this flow has no server action to log through).
     const msg = [
       `🏠 בקשת הצטרפות — קבוצת ${typeLabel}`,
       ``,
@@ -63,6 +68,9 @@ export default function GroupModal({ groupType, onClose }: Props) {
       `🔍 מחפש: ${looking}`,
       `💰 תקציב: ${budget}`,
       `🏡 מטרת הנכס: ${purposeLabel}`,
+      ``,
+      `✅ אישור מדיניות פרטיות: כן`,
+      `📨 הסכמה לעדכונים שיווקיים: ${consent.marketing ? "כן" : "לא"}`,
     ].join("\n");
 
     window.open(
@@ -207,9 +215,12 @@ export default function GroupModal({ groupType, onClose }: Props) {
                 </div>
               </div>
 
+              <ConsentCheckboxes value={consent} onChange={setConsent} />
+
               <button
                 type="submit"
-                className="btn-gold w-full py-3 rounded-xl text-sm font-semibold mt-1 hover:opacity-90 transition-opacity"
+                disabled={!consent.privacy}
+                className="btn-gold w-full py-3 rounded-xl text-sm font-semibold mt-1 hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {m.submit_button}
               </button>
