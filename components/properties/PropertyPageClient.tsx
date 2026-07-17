@@ -82,7 +82,7 @@ export default function PropertyPageClient({ property, schema }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
       <Header />
-      <main className="min-h-screen pt-24">
+      <main id="main-content" className="min-h-screen pt-24">
         {/* Breadcrumb */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center gap-2 text-xs text-gray-light">
           <Link href="/" className="hover:text-gold transition-colors">{t.nav.home}</Link>
@@ -147,6 +147,8 @@ export default function PropertyPageClient({ property, schema }: Props) {
                     <button
                       key={i}
                       onClick={() => setActiveImg(i)}
+                      aria-label={`הצג תמונה ${i + 1} מתוך ${images.length}`}
+                      aria-current={i === activeImg ? "true" : undefined}
                       className={`relative shrink-0 w-20 h-14 rounded-lg overflow-hidden transition-all ${
                         i === activeImg ? "ring-2 ring-gold" : "opacity-60 hover:opacity-90"
                       }`}

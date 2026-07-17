@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { sendToolLead } from "@/app/actions/tool-leads";
 import { isValidPhone, isValidEmail } from "@/lib/validation";
 
@@ -21,6 +21,7 @@ export default function LeadCaptureForm({
   ctaLabel = "השאירו פרטים ונחזור אליכם",
   submitLabel = "שלח →",
 }: Props) {
+  const uid = useId();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -75,37 +76,46 @@ export default function LeadCaptureForm({
       <p className="text-sm font-semibold text-white mb-1">{ctaLabel}</p>
 
       <div>
-        <label className={label}>
-          שם מלא <span className="text-red-400">*</span>
+        <label htmlFor={`${uid}-name`} className={label}>
+          שם מלא <span className="text-red-400" aria-hidden="true">*</span>
         </label>
         <input
+          id={`${uid}-name`}
           className={field}
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
+          aria-required="true"
         />
       </div>
 
       <div>
-        <label className={label}>
-          טלפון <span className="text-red-400">*</span>
+        <label htmlFor={`${uid}-phone`} className={label}>
+          טלפון <span className="text-red-400" aria-hidden="true">*</span>
         </label>
         <input
+          id={`${uid}-phone`}
           className={`${field} ${phoneError ? "border-red-500/70" : ""}`}
           type="tel"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           onBlur={handlePhoneBlur}
           required
+          aria-required="true"
+          aria-invalid={phoneTouched && phoneError ? true : undefined}
+          aria-describedby={phoneTouched && phoneError ? `${uid}-phone-err` : undefined}
         />
-        {phoneTouched && phoneError && <p className="mt-1.5 text-xs text-red-400">{phoneError}</p>}
+        {phoneTouched && phoneError && (
+          <p id={`${uid}-phone-err`} role="alert" className="mt-1.5 text-xs text-red-400">{phoneError}</p>
+        )}
       </div>
 
       <div>
-        <label className={label}>
+        <label htmlFor={`${uid}-email`} className={label}>
           מייל <span className="text-gray-light text-xs normal-case tracking-normal">(אופציונלי)</span>
         </label>
         <input
+          id={`${uid}-email`}
           className={field}
           type="email"
           value={email}
@@ -114,7 +124,7 @@ export default function LeadCaptureForm({
       </div>
 
       {status === "error" && (
-        <p className="text-xs text-red-400 text-center">שגיאה בשליחה. נסה שוב או פנה ב-WhatsApp.</p>
+        <p role="alert" className="text-xs text-red-400 text-center">שגיאה בשליחה. נסה שוב או פנה ב-WhatsApp.</p>
       )}
 
       <button

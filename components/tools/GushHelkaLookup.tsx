@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { MapPin, Search, Copy, Check, ExternalLink, LoaderCircle } from "lucide-react";
 import { govmapAutocomplete, type AddressSuggestion } from "@/lib/govmap/autocomplete";
 import { parcelByPoint, findParcel, govmapSiteLink, type ParcelInfo } from "@/lib/govmap/parcel";
@@ -14,6 +14,8 @@ type Mode = "address" | "parcel";
 type Status = "idle" | "loading" | "done" | "notfound";
 
 export default function GushHelkaLookup() {
+  const uid = useId();
+  const listboxId = `${uid}-listbox`;
   const [mode, setMode] = useState<Mode>("address");
   const [status, setStatus] = useState<Status>("idle");
   const [result, setResult] = useState<ParcelInfo | null>(null);
@@ -147,6 +149,7 @@ export default function GushHelkaLookup() {
             key={m}
             type="button"
             onClick={() => switchMode(m)}
+            aria-pressed={mode === m}
             className={`py-2.5 rounded-md text-sm transition-colors ${
               mode === m ? "bg-gold/15 text-gold font-semibold" : "text-gray-light hover:text-cream"
             }`}
@@ -158,8 +161,9 @@ export default function GushHelkaLookup() {
 
       {mode === "address" ? (
         <div ref={rootRef} className="relative">
-          <label className={label}>כתובת הנכס</label>
+          <label htmlFor={`${uid}-address`} className={label}>כתובת הנכס</label>
           <input
+            id={`${uid}-address`}
             className={field}
             value={address}
             onChange={(e) => setAddress(e.target.value)}
@@ -167,23 +171,34 @@ export default function GushHelkaLookup() {
             onFocus={() => suggestions.length > 0 && setOpen(true)}
             placeholder="התחילו להקליד כתובת ובחרו מההצעות…"
             autoComplete="off"
+            role="combobox"
+            aria-expanded={open}
+            aria-controls={listboxId}
+            aria-autocomplete="list"
+            aria-activedescendant={open && highlighted >= 0 ? `${listboxId}-opt-${highlighted}` : undefined}
           />
           {open && (
-            <ul className="absolute z-30 mt-1 w-full bg-charcoal border border-gray-dark rounded-lg shadow-xl overflow-hidden">
+            <ul
+              id={listboxId}
+              role="listbox"
+              aria-label="הצעות כתובת"
+              className="absolute z-30 mt-1 w-full bg-charcoal border border-gray-dark rounded-lg shadow-xl overflow-hidden"
+            >
               {suggestions.map((s, i) => (
-                <li key={`${s.text}-${i}`}>
-                  <button
-                    type="button"
-                    onMouseDown={(e) => e.preventDefault()}
-                    onClick={() => lookupByAddress(s)}
-                    onMouseEnter={() => setHighlighted(i)}
-                    className={`w-full text-right px-4 py-2.5 text-sm flex items-center gap-2 transition-colors ${
-                      i === highlighted ? "bg-gold/15 text-gold" : "text-cream hover:bg-gold/10"
-                    }`}
-                  >
-                    <MapPin size={13} className="text-gold/70 shrink-0" />
-                    {s.text}
-                  </button>
+                <li
+                  key={`${s.text}-${i}`}
+                  id={`${listboxId}-opt-${i}`}
+                  role="option"
+                  aria-selected={i === highlighted}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => lookupByAddress(s)}
+                  onMouseEnter={() => setHighlighted(i)}
+                  className={`cursor-pointer text-right px-4 py-2.5 text-sm flex items-center gap-2 transition-colors ${
+                    i === highlighted ? "bg-gold/15 text-gold" : "text-cream hover:bg-gold/10"
+                  }`}
+                >
+                  <MapPin size={13} className="text-gold/70 shrink-0" aria-hidden="true" />
+                  {s.text}
                 </li>
               ))}
             </ul>
@@ -196,25 +211,29 @@ export default function GushHelkaLookup() {
         <form onSubmit={lookupByNumbers} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className={label}>מספר גוש</label>
+              <label htmlFor={`${uid}-gush`} className={label}>מספר גוש</label>
               <input
+                id={`${uid}-gush`}
                 className={field}
                 inputMode="numeric"
                 value={gush}
                 onChange={(e) => setGush(e.target.value.replace(/\D/g, ""))}
                 placeholder="6638"
                 required
+                aria-required="true"
               />
             </div>
             <div>
-              <label className={label}>מספר חלקה</label>
+              <label htmlFor={`${uid}-helka`} className={label}>מספר חלקה</label>
               <input
+                id={`${uid}-helka`}
                 className={field}
                 inputMode="numeric"
                 value={helka}
                 onChange={(e) => setHelka(e.target.value.replace(/\D/g, ""))}
                 placeholder="96"
                 required
+                aria-required="true"
               />
             </div>
           </div>
@@ -229,18 +248,25 @@ export default function GushHelkaLookup() {
         </form>
       )}
 
-      {status === "loading" && (
-        <div className="flex items-center justify-center gap-2 py-6 text-sm text-gray-light">
-          <LoaderCircle size={16} className="animate-spin text-gold" />
-          מאתר מול נתוני המרכז למיפוי ישראל…
-        </div>
-      )}
+      {/* Always mounted so state changes are announced to screen readers */}
+      <div role="status" aria-live="polite">
+        {status === "loading" && (
+          <div className="flex items-center justify-center gap-2 py-6 text-sm text-gray-light">
+            <LoaderCircle size={16} className="animate-spin text-gold" aria-hidden="true" />
+            מאתר מול נתוני המרכז למיפוי ישראל…
+          </div>
+        )}
 
-      {status === "notfound" && (
-        <div className="bg-black/40 border border-gray-dark rounded-lg p-5 text-sm text-gray-light text-center">
-          לא נמצאה חלקה רשומה עבור החיפוש הזה. בדקו את הפרטים ונסו שוב, או השאירו פרטים ונבדוק עבורכם.
-        </div>
-      )}
+        {status === "notfound" && (
+          <div className="bg-black/40 border border-gray-dark rounded-lg p-5 text-sm text-gray-light text-center">
+            לא נמצאה חלקה רשומה עבור החיפוש הזה. בדקו את הפרטים ונסו שוב, או השאירו פרטים ונבדוק עבורכם.
+          </div>
+        )}
+
+        {status === "done" && result && (
+          <p className="sr-only">נמצאה תוצאה: {parcelLabel}</p>
+        )}
+      </div>
 
       {status === "done" && result && (
         <div className="space-y-4 pt-2">

@@ -88,12 +88,12 @@ export default function TaxSimulator() {
 
         <div className="grid sm:grid-cols-2 gap-4">
           <div>
-            <label className={label}>מחיר הנכס (₪)</label>
-            <input className={field} inputMode="numeric" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="2,500,000" />
+            <label htmlFor="taxsimulator-f0" className={label}>מחיר הנכס (₪)</label>
+            <input id="taxsimulator-f0" className={field} inputMode="numeric" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="2,500,000" />
           </div>
           <div>
-            <label className={label}>סטטוס הרוכש</label>
-            <select className={field} value={buyerStatus} onChange={(e) => setBuyerStatus(e.target.value as BuyerStatus)}>
+            <label htmlFor="taxsimulator-f1" className={label}>סטטוס הרוכש</label>
+            <select id="taxsimulator-f1" className={field} value={buyerStatus} onChange={(e) => setBuyerStatus(e.target.value as BuyerStatus)}>
               {(Object.keys(BUYER_LABEL) as BuyerStatus[]).map((key) => (
                 <option key={key} value={key}>{BUYER_LABEL[key]}</option>
               ))}
@@ -154,16 +154,16 @@ export default function TaxSimulator() {
           <>
             <div className="grid sm:grid-cols-3 gap-4">
               <div>
-                <label className={label}>מחיר רכישה מקורי (₪)</label>
-                <input className={field} inputMode="numeric" value={originalPrice} onChange={(e) => setOriginalPrice(e.target.value)} placeholder="2,000,000" />
+                <label htmlFor="taxsimulator-f2" className={label}>מחיר רכישה מקורי (₪)</label>
+                <input id="taxsimulator-f2" className={field} inputMode="numeric" value={originalPrice} onChange={(e) => setOriginalPrice(e.target.value)} placeholder="2,000,000" />
               </div>
               <div>
-                <label className={label}>מחיר מכירה משוער (₪)</label>
-                <input className={field} inputMode="numeric" value={salePrice} onChange={(e) => setSalePrice(e.target.value)} placeholder="2,800,000" />
+                <label htmlFor="taxsimulator-f3" className={label}>מחיר מכירה משוער (₪)</label>
+                <input id="taxsimulator-f3" className={field} inputMode="numeric" value={salePrice} onChange={(e) => setSalePrice(e.target.value)} placeholder="2,800,000" />
               </div>
               <div>
-                <label className={label}>הוצאות מוכרות (₪, אופציונלי)</label>
-                <input className={field} inputMode="numeric" value={sellingExpenses} onChange={(e) => setSellingExpenses(e.target.value)} placeholder="60,000" />
+                <label htmlFor="taxsimulator-f4" className={label}>הוצאות מוכרות (₪, אופציונלי)</label>
+                <input id="taxsimulator-f4" className={field} inputMode="numeric" value={sellingExpenses} onChange={(e) => setSellingExpenses(e.target.value)} placeholder="60,000" />
               </div>
             </div>
 

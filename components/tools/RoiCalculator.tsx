@@ -42,20 +42,20 @@ export default function RoiCalculator() {
     <div className="space-y-6">
       <div className="grid sm:grid-cols-2 gap-4">
         <div>
-          <label className={label}>מחיר רכישת הנכס (₪)</label>
-          <input className={field} inputMode="numeric" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="1,800,000" />
+          <label htmlFor="roicalculator-f0" className={label}>מחיר רכישת הנכס (₪)</label>
+          <input id="roicalculator-f0" className={field} inputMode="numeric" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="1,800,000" />
         </div>
         <div>
-          <label className={label}>שכ״ד חודשי צפוי (₪)</label>
-          <input className={field} inputMode="numeric" value={rent} onChange={(e) => setRent(e.target.value)} placeholder="6,500" />
+          <label htmlFor="roicalculator-f1" className={label}>שכ״ד חודשי צפוי (₪)</label>
+          <input id="roicalculator-f1" className={field} inputMode="numeric" value={rent} onChange={(e) => setRent(e.target.value)} placeholder="6,500" />
         </div>
         <div>
-          <label className={label}>דמי ניהול/אחזקה חודשיים (₪)</label>
-          <input className={field} inputMode="numeric" value={fee} onChange={(e) => setFee(e.target.value)} placeholder="400" />
+          <label htmlFor="roicalculator-f2" className={label}>דמי ניהול/אחזקה חודשיים (₪)</label>
+          <input id="roicalculator-f2" className={field} inputMode="numeric" value={fee} onChange={(e) => setFee(e.target.value)} placeholder="400" />
         </div>
         <div>
-          <label className={label}>מס רכישה (₪)</label>
-          <input className={field} inputMode="numeric" value={tax} onChange={(e) => setTax(e.target.value)} placeholder="63,000" />
+          <label htmlFor="roicalculator-f3" className={label}>מס רכישה (₪)</label>
+          <input id="roicalculator-f3" className={field} inputMode="numeric" value={tax} onChange={(e) => setTax(e.target.value)} placeholder="63,000" />
         </div>
       </div>
 
@@ -63,32 +63,35 @@ export default function RoiCalculator() {
         <button
           type="button"
           onClick={() => setShowExtra((v) => !v)}
+          aria-expanded={showExtra}
+          aria-controls="roi-extra-costs"
           className="flex items-center justify-between w-full text-xs text-gold tracking-wider uppercase py-2 border-t border-gray-dark"
         >
           הוצאות נלוות לרכישה (אופציונלי)
           <ChevronDown
             size={14}
+            aria-hidden="true"
             className={`transition-transform ${showExtra ? "rotate-180" : ""}`}
           />
         </button>
 
         {showExtra && (
-          <div className="grid sm:grid-cols-2 gap-4 mt-4">
+          <div id="roi-extra-costs" className="grid sm:grid-cols-2 gap-4 mt-4">
             <div>
-              <label className={label}>דמי תיווך (₪)</label>
-              <input className={field} inputMode="numeric" value={brokerFee} onChange={(e) => setBrokerFee(e.target.value)} placeholder="36,000" />
+              <label htmlFor="roicalculator-f4" className={label}>דמי תיווך (₪)</label>
+              <input id="roicalculator-f4" className={field} inputMode="numeric" value={brokerFee} onChange={(e) => setBrokerFee(e.target.value)} placeholder="36,000" />
             </div>
             <div>
-              <label className={label}>שכר טרחת עו״ד (₪)</label>
-              <input className={field} inputMode="numeric" value={legalFee} onChange={(e) => setLegalFee(e.target.value)} placeholder="8,000" />
+              <label htmlFor="roicalculator-f5" className={label}>שכר טרחת עו״ד (₪)</label>
+              <input id="roicalculator-f5" className={field} inputMode="numeric" value={legalFee} onChange={(e) => setLegalFee(e.target.value)} placeholder="8,000" />
             </div>
             <div>
-              <label className={label}>עלות שיפוץ (₪)</label>
-              <input className={field} inputMode="numeric" value={renovation} onChange={(e) => setRenovation(e.target.value)} placeholder="50,000" />
+              <label htmlFor="roicalculator-f6" className={label}>עלות שיפוץ (₪)</label>
+              <input id="roicalculator-f6" className={field} inputMode="numeric" value={renovation} onChange={(e) => setRenovation(e.target.value)} placeholder="50,000" />
             </div>
             <div>
-              <label className={label}>הוצאות נוספות (₪)</label>
-              <input className={field} inputMode="numeric" value={otherCosts} onChange={(e) => setOtherCosts(e.target.value)} placeholder="5,000" />
+              <label htmlFor="roicalculator-f7" className={label}>הוצאות נוספות (₪)</label>
+              <input id="roicalculator-f7" className={field} inputMode="numeric" value={otherCosts} onChange={(e) => setOtherCosts(e.target.value)} placeholder="5,000" />
             </div>
           </div>
         )}

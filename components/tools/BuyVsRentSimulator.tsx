@@ -66,16 +66,16 @@ export default function BuyVsRentSimulator() {
     <div className="space-y-6">
       <div className="grid sm:grid-cols-3 gap-4">
         <div>
-          <label className={label}>הון עצמי זמין (₪)</label>
-          <input className={field} inputMode="numeric" value={capital} onChange={(e) => setCapital(e.target.value)} placeholder="500,000" />
+          <label htmlFor="buyvsrentsimulator-f0" className={label}>הון עצמי זמין (₪)</label>
+          <input id="buyvsrentsimulator-f0" className={field} inputMode="numeric" value={capital} onChange={(e) => setCapital(e.target.value)} placeholder="500,000" />
         </div>
         <div>
-          <label className={label}>ריבית משכנתא שנתית (%)</label>
-          <input className={field} inputMode="decimal" value={rate} onChange={(e) => setRate(e.target.value)} placeholder="4.5" />
+          <label htmlFor="buyvsrentsimulator-f1" className={label}>ריבית משכנתא שנתית (%)</label>
+          <input id="buyvsrentsimulator-f1" className={field} inputMode="decimal" value={rate} onChange={(e) => setRate(e.target.value)} placeholder="4.5" />
         </div>
         <div>
-          <label className={label}>שכ״ד חודשי חלופי (₪)</label>
-          <input className={field} inputMode="numeric" value={rent} onChange={(e) => setRent(e.target.value)} placeholder="6,500" />
+          <label htmlFor="buyvsrentsimulator-f2" className={label}>שכ״ד חודשי חלופי (₪)</label>
+          <input id="buyvsrentsimulator-f2" className={field} inputMode="numeric" value={rent} onChange={(e) => setRent(e.target.value)} placeholder="6,500" />
         </div>
       </div>
 

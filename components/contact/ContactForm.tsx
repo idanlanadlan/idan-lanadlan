@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { TrendingUp, Key, Search, Building2, ArrowRight } from "lucide-react";
 import { sendContactForm } from "@/app/actions/contact";
 import { isValidPhone, isValidEmail } from "@/lib/validation";
@@ -13,6 +13,7 @@ const CATEGORIES = [
 ];
 
 export function ContactForm() {
+  const uid = useId();
   const [step, setStep] = useState<"category" | "details">("category");
   const [category, setCategory] = useState("");
   const [name, setName] = useState("");
@@ -146,14 +147,16 @@ export function ContactForm() {
 
       {/* שם מלא — חובה */}
       <div>
-        <label className="block text-xs text-gold tracking-widest uppercase mb-2">
-          שם מלא <span className="text-red-400">*</span>
+        <label htmlFor={`${uid}-name`} className="block text-xs text-gold tracking-widest uppercase mb-2">
+          שם מלא <span className="text-red-400" aria-hidden="true">*</span>
         </label>
         <input
+          id={`${uid}-name`}
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
+          aria-required="true"
           autoFocus
           className="w-full bg-charcoal border border-gray-dark rounded-lg px-4 py-3 text-sm text-cream focus:border-gold outline-none transition-colors"
         />
@@ -161,36 +164,42 @@ export function ContactForm() {
 
       {/* טלפון — חובה */}
       <div>
-        <label className="block text-xs text-gold tracking-widest uppercase mb-2">
-          טלפון <span className="text-red-400">*</span>
+        <label htmlFor={`${uid}-phone`} className="block text-xs text-gold tracking-widest uppercase mb-2">
+          טלפון <span className="text-red-400" aria-hidden="true">*</span>
         </label>
         <input
+          id={`${uid}-phone`}
           type="tel"
           value={phone}
           onChange={(e) => handlePhoneChange(e.target.value)}
           onBlur={handlePhoneBlur}
           required
+          aria-required="true"
+          aria-invalid={phoneError ? true : undefined}
+          aria-describedby={`${uid}-phone-hint`}
           className={`w-full bg-charcoal border rounded-lg px-4 py-3 text-sm text-cream focus:border-gold outline-none transition-colors ${
             phoneError ? "border-red-500/70" : "border-gray-dark"
           }`}
         />
         {phoneError ? (
-          <p className="mt-1.5 text-xs text-red-400">{phoneError}</p>
+          <p id={`${uid}-phone-hint`} role="alert" className="mt-1.5 text-xs text-red-400">{phoneError}</p>
         ) : (
-          <p className="mt-1.5 text-xs text-gray-light">ישראלי (05X-XXXXXXX) או בינלאומי (+XX...)</p>
+          <p id={`${uid}-phone-hint`} className="mt-1.5 text-xs text-gray-light">ישראלי (05X-XXXXXXX) או בינלאומי (+XX...)</p>
         )}
       </div>
 
       {/* עיר — חובה */}
       <div>
-        <label className="block text-xs text-gold tracking-widest uppercase mb-2">
-          עיר <span className="text-red-400">*</span>
+        <label htmlFor={`${uid}-city`} className="block text-xs text-gold tracking-widest uppercase mb-2">
+          עיר <span className="text-red-400" aria-hidden="true">*</span>
         </label>
         <input
+          id={`${uid}-city`}
           type="text"
           value={city}
           onChange={(e) => setCity(e.target.value)}
           required
+          aria-required="true"
           placeholder="עיר הנכס הקיים או המבוקש"
           className="w-full bg-charcoal border border-gray-dark rounded-lg px-4 py-3 text-sm text-cream focus:border-gold outline-none transition-colors"
         />
@@ -198,25 +207,28 @@ export function ContactForm() {
 
       {/* מייל — לא חובה */}
       <div>
-        <label className="block text-xs text-gold tracking-widest uppercase mb-2">
+        <label htmlFor={`${uid}-email`} className="block text-xs text-gold tracking-widest uppercase mb-2">
           מייל <span className="text-gray-light text-xs normal-case tracking-normal">(אופציונלי)</span>
         </label>
         <input
+          id={`${uid}-email`}
           type="email"
           value={email}
           onChange={(e) => handleEmailChange(e.target.value)}
           onBlur={handleEmailBlur}
+          aria-invalid={emailError ? true : undefined}
+          aria-describedby={emailError ? `${uid}-email-err` : undefined}
           className={`w-full bg-charcoal border rounded-lg px-4 py-3 text-sm text-cream focus:border-gold outline-none transition-colors ${
             emailError ? "border-red-500/70" : "border-gray-dark"
           }`}
         />
         {emailError && (
-          <p className="mt-1.5 text-xs text-red-400">{emailError}</p>
+          <p id={`${uid}-email-err`} role="alert" className="mt-1.5 text-xs text-red-400">{emailError}</p>
         )}
       </div>
 
       {status === "error" && (
-        <p className="text-xs text-red-400 text-center">
+        <p role="alert" className="text-xs text-red-400 text-center">
           שגיאה בשליחה. נסה שוב או פנה אלינו ישירות.
         </p>
       )}

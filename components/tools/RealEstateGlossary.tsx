@@ -64,16 +64,19 @@ export default function RealEstateGlossary() {
           <button
             type="button"
             onClick={() => setOpen(open === i ? null : i)}
+            aria-expanded={open === i}
+            aria-controls={`glossary-panel-${i}`}
             className="w-full flex items-center justify-between gap-3 px-4 py-3.5 bg-black/40 text-right hover:bg-black/60 transition-colors"
           >
             <span className="text-sm font-semibold text-white">{t.term}</span>
             <ChevronDown
               size={16}
+              aria-hidden="true"
               className={`text-gold shrink-0 transition-transform ${open === i ? "rotate-180" : ""}`}
             />
           </button>
           {open === i && (
-            <div className="px-4 py-4 text-sm text-gray-light leading-relaxed bg-black/20">
+            <div id={`glossary-panel-${i}`} className="px-4 py-4 text-sm text-gray-light leading-relaxed bg-black/20">
               {t.explanation}
             </div>
           )}

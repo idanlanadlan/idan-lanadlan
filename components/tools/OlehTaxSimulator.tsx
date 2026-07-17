@@ -66,12 +66,13 @@ export default function OlehTaxSimulator() {
 
       <div className="grid sm:grid-cols-2 gap-4">
         <div>
-          <label className={label}>מחיר הנכס</label>
-          <input className={field} inputMode="numeric" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="1,800,000" />
+          <label htmlFor="olehtaxsimulator-f0" className={label}>מחיר הנכס</label>
+          <input id="olehtaxsimulator-f0" className={field} inputMode="numeric" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="1,800,000" />
         </div>
         <div>
-          <label className={label}>מטבע</label>
+          <label htmlFor="olehtax-currency" className={label}>מטבע</label>
           <select
+            id="olehtax-currency"
             className={field}
             value={currency}
             onChange={(e) => setCurrency(e.target.value as "ILS" | "USD" | "EUR")}

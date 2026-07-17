@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { MapPin, Check, X } from "lucide-react";
 import { govmapAutocomplete, type AddressSuggestion } from "@/lib/govmap/autocomplete";
 
@@ -19,6 +19,8 @@ interface Props {
  * works — the property just saves without coordinates.
  */
 export default function AddressAutocomplete({ defaultValue, defaultLat, defaultLng }: Props) {
+  const uid = useId();
+  const listboxId = `${uid}-listbox`;
   const [value, setValue] = useState(defaultValue ?? "");
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(
     defaultLat && defaultLng ? { lat: defaultLat, lng: defaultLng } : null
@@ -102,26 +104,38 @@ export default function AddressAutocomplete({ defaultValue, defaultLat, defaultL
         onFocus={() => suggestions.length > 0 && setOpen(true)}
         placeholder="התחל להקליד כתובת — הצעות מ-GovMap"
         autoComplete="off"
+        aria-label="כתובת הנכס"
+        role="combobox"
+        aria-expanded={open}
+        aria-controls={listboxId}
+        aria-autocomplete="list"
+        aria-activedescendant={open && highlighted >= 0 ? `${listboxId}-opt-${highlighted}` : undefined}
       />
       <input type="hidden" name="lat" value={coords?.lat ?? ""} />
       <input type="hidden" name="lng" value={coords?.lng ?? ""} />
 
       {open && (
-        <ul className="absolute z-30 mt-1 w-full bg-charcoal border border-gray-dark rounded-lg shadow-xl overflow-hidden">
+        <ul
+          id={listboxId}
+          role="listbox"
+          aria-label="הצעות כתובת"
+          className="absolute z-30 mt-1 w-full bg-charcoal border border-gray-dark rounded-lg shadow-xl overflow-hidden"
+        >
           {suggestions.map((s, i) => (
-            <li key={`${s.text}-${i}`}>
-              <button
-                type="button"
-                onMouseDown={(e) => e.preventDefault()}
-                onClick={() => pick(s)}
-                onMouseEnter={() => setHighlighted(i)}
-                className={`w-full text-right px-4 py-2.5 text-sm flex items-center gap-2 transition-colors ${
-                  i === highlighted ? "bg-gold/15 text-gold" : "text-cream hover:bg-gold/10"
-                }`}
-              >
-                <MapPin size={13} className="text-gold/70 shrink-0" />
-                {s.text}
-              </button>
+            <li
+              key={`${s.text}-${i}`}
+              id={`${listboxId}-opt-${i}`}
+              role="option"
+              aria-selected={i === highlighted}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => pick(s)}
+              onMouseEnter={() => setHighlighted(i)}
+              className={`cursor-pointer text-right px-4 py-2.5 text-sm flex items-center gap-2 transition-colors ${
+                i === highlighted ? "bg-gold/15 text-gold" : "text-cream hover:bg-gold/10"
+              }`}
+            >
+              <MapPin size={13} className="text-gold/70 shrink-0" aria-hidden="true" />
+              {s.text}
             </li>
           ))}
         </ul>

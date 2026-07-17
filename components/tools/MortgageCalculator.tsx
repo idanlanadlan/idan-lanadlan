@@ -57,24 +57,24 @@ export default function MortgageCalculator() {
     <div className="space-y-6">
       <div className="grid sm:grid-cols-2 gap-4">
         <div>
-          <label className={label}>מחיר הנכס (₪)</label>
-          <input className={field} inputMode="numeric" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="2,000,000" />
+          <label htmlFor="mortgagecalculator-f0" className={label}>מחיר הנכס (₪)</label>
+          <input id="mortgagecalculator-f0" className={field} inputMode="numeric" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="2,000,000" />
         </div>
         <div>
-          <label className={label}>הון עצמי / מקדמה (₪)</label>
-          <input className={field} inputMode="numeric" value={downPayment} onChange={(e) => setDownPayment(e.target.value)} placeholder="500,000" />
+          <label htmlFor="mortgagecalculator-f1" className={label}>הון עצמי / מקדמה (₪)</label>
+          <input id="mortgagecalculator-f1" className={field} inputMode="numeric" value={downPayment} onChange={(e) => setDownPayment(e.target.value)} placeholder="500,000" />
         </div>
         <div>
-          <label className={label}>ריבית שנתית (%)</label>
-          <input className={field} inputMode="decimal" value={rate} onChange={(e) => setRate(e.target.value)} placeholder="4.5" />
+          <label htmlFor="mortgagecalculator-f2" className={label}>ריבית שנתית (%)</label>
+          <input id="mortgagecalculator-f2" className={field} inputMode="decimal" value={rate} onChange={(e) => setRate(e.target.value)} placeholder="4.5" />
         </div>
         <div>
-          <label className={label}>תקופת המשכנתא (שנים)</label>
-          <input className={field} inputMode="numeric" value={years} onChange={(e) => setYears(e.target.value)} placeholder="25" />
+          <label htmlFor="mortgagecalculator-f3" className={label}>תקופת המשכנתא (שנים)</label>
+          <input id="mortgagecalculator-f3" className={field} inputMode="numeric" value={years} onChange={(e) => setYears(e.target.value)} placeholder="25" />
         </div>
         <div className="sm:col-span-2">
-          <label className={label}>סטטוס הרוכש</label>
-          <select className={field} value={buyerStatus} onChange={(e) => setBuyerStatus(e.target.value as BuyerStatus)}>
+          <label htmlFor="mortgagecalculator-f4" className={label}>סטטוס הרוכש</label>
+          <select id="mortgagecalculator-f4" className={field} value={buyerStatus} onChange={(e) => setBuyerStatus(e.target.value as BuyerStatus)}>
             {(Object.keys(BUYER_LABEL) as BuyerStatus[]).map((key) => (
               <option key={key} value={key}>{BUYER_LABEL[key]}</option>
             ))}

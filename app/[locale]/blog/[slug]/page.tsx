@@ -67,7 +67,7 @@ export default async function BlogPostPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
       <Header />
-      <main className="min-h-screen pt-24">
+      <main id="main-content" className="min-h-screen pt-24">
         {/* Breadcrumb */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center gap-2 text-xs text-gray-light">
           <Link href="/" className="hover:text-gold transition-colors">בית</Link>
