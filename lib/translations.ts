@@ -22,6 +22,7 @@ export interface T {
   theme: { dark: string; light: string; };
   advisor: { trigger_title: string; trigger_subtitle: string; title: string; input_placeholder: string; error: string; disclaimer: string; reset_aria: string; close_aria: string; typing_status: string; ai_disclosure: string; ai_disclosure_link: string; };
   consent: { privacy_prefix: string; privacy_link: string; privacy_suffix: string; marketing_label: string; };
+  a11y_widget: { open_aria: string; title: string; font_size: string; font_step: string; contrast: string; motion: string; links: string; reset: string; close_aria: string; statement_link: string; };
   groups_modal: { description: string; name_label: string; name_placeholder: string; phone_label: string; looking_label_sale: string; looking_label_rent: string; looking_placeholder_sale: string; looking_placeholder_rent: string; budget_label: string; budget_placeholder_sale: string; budget_placeholder_rent: string; purpose_label: string; purpose_placeholder: string; purpose_investment: string; purpose_living: string; purpose_both: string; submit_button: string; disclaimer: string; success_title: string; success_message: string; success_button: string; };
 }
 
@@ -210,6 +211,18 @@ export const translations: Record<Locale, T> = {
       privacy_link: "מדיניות הפרטיות",
       privacy_suffix: "",
       marketing_label: "אני מאשר/ת קבלת עדכונים שיווקיים מעידן לנדל\"ן בטלפון, בוואטסאפ ובמייל (ניתן לבטל בכל עת)",
+    },
+    a11y_widget: {
+      open_aria: "פתיחת תפריט נגישות",
+      title: "הגדרות נגישות",
+      font_size: "הגדלת טקסט",
+      font_step: "רגיל|בינוני|גדול",
+      contrast: "ניגודיות גבוהה",
+      motion: "עצירת אנימציות",
+      links: "הדגשת קישורים",
+      reset: "איפוס הגדרות",
+      close_aria: "סגירת תפריט נגישות",
+      statement_link: "הצהרת נגישות",
     },
     groups_modal: {
       description: "מלא את הפרטים ונוודא שהקבוצה מתאימה לך. לאחר השליחה תעבור ישירות לקבוצה.",
@@ -421,6 +434,18 @@ export const translations: Record<Locale, T> = {
       privacy_suffix: "",
       marketing_label: "I agree to receive marketing updates from Idan LaNadlan by phone, WhatsApp and email (you can opt out at any time)",
     },
+    a11y_widget: {
+      open_aria: "Open accessibility menu",
+      title: "Accessibility settings",
+      font_size: "Increase text size",
+      font_step: "Normal|Medium|Large",
+      contrast: "High contrast",
+      motion: "Stop animations",
+      links: "Highlight links",
+      reset: "Reset settings",
+      close_aria: "Close accessibility menu",
+      statement_link: "Accessibility statement",
+    },
     groups_modal: {
       description: "Fill in your details and we'll confirm the group is right for you. After submitting you'll go straight to the group.",
       name_label: "Full name *",
@@ -630,6 +655,18 @@ export const translations: Record<Locale, T> = {
       privacy_link: "politique de confidentialité",
       privacy_suffix: "",
       marketing_label: "J'accepte de recevoir des mises à jour marketing d'Idan LaNadlan par téléphone, WhatsApp et e-mail (désinscription possible à tout moment)",
+    },
+    a11y_widget: {
+      open_aria: "Ouvrir le menu d'accessibilité",
+      title: "Paramètres d'accessibilité",
+      font_size: "Agrandir le texte",
+      font_step: "Normal|Moyen|Grand",
+      contrast: "Contraste élevé",
+      motion: "Arrêter les animations",
+      links: "Surligner les liens",
+      reset: "Réinitialiser",
+      close_aria: "Fermer le menu d'accessibilité",
+      statement_link: "Déclaration d'accessibilité",
     },
     groups_modal: {
       description: "Remplissez vos coordonnées et nous confirmerons que le groupe vous convient. Après l'envoi, vous accéderez directement au groupe.",

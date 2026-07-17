@@ -7,6 +7,7 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import CookieBanner from "@/components/CookieBanner";
 import Advisor from "@/components/Advisor";
+import AccessibilityWidget from "@/components/AccessibilityWidget";
 import { getSettings } from "@/lib/db";
 import { locales, isLocale } from "@/lib/locale-path";
 import { translations } from "@/lib/translations";
@@ -164,10 +165,10 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        {/* Anti-flash: set theme before first paint */}
+        {/* Anti-flash: set theme + accessibility prefs before first paint */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();`,
+            __html: `(function(){var d=document.documentElement;var t=localStorage.getItem('theme')||'dark';d.setAttribute('data-theme',t);try{var a=JSON.parse(localStorage.getItem('a11y-prefs')||'{}');if(a.font===1||a.font===2)d.setAttribute('data-a11y-font',String(a.font));if(a.contrast)d.setAttribute('data-a11y-contrast','high');if(a.motion)d.setAttribute('data-a11y-motion','stop');if(a.links)d.setAttribute('data-a11y-links','on');}catch(e){}})();`,
           }}
         />
         <script
@@ -186,6 +187,7 @@ export default async function RootLayout({
               {children}
               <CookieBanner />
               <Advisor />
+              <AccessibilityWidget />
             </SettingsProvider>
           </LanguageProvider>
         </ThemeProvider>
