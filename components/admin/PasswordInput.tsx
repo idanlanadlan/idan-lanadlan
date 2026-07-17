@@ -10,7 +10,7 @@ export function PasswordInput() {
         name="password"
         autoFocus
         required
-        className="w-full bg-charcoal border border-gray-dark rounded-lg px-4 py-3 pl-10 text-sm text-cream placeholder:text-gray focus:border-gold outline-none transition-colors"
+        className="w-full bg-charcoal border border-gray-dark rounded-lg px-4 py-3 pl-10 text-sm text-cream focus:border-gold outline-none transition-colors"
         placeholder="הזן סיסמת ניהול"
       />
       <button

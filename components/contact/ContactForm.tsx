@@ -155,7 +155,7 @@ export function ContactForm() {
           onChange={(e) => setName(e.target.value)}
           required
           autoFocus
-          className="w-full bg-charcoal border border-gray-dark rounded-lg px-4 py-3 text-sm text-cream placeholder:text-gray focus:border-gold outline-none transition-colors"
+          className="w-full bg-charcoal border border-gray-dark rounded-lg px-4 py-3 text-sm text-cream focus:border-gold outline-none transition-colors"
         />
       </div>
 
@@ -170,7 +170,7 @@ export function ContactForm() {
           onChange={(e) => handlePhoneChange(e.target.value)}
           onBlur={handlePhoneBlur}
           required
-          className={`w-full bg-charcoal border rounded-lg px-4 py-3 text-sm text-cream placeholder:text-gray focus:border-gold outline-none transition-colors ${
+          className={`w-full bg-charcoal border rounded-lg px-4 py-3 text-sm text-cream focus:border-gold outline-none transition-colors ${
             phoneError ? "border-red-500/70" : "border-gray-dark"
           }`}
         />
@@ -192,7 +192,7 @@ export function ContactForm() {
           onChange={(e) => setCity(e.target.value)}
           required
           placeholder="עיר הנכס הקיים או המבוקש"
-          className="w-full bg-charcoal border border-gray-dark rounded-lg px-4 py-3 text-sm text-cream placeholder:text-gray-light/50 focus:border-gold outline-none transition-colors"
+          className="w-full bg-charcoal border border-gray-dark rounded-lg px-4 py-3 text-sm text-cream focus:border-gold outline-none transition-colors"
         />
       </div>
 
@@ -206,7 +206,7 @@ export function ContactForm() {
           value={email}
           onChange={(e) => handleEmailChange(e.target.value)}
           onBlur={handleEmailBlur}
-          className={`w-full bg-charcoal border rounded-lg px-4 py-3 text-sm text-cream placeholder:text-gray focus:border-gold outline-none transition-colors ${
+          className={`w-full bg-charcoal border rounded-lg px-4 py-3 text-sm text-cream focus:border-gold outline-none transition-colors ${
             emailError ? "border-red-500/70" : "border-gray-dark"
           }`}
         />

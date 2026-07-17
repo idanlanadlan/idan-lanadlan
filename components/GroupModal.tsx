@@ -122,7 +122,7 @@ export default function GroupModal({ groupType, onClose }: Props) {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder={m.name_placeholder}
-                    className="w-full bg-white/5 border border-gray-dark/60 rounded-lg px-4 py-2.5 text-sm text-cream placeholder-gray-light focus:outline-none focus:border-gold/50 transition-colors"
+                    className="w-full bg-white/5 border border-gray-dark/60 rounded-lg px-4 py-2.5 text-sm text-cream focus:outline-none focus:border-gold/50 transition-colors"
                   />
                 </div>
 
@@ -135,7 +135,7 @@ export default function GroupModal({ groupType, onClose }: Props) {
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="05X-XXX-XXXX"
                     dir="ltr"
-                    className="w-full bg-white/5 border border-gray-dark/60 rounded-lg px-4 py-2.5 text-sm text-cream placeholder-gray-light focus:outline-none focus:border-gold/50 transition-colors"
+                    className="w-full bg-white/5 border border-gray-dark/60 rounded-lg px-4 py-2.5 text-sm text-cream focus:outline-none focus:border-gold/50 transition-colors"
                   />
                 </div>
 
@@ -148,7 +148,7 @@ export default function GroupModal({ groupType, onClose }: Props) {
                     value={looking}
                     onChange={(e) => setLooking(e.target.value)}
                     placeholder={groupType === "sale" ? m.looking_placeholder_sale : m.looking_placeholder_rent}
-                    className="w-full bg-white/5 border border-gray-dark/60 rounded-lg px-4 py-2.5 text-sm text-cream placeholder-gray-light focus:outline-none focus:border-gold/50 transition-colors"
+                    className="w-full bg-white/5 border border-gray-dark/60 rounded-lg px-4 py-2.5 text-sm text-cream focus:outline-none focus:border-gold/50 transition-colors"
                   />
                 </div>
 
@@ -159,7 +159,7 @@ export default function GroupModal({ groupType, onClose }: Props) {
                     value={budget}
                     onChange={(e) => setBudget(e.target.value)}
                     placeholder={groupType === "sale" ? m.budget_placeholder_sale : m.budget_placeholder_rent}
-                    className="w-full bg-white/5 border border-gray-dark/60 rounded-lg px-4 py-2.5 text-sm text-cream placeholder-gray-light focus:outline-none focus:border-gold/50 transition-colors"
+                    className="w-full bg-white/5 border border-gray-dark/60 rounded-lg px-4 py-2.5 text-sm text-cream focus:outline-none focus:border-gold/50 transition-colors"
                   />
                 </div>
 

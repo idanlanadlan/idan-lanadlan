@@ -5,7 +5,7 @@ import Link from "@/components/LocaleLink";
 
 const label = "block text-xs text-gold tracking-wider uppercase mb-1.5";
 const field =
-  "w-full bg-black border border-gray-dark rounded-lg px-4 py-2.5 text-sm text-cream placeholder:text-gray focus:border-gold outline-none transition-colors";
+  "w-full bg-black border border-gray-dark rounded-lg px-4 py-2.5 text-sm text-cream focus:border-gold outline-none transition-colors";
 
 function num(v: string): number {
   const n = Number(v.replace(/,/g, ""));

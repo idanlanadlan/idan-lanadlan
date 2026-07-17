@@ -261,7 +261,7 @@ export default function Advisor() {
                 rows={1}
                 disabled={loading}
                 aria-label="הודעה ליועץ"
-                className="flex-1 resize-none bg-transparent text-cream text-sm placeholder-gray-light focus:outline-none py-1.5 leading-relaxed max-h-24 overflow-y-auto"
+                className="flex-1 resize-none bg-transparent text-cream text-sm focus:outline-none py-1.5 leading-relaxed max-h-24 overflow-y-auto"
                 style={{ direction: "rtl" }}
               />
               <button

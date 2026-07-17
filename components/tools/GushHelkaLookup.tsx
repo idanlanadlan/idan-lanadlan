@@ -7,7 +7,7 @@ import { parcelByPoint, findParcel, govmapSiteLink, type ParcelInfo } from "@/li
 import LeadCaptureForm from "./LeadCaptureForm";
 
 const field =
-  "w-full bg-black border border-gray-dark rounded-lg px-4 py-3 text-sm text-cream placeholder:text-gray focus:border-gold outline-none transition-colors";
+  "w-full bg-black border border-gray-dark rounded-lg px-4 py-3 text-sm text-cream focus:border-gold outline-none transition-colors";
 const label = "block text-xs text-gold tracking-widest uppercase mb-2";
 
 type Mode = "address" | "parcel";
