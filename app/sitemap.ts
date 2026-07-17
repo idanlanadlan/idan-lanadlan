@@ -3,8 +3,8 @@ import { getProperties, getPublishedBlogPosts } from "@/lib/db";
 
 const BASE = "https://idanlanadlan.co.il";
 
-// Hebrew is prefix-free; en/fr live under a URL prefix (see proxy.ts).
-function urlFor(path: string, locale: "he" | "en" | "fr"): string {
+// Hebrew is prefix-free; en/fr/es live under a URL prefix (see proxy.ts).
+function urlFor(path: string, locale: "he" | "en" | "fr" | "es"): string {
   const prefix = locale === "he" ? "" : `/${locale}`;
   return `${BASE}${prefix}${path}`;
 }
@@ -15,6 +15,7 @@ function alternatesFor(path: string) {
       he: urlFor(path, "he"),
       en: urlFor(path, "en"),
       fr: urlFor(path, "fr"),
+      es: urlFor(path, "es"),
       "x-default": urlFor(path, "he"),
     },
   };
@@ -25,7 +26,7 @@ function localizedEntries(
   path: string,
   extra: { changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"]; priority: number; lastModified?: Date }
 ): MetadataRoute.Sitemap {
-  return (["he", "en", "fr"] as const).map((locale) => ({
+  return (["he", "en", "fr", "es"] as const).map((locale) => ({
     url: urlFor(path, locale),
     alternates: alternatesFor(path),
     ...extra,

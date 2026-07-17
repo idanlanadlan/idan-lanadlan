@@ -32,7 +32,7 @@ const frankRuhl = Frank_Ruhl_Libre({
 });
 
 const BASE = "https://idanlanadlan.co.il";
-const OG_LOCALES: Record<string, string> = { he: "he_IL", en: "en_US", fr: "fr_FR" };
+const OG_LOCALES: Record<string, string> = { he: "he_IL", en: "en_US", fr: "fr_FR", es: "es_ES" };
 
 export async function generateMetadata({
   params,
@@ -93,6 +93,7 @@ export async function generateMetadata({
         he: BASE,
         en: `${BASE}/en`,
         fr: `${BASE}/fr`,
+        es: `${BASE}/es`,
         "x-default": BASE,
       },
     },

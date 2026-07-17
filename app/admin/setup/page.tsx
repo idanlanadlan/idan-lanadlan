@@ -57,6 +57,13 @@ ALTER TABLE properties
   ADD COLUMN IF NOT EXISTS lat DOUBLE PRECISION,
   ADD COLUMN IF NOT EXISTS lng DOUBLE PRECISION;`;
 
+const MIGRATION_SQL_TRANSLATIONS_ES = `-- הוספת שדות תרגום לספרדית לכותרת, תיאור, שכונה ועיר
+ALTER TABLE properties
+  ADD COLUMN IF NOT EXISTS title_es TEXT,
+  ADD COLUMN IF NOT EXISTS description_es TEXT,
+  ADD COLUMN IF NOT EXISTS neighborhood_es TEXT,
+  ADD COLUMN IF NOT EXISTS city_es TEXT;`;
+
 export default function SetupPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-10" dir="rtl">
@@ -141,6 +148,15 @@ export default function SetupPage() {
           </p>
           <pre className="bg-black rounded-lg p-4 text-xs text-cream overflow-x-auto leading-relaxed font-mono">
             {MIGRATION_SQL_COORDS}
+          </pre>
+        </Step>
+
+        <Step num={8} title="עדכון: תרגום אוטומטי של נכסים (ספרדית)">
+          <p className="text-sm text-gray-light mb-3">
+            הוספת שפה רביעית (ספרדית) לאתר — כדי שכותרת/תיאור/שכונה/עיר יתורגמו גם לספרדית, הרץ ב-<strong className="text-cream">SQL Editor</strong> את זה:
+          </p>
+          <pre className="bg-black rounded-lg p-4 text-xs text-cream overflow-x-auto leading-relaxed font-mono">
+            {MIGRATION_SQL_TRANSLATIONS_ES}
           </pre>
         </Step>
       </div>

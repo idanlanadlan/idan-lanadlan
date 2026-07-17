@@ -19,6 +19,9 @@ function getWelcome(locale: Locale): string {
   if (locale === "fr") {
     return `Bonjour! Je suis le conseiller IA d'Idan LaNadlan 🏠\n\nJe peux vous aider avec:\n• Calcul de la **taxe d'achat**\n• **Limites de prêt** (LTV)\n• **Taxe sur la plus-value** & exonérations\n• **Étapes d'une transaction** immobilière\n• **Frais** pour l'acheteur\n\nQue souhaitez-vous savoir?`;
   }
+  if (locale === "es") {
+    return `¡Hola! Soy el asesor inmobiliario IA de Idan LaNadlan 🏠\n\nPuedo ayudarte con:\n• Cálculo del **impuesto de compra**\n• **Límites de hipoteca** (LTV)\n• **Impuesto sobre la plusvalía** y exenciones\n• **Pasos de una operación** inmobiliaria\n• **Costos** para el comprador\n\n¿Qué te gustaría saber?`;
+  }
   return `שלום! אני היועץ הנדל"ני של עידן לנדל"ן 🏠\n\nאני יכול לעזור לך עם:\n• חישוב **מס רכישה** לנכס\n• **מגבלות משכנתא** (LTV)\n• **מס שבח** ופטורים\n• **שלבי עסקת נדל"ן**\n• **עלויות נלוות** לרוכש\n\nמה תרצה לדעת?`;
 }
 

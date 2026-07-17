@@ -22,12 +22,16 @@ export interface Property {
   description: string;
   title_en?: string;
   title_fr?: string;
+  title_es?: string;
   description_en?: string;
   description_fr?: string;
+  description_es?: string;
   neighborhood_en?: string;
   neighborhood_fr?: string;
+  neighborhood_es?: string;
   city_en?: string;
   city_fr?: string;
+  city_es?: string;
   images: string[];
   status: PropertyStatus;
   featured: boolean;
