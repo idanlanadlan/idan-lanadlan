@@ -109,11 +109,18 @@ export default function AccessibilityWidget() {
         aria-expanded={open}
         className="fixed bottom-6 right-3 sm:right-6 z-50 w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shadow-2xl transition-transform hover:scale-105 active:scale-95"
         style={{
-          background: "linear-gradient(135deg, #C9A96E, #a07840)",
+          background: "linear-gradient(135deg, rgba(201,169,110,0.55), rgba(160,120,64,0.55))",
+          backdropFilter: "blur(6px)",
+          WebkitBackdropFilter: "blur(6px)",
           boxShadow: "0 4px 28px rgba(201, 169, 110, 0.45)",
         }}
       >
-        <PersonStanding size={24} className="text-black" aria-hidden="true" />
+        <PersonStanding
+          size={24}
+          className="text-black"
+          style={{ filter: "drop-shadow(0 1px 1px rgba(255,255,255,0.35))" }}
+          aria-hidden="true"
+        />
       </button>
 
       {open && (
