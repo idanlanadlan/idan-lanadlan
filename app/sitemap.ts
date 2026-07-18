@@ -49,6 +49,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     ...localizedEntries("", { changeFrequency: "weekly", priority: 1 }),
     ...localizedEntries("/nadlan", { changeFrequency: "daily", priority: 0.9 }),
+    ...localizedEntries("/projects", { changeFrequency: "daily", priority: 0.9 }),
     ...localizedEntries("/blog", { changeFrequency: "weekly", priority: 0.8 }),
     ...localizedEntries("/about", { changeFrequency: "monthly", priority: 0.7 }),
     ...localizedEntries("/contact", { changeFrequency: "monthly", priority: 0.7 }),

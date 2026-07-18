@@ -12,7 +12,7 @@
 - **Framework:** Next.js 16 (App Router)
 - **Styling:** Tailwind CSS v4 + RTL עברית
 - **Animations:** framer-motion
-- **Fonts:** Heebo (עברית, body) + Cormorant Garamond (display יוקרתי)
+- **Fonts:** David Libre (עברית+לטינית, body — סריף היסטורי של עיצוב ישראל, יוקרתי ולא גנרי) + Frank Ruhl Libre/Cormorant Garamond (display)
 - **Database (עתידי):** Supabase
 - **Deployment:** Vercel (יחובר ל-GitHub)
 

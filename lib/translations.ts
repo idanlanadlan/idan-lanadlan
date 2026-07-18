@@ -2,11 +2,12 @@ export type Locale = "he" | "en" | "fr" | "es";
 
 export interface T {
   meta: { site_name: string; site_title: string; site_description: string; og_title: string; og_description: string; };
-  nav: { home: string; properties: string; tools: string; groups: string; sellers: string; blog: string; about: string; contact: string; message: string; close: string; open: string; };
+  nav: { home: string; projects: string; properties: string; tools: string; groups: string; sellers: string; blog: string; about: string; contact: string; message: string; close: string; open: string; };
   hero: { eyebrow: string; line1: string; line2: string; subtitle: string; cta_properties: string; cta_contact: string; rating: string; };
   stats: { experience: string; experience_value: string; deals: string; deals_value: string; rating: string; office: string; office_value: string; };
   sections: {
     properties: { eyebrow: string; title: string; description: string; all: string; filter_all: string; filter_sale: string; filter_rent: string; filter_projects: string; empty: string; };
+    projects: { eyebrow: string; title: string; subtitle: string; empty: string; pitch_eyebrow: string; pitch_title: string; pitch_subtitle: string; pitch_items: string[]; pitch_form_title: string; };
     about: { eyebrow: string; quote: string; read_more: string; bio1: string; bio2: string; };
     testimonials: { eyebrow: string; title: string; all: string; google_review: string; };
     cta: { eyebrow: string; title1: string; title2: string; subtitle: string; whatsapp: string; };
@@ -148,6 +149,7 @@ export const translations: Record<Locale, T> = {
     },
     nav: {
       home: "בית",
+      projects: "פרויקטים חדשים",
       properties: "נכסים",
       tools: "ארגז כלים",
       groups: "קבוצות VIP",
@@ -188,6 +190,22 @@ export const translations: Record<Locale, T> = {
         filter_rent: "להשכרה",
         filter_projects: "פרויקטים",
         empty: "אין נכסים זמינים בקטגוריה זו כרגע.",
+      },
+      projects: {
+        eyebrow: "ליווי יזמות והשקעות",
+        title: "פרויקטים",
+        subtitle: "פרויקטי בנייה חדשים ותמ\"א 38 בתל אביב וסביבתה — הזדמנויות רכישה והשקעה משלב מוקדם.",
+        empty: "אין פרויקטים זמינים כרגע.",
+        pitch_eyebrow: "ליזמים ולחברות בנייה",
+        pitch_title: "תנו לנו לשווק את הפרויקט שלכם",
+        pitch_subtitle: "חשיפה ממוקדת לקהל רוכשים ומשקיעים איכותי, עם ליווי שיווקי מקצה לקצה.",
+        pitch_items: [
+          "דף פרויקט ייעודי עם קידום אורגני בגוגל",
+          "חשיפה לרשימת לקוחות ומשקיעים פעילים",
+          "ליווי מכירה מקצה לקצה מול רוכשים",
+          "תוכן שיווקי מותאם — תמונות, טקסטים ורשתות חברתיות",
+        ],
+        pitch_form_title: "השאירו פרטים ונחזור אליכם עם הצעה",
       },
       about: {
         eyebrow: "אודות",
@@ -789,6 +807,7 @@ export const translations: Record<Locale, T> = {
     },
     nav: {
       home: "Home",
+      projects: "New Projects",
       properties: "Properties",
       tools: "Toolbox",
       groups: "VIP Groups",
@@ -829,6 +848,22 @@ export const translations: Record<Locale, T> = {
         filter_rent: "For Rent",
         filter_projects: "Projects",
         empty: "No properties available in this category at the moment.",
+      },
+      projects: {
+        eyebrow: "Development & Investment",
+        title: "Projects",
+        subtitle: "New construction and urban-renewal projects in Tel Aviv and surroundings — early-stage purchase and investment opportunities.",
+        empty: "No projects available at the moment.",
+        pitch_eyebrow: "For Developers & Construction Companies",
+        pitch_title: "Let Us Market Your Project",
+        pitch_subtitle: "Targeted exposure to a qualified audience of buyers and investors, with end-to-end marketing support.",
+        pitch_items: [
+          "A dedicated project page with organic Google visibility",
+          "Exposure to an active list of clients and investors",
+          "End-to-end sales support with prospective buyers",
+          "Tailored marketing content — photos, copy and social media",
+        ],
+        pitch_form_title: "Leave your details and we'll get back to you with a proposal",
       },
       about: {
         eyebrow: "About",
@@ -1430,6 +1465,7 @@ export const translations: Record<Locale, T> = {
     },
     nav: {
       home: "Accueil",
+      projects: "Nouveaux Projets",
       properties: "Biens",
       tools: "Boîte à outils",
       groups: "Groupes VIP",
@@ -1470,6 +1506,22 @@ export const translations: Record<Locale, T> = {
         filter_rent: "À louer",
         filter_projects: "Projets",
         empty: "Aucun bien disponible dans cette catégorie pour le moment.",
+      },
+      projects: {
+        eyebrow: "Promotion et investissement",
+        title: "Projets",
+        subtitle: "Nouveaux projets de construction et de rénovation urbaine à Tel Aviv et ses environs — opportunités d'achat et d'investissement dès les premières phases.",
+        empty: "Aucun projet disponible pour le moment.",
+        pitch_eyebrow: "Pour les promoteurs et entreprises de construction",
+        pitch_title: "Confiez-nous la commercialisation de votre projet",
+        pitch_subtitle: "Une exposition ciblée auprès d'un public qualifié d'acheteurs et d'investisseurs, avec un accompagnement marketing de bout en bout.",
+        pitch_items: [
+          "Une page projet dédiée avec visibilité organique sur Google",
+          "Exposition à une liste active de clients et d'investisseurs",
+          "Accompagnement commercial de bout en bout avec les acheteurs potentiels",
+          "Contenu marketing sur mesure — photos, textes et réseaux sociaux",
+        ],
+        pitch_form_title: "Laissez vos coordonnées, nous vous recontactons avec une proposition",
       },
       about: {
         eyebrow: "À propos",
@@ -2071,6 +2123,7 @@ export const translations: Record<Locale, T> = {
     },
     nav: {
       home: "Inicio",
+      projects: "Proyectos Nuevos",
       properties: "Propiedades",
       tools: "Herramientas",
       groups: "Grupos VIP",
@@ -2111,6 +2164,22 @@ export const translations: Record<Locale, T> = {
         filter_rent: "En alquiler",
         filter_projects: "Proyectos",
         empty: "No hay propiedades disponibles en esta categoría por el momento.",
+      },
+      projects: {
+        eyebrow: "Promoción e inversión",
+        title: "Proyectos",
+        subtitle: "Nuevos proyectos de construcción y renovación urbana en Tel Aviv y sus alrededores — oportunidades de compra e inversión desde una etapa temprana.",
+        empty: "No hay proyectos disponibles por el momento.",
+        pitch_eyebrow: "Para promotores y constructoras",
+        pitch_title: "Déjanos comercializar tu proyecto",
+        pitch_subtitle: "Exposición dirigida a un público cualificado de compradores e inversores, con acompañamiento de marketing integral.",
+        pitch_items: [
+          "Una página de proyecto dedicada con visibilidad orgánica en Google",
+          "Exposición a una lista activa de clientes e inversores",
+          "Acompañamiento de venta integral ante compradores potenciales",
+          "Contenido de marketing a medida — fotos, textos y redes sociales",
+        ],
+        pitch_form_title: "Déjanos tus datos y te contactaremos con una propuesta",
       },
       about: {
         eyebrow: "Sobre mí",

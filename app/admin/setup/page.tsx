@@ -79,6 +79,14 @@ ALTER TABLE blog_posts
   ADD COLUMN IF NOT EXISTS keywords_fr TEXT[],
   ADD COLUMN IF NOT EXISTS keywords_es TEXT[];`;
 
+const MIGRATION_SQL_ADDRESS_TRANSLATIONS = `-- הוספת תעתיק לטיני של הכתובת המדויקת (רחוב+מספר) לכל שפה
+-- (בניגוד לעיר/שכונה, זה לא תרגום משמעות אלא תעתיק פונטי — לשימוש בתצוגה בלבד,
+-- לא בקישורי Waze/Google Maps שממשיכים להשתמש בכתובת העברית המקורית)
+ALTER TABLE properties
+  ADD COLUMN IF NOT EXISTS address_en TEXT,
+  ADD COLUMN IF NOT EXISTS address_fr TEXT,
+  ADD COLUMN IF NOT EXISTS address_es TEXT;`;
+
 export default function SetupPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-10" dir="rtl">
@@ -181,6 +189,15 @@ export default function SetupPage() {
           </p>
           <pre className="bg-black rounded-lg p-4 text-xs text-cream overflow-x-auto leading-relaxed font-mono">
             {MIGRATION_SQL_BLOG_TRANSLATIONS}
+          </pre>
+        </Step>
+
+        <Step num={10} title="עדכון: תעתיק לטיני לכתובת המדויקת">
+          <p className="text-sm text-gray-light mb-3">
+            כדי שהכתובת המדויקת (רחוב+מספר) תוצג בתעתיק לטיני בשפות שאינן עברית (במקום עברית גולמית), הרץ ב-<strong className="text-cream">SQL Editor</strong> את זה:
+          </p>
+          <pre className="bg-black rounded-lg p-4 text-xs text-cream overflow-x-auto leading-relaxed font-mono">
+            {MIGRATION_SQL_ADDRESS_TRANSLATIONS}
           </pre>
         </Step>
       </div>

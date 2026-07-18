@@ -60,14 +60,20 @@ export default async function BlogPage({
                 return (
                   <Link key={post.id} href={`/blog/${post.slug}`} className="group block">
                     <article className="card-luxury rounded-xl overflow-hidden h-full flex flex-col">
-                      <div className="relative h-52 overflow-hidden">
-                        <Image
-                          src={post.cover_image}
-                          alt={title}
-                          fill
-                          sizes="(max-width: 768px) 100vw, 33vw"
-                          className="object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
+                      <div className="relative h-52 overflow-hidden bg-charcoal">
+                        {post.cover_image ? (
+                          <Image
+                            src={post.cover_image}
+                            alt={title}
+                            fill
+                            sizes="(max-width: 768px) 100vw, 33vw"
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                        ) : (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <span className="text-[10px] tracking-widest text-gray-light/40 uppercase">תמונה בקרוב</span>
+                          </div>
+                        )}
                       </div>
                       <div className="p-6 flex flex-col flex-1">
                         <div className="flex flex-wrap gap-1.5 mb-4">

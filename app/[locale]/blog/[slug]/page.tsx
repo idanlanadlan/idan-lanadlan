@@ -105,7 +105,7 @@ export default async function BlogPostPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
       <Header />
-      <main id="main-content" className="min-h-screen pt-24">
+      <main id="main-content" className="min-h-screen pt-28">
         {/* Breadcrumb */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center gap-2 text-xs text-gray-light">
           <Link href="/" className="hover:text-gold transition-colors">{nav.home}</Link>
@@ -117,16 +117,24 @@ export default async function BlogPostPage({
 
         {/* Cover image */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 mb-10">
-          <div className="relative h-64 sm:h-96 rounded-xl overflow-hidden">
-            <Image
-              src={post.cover_image}
-              alt={title}
-              fill
-              sizes="(max-width: 896px) 100vw, 896px"
-              className="object-cover"
-              priority
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          <div className="relative h-64 sm:h-96 rounded-xl overflow-hidden bg-charcoal">
+            {post.cover_image ? (
+              <>
+                <Image
+                  src={post.cover_image}
+                  alt={title}
+                  fill
+                  sizes="(max-width: 896px) 100vw, 896px"
+                  className="object-cover"
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              </>
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-[10px] tracking-widest text-gray-light/40 uppercase">תמונה בקרוב</span>
+              </div>
+            )}
           </div>
         </div>
 

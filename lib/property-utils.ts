@@ -16,7 +16,7 @@ export function pricePerSqm(p: Property): number {
 /** Picks the translated field for the given locale, falling back to Hebrew if missing. */
 export function localizedField(
   p: Property,
-  field: "title" | "description" | "neighborhood" | "city",
+  field: "title" | "description" | "neighborhood" | "city" | "address",
   locale: Locale
 ): string {
   if (locale === "he") return p[field];

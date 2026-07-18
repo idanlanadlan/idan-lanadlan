@@ -21,6 +21,7 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   const navLinks = [
+    { href: "/projects", label: t.nav.projects },
     { href: "/nadlan", label: t.nav.properties },
     { href: "/blog", label: t.nav.blog },
     { href: "/about", label: t.nav.about },

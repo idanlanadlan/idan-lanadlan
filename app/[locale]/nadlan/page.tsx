@@ -7,7 +7,7 @@ import { getProperties } from "@/lib/db";
 export const dynamic = "force-dynamic";
 
 export default async function PropertiesPage() {
-  const properties = await getProperties();
+  const properties = (await getProperties()).filter((p) => p.type !== "project");
 
   return (
     <>

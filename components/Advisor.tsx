@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Send, RotateCcw, MessageCircle } from "lucide-react";
 import LocaleLink from "@/components/LocaleLink";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useCookieBannerVisible } from "@/lib/use-cookie-banner-visible";
 import type { Locale } from "@/lib/translations";
 
 type Message = {
@@ -28,6 +29,7 @@ function getWelcome(locale: Locale): string {
 export default function Advisor() {
   const { t, locale } = useLanguage();
   const ad = t.advisor;
+  const cookieBannerVisible = useCookieBannerVisible();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -134,7 +136,7 @@ export default function Advisor() {
         aria-label={ad.trigger_title}
         aria-haspopup="dialog"
         aria-expanded={open}
-        className={`fixed bottom-6 left-3 sm:left-6 z-50 flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-2xl shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95 ${open ? "opacity-0 pointer-events-none" : "opacity-100"}`}
+        className={`fixed bottom-6 left-3 sm:left-6 z-50 flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-2xl shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95 ${open || cookieBannerVisible ? "opacity-0 pointer-events-none" : "opacity-100"}`}
         style={{
           background: "linear-gradient(135deg, #C9A96E, #a07840)",
           boxShadow: "0 4px 28px rgba(201, 169, 110, 0.45)",

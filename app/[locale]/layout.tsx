@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Heebo, Cormorant_Garamond, Frank_Ruhl_Libre } from "next/font/google";
+import Script from "next/script";
+import { David_Libre, Cormorant_Garamond, Frank_Ruhl_Libre } from "next/font/google";
 import "../globals.css";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
@@ -8,14 +9,15 @@ import { SettingsProvider } from "@/contexts/SettingsContext";
 import CookieBanner from "@/components/CookieBanner";
 import Advisor from "@/components/Advisor";
 import AccessibilityWidget from "@/components/AccessibilityWidget";
+import AmbientBackground from "@/components/AmbientBackground";
 import { getSettings } from "@/lib/db";
 import { locales, isLocale } from "@/lib/locale-path";
 import { translations } from "@/lib/translations";
 
-const heebo = Heebo({
-  variable: "--font-heebo",
+const davidLibre = David_Libre({
+  variable: "--font-david-libre",
   subsets: ["hebrew", "latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
+  weight: ["400", "500", "700"],
 });
 
 const cormorant = Cormorant_Garamond({
@@ -162,26 +164,32 @@ export default async function RootLayout({
     <html
       lang={locale}
       dir={locale === "he" ? "rtl" : "ltr"}
-      className={`${heebo.variable} ${cormorant.variable} ${frankRuhl.variable}`}
+      className={`${davidLibre.variable} ${cormorant.variable} ${frankRuhl.variable}`}
       suppressHydrationWarning
     >
       <head>
-        {/* Anti-flash: set theme + accessibility prefs before first paint */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){var d=document.documentElement;var t=localStorage.getItem('theme')||'dark';d.setAttribute('data-theme',t);try{var a=JSON.parse(localStorage.getItem('a11y-prefs')||'{}');if(a.font===1||a.font===2)d.setAttribute('data-a11y-font',String(a.font));if(a.contrast)d.setAttribute('data-a11y-contrast','high');if(a.motion)d.setAttribute('data-a11y-motion','stop');if(a.links)d.setAttribute('data-a11y-links','on');}catch(e){}})();`,
-          }}
-        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrg) }}
         />
       </head>
       <body className="min-h-screen bg-black text-cream antialiased">
+        {/* Anti-flash: set theme + accessibility prefs before first paint.
+            Per Next.js docs, beforeInteractive scripts are always hoisted into
+            <head> regardless of where they're placed — must live in <body>,
+            not manually inside <head>, or it fights Next's own injection. */}
+        <Script
+          id="theme-a11y-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var d=document.documentElement;var t=localStorage.getItem('theme')||'dark';d.setAttribute('data-theme',t);try{var a=JSON.parse(localStorage.getItem('a11y-prefs')||'{}');if(a.font===1||a.font===2)d.setAttribute('data-a11y-font',String(a.font));if(a.contrast)d.setAttribute('data-a11y-contrast','high');if(a.motion)d.setAttribute('data-a11y-motion','stop');if(a.links)d.setAttribute('data-a11y-links','on');}catch(e){}})();`,
+          }}
+        />
         {/* Skip navigation for keyboard/screen-reader users */}
         <a href="#main-content" className="skip-nav">
           דלג לתוכן הראשי
         </a>
+        <AmbientBackground />
         <ThemeProvider>
           <LanguageProvider key={locale} initialLocale={locale}>
             <SettingsProvider settings={settings}>

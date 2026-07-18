@@ -22,6 +22,7 @@ export default function CookieBanner() {
       JSON.stringify({ choice, ts: new Date().toISOString() })
     );
     setVisible(false);
+    window.dispatchEvent(new Event("cookiebanner:dismissed"));
   };
 
   const accept = () => store("accepted");

@@ -43,6 +43,7 @@ export default function Header() {
 
   const navLinks = [
     { href: "/", label: t.nav.home },
+    { href: "/projects", label: t.nav.projects },
     { href: "/nadlan", label: t.nav.properties },
     { href: "/toolbox", label: t.nav.tools },
     { href: "/groups", label: t.nav.groups },
@@ -74,26 +75,8 @@ export default function Header() {
           />
         </Link>
 
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-6 lg:gap-8" aria-label="ניווט ראשי">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`text-sm font-medium tracking-wider transition-colors duration-200 hover:text-gold ${isLight ? "text-gray-dark" : "text-cream"}`}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
-
-        {/* Desktop controls */}
-        <div className="hidden md:flex items-center gap-3">
-          {/* Language switcher */}
-          <div className="border border-gray-dark/40 rounded px-1 py-0.5">
-            <LanguageSwitcher size="sm" />
-          </div>
-
+        {/* Controls — always visible, all breakpoints */}
+        <div className="flex items-center gap-2 sm:gap-3">
           {/* Theme toggle */}
           <button
             onClick={toggle}
@@ -103,10 +86,15 @@ export default function Header() {
             {isLight ? <Moon size={16} /> : <Sun size={16} />}
           </button>
 
+          {/* Language switcher */}
+          <div className="hidden sm:block border border-gray-dark/40 rounded px-1 py-0.5">
+            <LanguageSwitcher size="sm" />
+          </div>
+
           {/* Phone */}
           <a
             href="tel:+972549791171"
-            className={`flex items-center gap-2 text-sm font-medium transition-colors hover:text-gold ${isLight ? "text-gray-dark" : "text-cream"}`}
+            className={`hidden sm:flex items-center gap-2 text-sm font-medium transition-colors hover:text-gold ${isLight ? "text-gray-dark" : "text-cream"}`}
             aria-label="התקשר לעידן חולי"
           >
             <Phone size={15} />
@@ -118,22 +106,13 @@ export default function Header() {
             href="https://wa.me/972549791171"
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-gold px-5 py-2 rounded text-sm"
+            className="hidden sm:inline-flex btn-gold px-5 py-2 rounded text-sm"
             aria-label={`${t.nav.message} (נפתח בחלון חדש)`}
           >
             {t.nav.message}
           </a>
-        </div>
 
-        {/* Mobile: theme toggle + hamburger */}
-        <div className="md:hidden flex items-center gap-2">
-          <button
-            onClick={toggle}
-            aria-label={isLight ? t.theme.dark : t.theme.light}
-            className={`p-1.5 transition-colors hover:text-gold ${isLight ? "text-gray" : "text-gray-light"}`}
-          >
-            {isLight ? <Moon size={16} /> : <Sun size={16} />}
-          </button>
+          {/* Hamburger — opens the full nav panel, all breakpoints */}
           <button
             ref={hamburgerRef}
             className={`p-2 border rounded transition-colors ${
@@ -144,35 +123,35 @@ export default function Header() {
             onClick={() => setOpen(!open)}
             aria-label={open ? t.nav.close : t.nav.open}
             aria-expanded={open}
-            aria-controls="mobile-menu"
+            aria-controls="nav-panel"
           >
             {open ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </div>
 
-      {/* Mobile menu */}
+      {/* Nav panel — full navigation, all breakpoints */}
       {open && (
         <div
-          id="mobile-menu"
-          className={`md:hidden border-t border-gray-dark px-4 py-6 flex flex-col gap-5 ${isLight ? "bg-white" : "bg-charcoal"}`}
+          id="nav-panel"
+          className={`border-t border-gray-dark px-4 py-5 sm:py-6 flex flex-col items-center gap-3 sm:gap-4 overflow-y-auto overscroll-contain max-h-[calc(100dvh-6rem)] ${isLight ? "bg-white" : "bg-charcoal"}`}
           role="navigation"
-          aria-label="תפריט ניידים"
+          aria-label="ניווט ראשי"
         >
           {navLinks.map((link, i) => (
             <Link
               key={link.href}
               href={link.href}
               ref={i === 0 ? firstMenuItemRef : undefined}
-              className={`text-base hover:text-gold transition-colors ${isLight ? "text-gray" : "text-cream"}`}
+              className={`font-display text-base sm:text-lg font-light tracking-wide hover:text-gold transition-colors ${isLight ? "text-gray" : "text-cream"}`}
               onClick={() => setOpen(false)}
             >
               {link.label}
             </Link>
           ))}
 
-          {/* Language picker in mobile menu */}
-          <div className="pt-2 border-t border-gray-dark/50">
+          {/* Language picker */}
+          <div className="pt-3 border-t border-gray-dark/50 w-full max-w-xs flex justify-center shrink-0">
             <LanguageSwitcher size="lg" onSelect={() => setOpen(false)} />
           </div>
 
@@ -180,7 +159,7 @@ export default function Header() {
             href="https://wa.me/972549791171"
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-gold px-5 py-3 rounded text-center text-sm mt-1"
+            className="btn-gold px-8 py-3 rounded text-center text-sm sm:hidden shrink-0"
             aria-label={`${t.nav.message} (נפתח בחלון חדש)`}
           >
             {t.nav.message}

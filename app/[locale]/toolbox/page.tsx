@@ -54,7 +54,7 @@ export default async function ToolboxPage({
   return (
     <>
       <Header />
-      <main id="main-content" className="min-h-screen pt-24">
+      <main id="main-content" className="min-h-screen pt-28">
         <section className="py-12 bg-charcoal border-b border-gray-dark">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <p className="text-xs tracking-[0.3em] text-gold uppercase mb-3">{idx.eyebrow}</p>

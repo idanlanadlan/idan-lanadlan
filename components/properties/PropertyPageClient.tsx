@@ -42,6 +42,7 @@ export default function PropertyPageClient({ property, schema }: Props) {
   const description = localizedField(property, "description", locale);
   const neighborhood = localizedField(property, "neighborhood", locale);
   const city = localizedField(property, "city", locale);
+  const address = localizedField(property, "address", locale);
 
   const images = property.images.length > 0 ? property.images : [];
   const hasGallery = images.length > 1;
@@ -82,7 +83,7 @@ export default function PropertyPageClient({ property, schema }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
       <Header />
-      <main id="main-content" className="min-h-screen pt-24">
+      <main id="main-content" className="min-h-screen pt-28">
         {/* Breadcrumb */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center gap-2 text-xs text-gray-light">
           <Link href="/" className="hover:text-gold transition-colors">{t.nav.home}</Link>
@@ -166,7 +167,7 @@ export default function PropertyPageClient({ property, schema }: Props) {
                 </h1>
                 <p className="flex items-center gap-2 text-sm text-gray-light mb-6">
                   <MapPin size={14} className="text-gold" />
-                  {property.address}, {neighborhood}, {city}
+                  {address}, {neighborhood}, {city}
                 </p>
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 py-6 border-y border-gray-dark mb-6">
@@ -189,7 +190,7 @@ export default function PropertyPageClient({ property, schema }: Props) {
                   <h2 className="text-sm font-semibold text-white">{pd.location_title}</h2>
                   <p className="text-xs text-gray-light mt-1 flex items-center gap-1">
                     <MapPin size={11} className="text-gold" />
-                    {property.address}, {neighborhood}, {city}
+                    {address}, {neighborhood}, {city}
                   </p>
                 </div>
                 <iframe

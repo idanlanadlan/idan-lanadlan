@@ -4,6 +4,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { PersonStanding, X, ALargeSmall, Contrast, PauseCircle, Link2, RotateCcw } from "lucide-react";
 import LocaleLink from "@/components/LocaleLink";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useCookieBannerVisible } from "@/lib/use-cookie-banner-visible";
 
 interface A11yPrefs {
   font: 0 | 1 | 2;
@@ -47,6 +48,7 @@ export default function AccessibilityWidget() {
   const uid = useId();
   const { t } = useLanguage();
   const w = t.a11y_widget;
+  const cookieBannerVisible = useCookieBannerVisible();
   const [open, setOpen] = useState(false);
   // Initial render must not depend on localStorage (hydration); the real
   // values load in the effect below. The <html> attributes themselves are
@@ -107,7 +109,7 @@ export default function AccessibilityWidget() {
         aria-label={w.open_aria}
         aria-haspopup="dialog"
         aria-expanded={open}
-        className="fixed bottom-6 right-3 sm:right-6 z-50 w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shadow-2xl transition-transform hover:scale-105 active:scale-95"
+        className={`fixed bottom-6 right-3 sm:right-6 z-50 w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95 ${cookieBannerVisible ? "opacity-0 pointer-events-none" : "opacity-100"}`}
         style={{
           background: "linear-gradient(135deg, rgba(201,169,110,0.55), rgba(160,120,64,0.55))",
           backdropFilter: "blur(6px)",

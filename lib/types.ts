@@ -17,6 +17,9 @@ export interface Property {
   has_shelter?: boolean;
   has_elevator?: boolean;
   address: string;
+  address_en?: string;
+  address_fr?: string;
+  address_es?: string;
   neighborhood: string;
   city: string;
   description: string;

@@ -18,7 +18,7 @@ export default function SellersClient() {
   return (
     <>
       <Header />
-      <main id="main-content" className="min-h-screen pt-24">
+      <main id="main-content" className="min-h-screen pt-28">
 
         {/* Hero */}
         <section className="relative py-24 overflow-hidden bg-black">

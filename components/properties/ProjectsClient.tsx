@@ -5,47 +5,19 @@ import { motion } from "framer-motion";
 import { LayoutGrid, Map } from "lucide-react";
 import PropertyCard from "@/components/properties/PropertyCard";
 import PropertyMap from "@/components/properties/PropertyMap";
-import type { Property, PropertyType } from "@/lib/types";
+import type { Property } from "@/lib/types";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-export default function PropertiesClient({ properties }: { properties: Property[] }) {
-  const [filter, setFilter] = useState<PropertyType | "all">("all");
+export default function ProjectsClient({ properties }: { properties: Property[] }) {
   const [view, setView] = useState<"list" | "map">("list");
   const { t } = useLanguage();
-  const p = t.sections.properties;
-
-  const filterOptions: { value: PropertyType | "all"; label: string }[] = [
-    { value: "all", label: p.filter_all },
-    { value: "sale", label: p.filter_sale },
-    { value: "rent", label: p.filter_rent },
-  ];
-
-  const filtered = filter === "all" ? properties : properties.filter((prop) => prop.type === filter);
+  const p = t.sections.projects;
 
   return (
     <>
-      {/* Filters + view toggle */}
+      {/* View toggle */}
       <section className="py-8 bg-black border-b border-gray-dark sticky top-16 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center gap-3 flex-wrap">
-          {filterOptions.map((opt) => (
-            <button
-              key={opt.value}
-              onClick={() => setFilter(opt.value)}
-              aria-pressed={filter === opt.value}
-              className={`px-5 py-2 rounded text-sm font-medium transition-all ${
-                filter === opt.value
-                  ? "bg-gold text-black"
-                  : "border border-gray-dark text-gray-light hover:border-gold hover:text-gold"
-              }`}
-            >
-              {opt.label}
-            </button>
-          ))}
-
-          {/* Spacer */}
-          <div className="flex-1" />
-
-          {/* View toggle */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-end">
           <div className="flex items-center gap-1 border border-gray-dark rounded-lg p-1">
             <button
               onClick={() => setView("list")}
@@ -69,19 +41,18 @@ export default function PropertiesClient({ properties }: { properties: Property[
         <section className="py-10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <Suspense fallback={<div className="h-[480px] bg-charcoal border border-gray-dark rounded-xl animate-pulse" />}>
-              <PropertyMap properties={filtered} height="480px" />
+              <PropertyMap properties={properties} height="480px" />
             </Suspense>
           </div>
         </section>
       ) : (
-        /* Grid */
         <section className="py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
-            {filtered.length === 0 ? (
+            {properties.length === 0 ? (
               <p className="text-center text-gray-light py-24">{p.empty}</p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filtered.map((property, i) => (
+                {properties.map((property, i) => (
                   <motion.div
                     key={property.id}
                     initial={{ opacity: 0, y: 20 }}

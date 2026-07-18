@@ -34,9 +34,16 @@ export default function PropertyMap({
 
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return;
+    let cancelled = false;
 
     // Dynamically import Leaflet to avoid SSR issues
     import("leaflet").then((L) => {
+      // Effect was cleaned up (or the container was already initialized by a
+      // stale, overlapping run) before this async import resolved — bail out
+      // instead of calling L.map() on a container Leaflet already owns.
+      if (cancelled || !mapRef.current || mapInstanceRef.current) return;
+      if ((mapRef.current as unknown as { _leaflet_id?: number })._leaflet_id) return;
+
       // Fix default icon paths broken by webpack
       // @ts-expect-error — leaflet internal
       delete L.Icon.Default.prototype._getIconUrl;
@@ -94,6 +101,7 @@ export default function PropertyMap({
     });
 
     return () => {
+      cancelled = true;
       if (mapInstanceRef.current) {
         // @ts-expect-error — leaflet Map type
         mapInstanceRef.current.remove();

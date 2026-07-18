@@ -62,7 +62,9 @@ export default function BlogForm({ action, post }: Props) {
       </div>
 
       <div>
-        <label className={label}>תמונת כותרת (URL)</label>
+        <label className={label}>
+          תמונת כותרת (URL) <span className="text-red-400" aria-hidden="true">*</span>
+        </label>
         <input
           className={field}
           name="cover_image"
@@ -70,6 +72,8 @@ export default function BlogForm({ action, post }: Props) {
           defaultValue={post?.cover_image}
           placeholder="https://images.unsplash.com/photo-..."
           dir="ltr"
+          required
+          aria-required="true"
         />
       </div>
 
