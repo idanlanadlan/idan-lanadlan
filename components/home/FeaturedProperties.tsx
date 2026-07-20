@@ -14,7 +14,7 @@ interface Props {
 export default function FeaturedProperties({ properties }: Props) {
   const { t } = useLanguage();
   const p = t.sections.properties;
-  const featured = properties.slice(0, 3);
+  const featured = properties;
 
   return (
     <section className="py-28 max-w-7xl mx-auto px-4 sm:px-6" aria-labelledby="properties-heading">
@@ -75,23 +75,14 @@ export default function FeaturedProperties({ properties }: Props) {
       )}
 
       {featured.length >= 3 && (
-        <div className="grid md:grid-cols-[2fr_1fr] gap-3">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="md:row-span-2"
-          >
-            <PropertyCard property={featured[0]} variant="large" />
-          </motion.div>
-          {featured.slice(1, 3).map((property, i) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {featured.map((property, i) => (
             <motion.div
               key={property.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.15 + i * 0.12, duration: 0.6 }}
+              transition={{ delay: i * 0.08, duration: 0.6 }}
             >
               <PropertyCard property={property} />
             </motion.div>
@@ -99,15 +90,21 @@ export default function FeaturedProperties({ properties }: Props) {
         </div>
       )}
 
-      <div className="mt-10 text-center sm:hidden">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="mt-16 text-center"
+      >
         <Link
           href="/nadlan"
-          className="btn-outline-gold px-8 py-3 text-sm inline-flex items-center gap-2"
+          className="btn-gold px-12 py-4 text-base inline-flex items-center gap-3 rounded"
         >
           {p.all}
-          <ArrowLeft size={14} className="rtl-flip" aria-hidden="true" />
+          <ArrowLeft size={18} className="rtl-flip" aria-hidden="true" />
         </Link>
-      </div>
+      </motion.div>
     </section>
   );
 }

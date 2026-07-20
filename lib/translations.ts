@@ -6,17 +6,17 @@ export interface T {
   hero: { eyebrow: string; line1: string; line2: string; subtitle: string; cta_properties: string; cta_contact: string; rating: string; };
   stats: { experience: string; experience_value: string; deals: string; deals_value: string; rating: string; office: string; office_value: string; };
   sections: {
-    properties: { eyebrow: string; title: string; description: string; all: string; filter_all: string; filter_sale: string; filter_rent: string; filter_projects: string; empty: string; };
+    properties: { eyebrow: string; title: string; description: string; all: string; filter_all: string; filter_sale: string; filter_rent: string; filter_projects: string; empty: string; filter_city_all: string; filter_neighborhood_all: string; sort_label: string; sort_default: string; sort_price_desc: string; sort_price_asc: string; budget_min: string; budget_max: string; };
     projects: { eyebrow: string; title: string; subtitle: string; empty: string; pitch_eyebrow: string; pitch_title: string; pitch_subtitle: string; pitch_items: string[]; pitch_form_title: string; };
     about: { eyebrow: string; quote: string; read_more: string; bio1: string; bio2: string; };
     testimonials: { eyebrow: string; title: string; all: string; google_review: string; };
     cta: { eyebrow: string; title1: string; title2: string; subtitle: string; whatsapp: string; };
     blog: { eyebrow: string; title: string; all: string; };
     map: { eyebrow: string; title: string; subtitle: string; on_map: string; };
-    social: { eyebrow: string; title: string; facebook_link: string; tiktok_description: string; tiktok_button: string; linkedin_description: string; linkedin_button: string; };
+    social: { eyebrow: string; title: string; facebook_link: string; instagram_description: string; instagram_button: string; tiktok_description: string; tiktok_button: string; linkedin_description: string; linkedin_button: string; };
     faq: { eyebrow: string; title: string; subtitle: string; items: { q: string; a: string }[]; };
     groups: { eyebrow: string; title: string; subtitle: string; sale_badge: string; rent_badge: string; sale_title: string; sale_subtitle: string; sale_description: string; sale_items: string[]; rent_title: string; rent_subtitle: string; rent_description: string; rent_items: string[]; request_button: string; card_footer: string; managed_note: string; share_note: string; };
-    property_detail: { rooms: string; bathrooms: string; toilets: string; sqm: string; sqm_unit: string; gross_sqm: string; balcony: string; floor: string; parking: string; mamad: string; shelter: string; elevator: string; price_per_sqm: string; description_title: string; location_title: string; price_label: string; contact_text: string; whatsapp_button: string; per_month: string; type_sale: string; type_rent: string; type_project: string; };
+    property_detail: { rooms: string; bathrooms: string; toilets: string; sqm: string; sqm_unit: string; gross_sqm: string; balcony: string; floor: string; parking: string; mamad: string; shelter: string; elevator: string; price_per_sqm: string; description_title: string; location_title: string; price_label: string; contact_text: string; whatsapp_button: string; per_month: string; type_sale: string; type_rent: string; type_project: string; status_sold: string; status_rented: string; };
   };
   footer: { tagline: string; quick_nav: string; contact: string; legal: string; privacy: string; accessibility: string; terms: string; copyright: string; license: string; };
   cookie: { message: string; accept: string; decline: string; privacy_link: string; };
@@ -190,6 +190,14 @@ export const translations: Record<Locale, T> = {
         filter_rent: "להשכרה",
         filter_projects: "פרויקטים",
         empty: "אין נכסים זמינים בקטגוריה זו כרגע.",
+        filter_city_all: "כל הערים",
+        filter_neighborhood_all: "כל השכונות",
+        sort_label: "מיין לפי",
+        sort_default: "ברירת מחדל",
+        sort_price_desc: "מחיר: מהגבוה לנמוך",
+        sort_price_asc: "מחיר: מהנמוך לגבוה",
+        budget_min: "מחיר מינימום",
+        budget_max: "מחיר מקסימום",
       },
       projects: {
         eyebrow: "ליווי יזמות והשקעות",
@@ -242,6 +250,8 @@ export const translations: Record<Locale, T> = {
         eyebrow: "עקבו אחרינו",
         title: "ברשתות החברתיות",
         facebook_link: "לעמוד הפייסבוק שלנו ←",
+        instagram_description: "תמונות נכסים, סטוריז מאחורי הקלעים ועדכונים שוטפים",
+        instagram_button: "עבור ל-Instagram",
         tiktok_description: "תוכן נדל״ן, טיפים ועדכונים שוק",
         tiktok_button: "עבור ל-TikTok",
         linkedin_description: "ניסיון מקצועי ורשת קשרים עסקיים",
@@ -302,6 +312,8 @@ export const translations: Record<Locale, T> = {
         type_sale: "למכירה",
         type_rent: "להשכרה",
         type_project: "פרויקט",
+        status_sold: "נמכר",
+        status_rented: "הושכר",
       },
     },
     footer: {
@@ -848,6 +860,14 @@ export const translations: Record<Locale, T> = {
         filter_rent: "For Rent",
         filter_projects: "Projects",
         empty: "No properties available in this category at the moment.",
+        filter_city_all: "All Cities",
+        filter_neighborhood_all: "All Neighborhoods",
+        sort_label: "Sort by",
+        sort_default: "Default",
+        sort_price_desc: "Price: High to Low",
+        sort_price_asc: "Price: Low to High",
+        budget_min: "Min price",
+        budget_max: "Max price",
       },
       projects: {
         eyebrow: "Development & Investment",
@@ -900,6 +920,8 @@ export const translations: Record<Locale, T> = {
         eyebrow: "Follow Us",
         title: "On Social Media",
         facebook_link: "Visit our Facebook page ←",
+        instagram_description: "Property photos, behind-the-scenes stories & updates",
+        instagram_button: "Go to Instagram",
         tiktok_description: "Real estate content, tips & market updates",
         tiktok_button: "Go to TikTok",
         linkedin_description: "Professional experience & business network",
@@ -960,6 +982,8 @@ export const translations: Record<Locale, T> = {
         type_sale: "For Sale",
         type_rent: "For Rent",
         type_project: "Project",
+        status_sold: "Sold",
+        status_rented: "Rented",
       },
     },
     footer: {
@@ -1506,6 +1530,14 @@ export const translations: Record<Locale, T> = {
         filter_rent: "À louer",
         filter_projects: "Projets",
         empty: "Aucun bien disponible dans cette catégorie pour le moment.",
+        filter_city_all: "Toutes les villes",
+        filter_neighborhood_all: "Tous les quartiers",
+        sort_label: "Trier par",
+        sort_default: "Par défaut",
+        sort_price_desc: "Prix : décroissant",
+        sort_price_asc: "Prix : croissant",
+        budget_min: "Prix min",
+        budget_max: "Prix max",
       },
       projects: {
         eyebrow: "Promotion et investissement",
@@ -1558,6 +1590,8 @@ export const translations: Record<Locale, T> = {
         eyebrow: "Suivez-nous",
         title: "Sur les réseaux sociaux",
         facebook_link: "Visiter notre page Facebook ←",
+        instagram_description: "Photos de biens, coulisses en story & actualités",
+        instagram_button: "Aller sur Instagram",
         tiktok_description: "Contenu immobilier, conseils & actualités du marché",
         tiktok_button: "Aller sur TikTok",
         linkedin_description: "Expérience professionnelle & réseau d'affaires",
@@ -1618,6 +1652,8 @@ export const translations: Record<Locale, T> = {
         type_sale: "À vendre",
         type_rent: "À louer",
         type_project: "Projet",
+        status_sold: "Vendu",
+        status_rented: "Loué",
       },
     },
     footer: {
@@ -2164,6 +2200,14 @@ export const translations: Record<Locale, T> = {
         filter_rent: "En alquiler",
         filter_projects: "Proyectos",
         empty: "No hay propiedades disponibles en esta categoría por el momento.",
+        filter_city_all: "Todas las ciudades",
+        filter_neighborhood_all: "Todos los barrios",
+        sort_label: "Ordenar por",
+        sort_default: "Predeterminado",
+        sort_price_desc: "Precio: de mayor a menor",
+        sort_price_asc: "Precio: de menor a mayor",
+        budget_min: "Precio mín.",
+        budget_max: "Precio máx.",
       },
       projects: {
         eyebrow: "Promoción e inversión",
@@ -2216,6 +2260,8 @@ export const translations: Record<Locale, T> = {
         eyebrow: "Síguenos",
         title: "En redes sociales",
         facebook_link: "Visita nuestra página de Facebook ←",
+        instagram_description: "Fotos de propiedades, historias entre bastidores y novedades",
+        instagram_button: "Ir a Instagram",
         tiktok_description: "Contenido inmobiliario, consejos y novedades del mercado",
         tiktok_button: "Ir a TikTok",
         linkedin_description: "Experiencia profesional y red de contactos",
@@ -2276,6 +2322,8 @@ export const translations: Record<Locale, T> = {
         type_sale: "En venta",
         type_rent: "En alquiler",
         type_project: "Proyecto",
+        status_sold: "Vendido",
+        status_rented: "Alquilado",
       },
     },
     footer: {

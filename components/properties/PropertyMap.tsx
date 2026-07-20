@@ -1,7 +1,7 @@
 "use client";
 
 // Leaflet is loaded dynamically inside useEffect — safe for SSR/Next.js 16
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Property } from "@/lib/types";
 
 interface Props {
@@ -28,10 +28,19 @@ export default function PropertyMap({
   labels = { sale: "מכירה", rent: "השכרה", on_map: "נכסים על המפה" },
 }: Props) {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<unknown>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const mapInstanceRef = useRef<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const layerGroupRef = useRef<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const leafletRef = useRef<any>(null);
+  const [mapReady, setMapReady] = useState(false);
 
   const mapped = properties.filter((p) => p.lat && p.lng);
 
+  // Effect 1 — create the Leaflet map instance exactly once. Must never depend
+  // on `properties`/`mapped` — re-running this would try to re-init Leaflet on
+  // a container it already owns (see the async-race comment below).
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return;
     let cancelled = false;
@@ -53,16 +62,12 @@ export default function PropertyMap({
         shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
       });
 
-      const center: [number, number] =
-        mapped.length > 0 ? [mapped[0].lat!, mapped[0].lng!] : [32.07, 34.78];
-      const zoom = mapped.length > 1 ? 11 : mapped.length === 1 ? 14 : 12;
-
       const map = L.map(mapRef.current!, { zoomControl: true, scrollWheelZoom: false });
       mapInstanceRef.current = map;
 
-      // CartoDB Dark Matter tile — matches the site's dark aesthetic
+      // CartoDB Voyager — colorful, Google Maps-like basemap (was Dark Matter)
       L.tileLayer(
-        "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+        "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
         {
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
           subdomains: "abcd",
@@ -70,60 +75,66 @@ export default function PropertyMap({
         }
       ).addTo(map);
 
-      map.setView(center, zoom);
+      map.setView([32.07, 34.78], 12);
 
-      // Add markers
-      mapped.forEach((p) => {
-        const iconUrl = p.type === "rent" ? RENT_ICON_URL : SALE_ICON_URL;
-        const icon = L.icon({ iconUrl, iconSize: [28, 36], iconAnchor: [14, 36], popupAnchor: [0, -36] });
-
-        const priceStr =
-          p.type === "rent"
-            ? `₪${p.price.toLocaleString("he-IL")} / חודש`
-            : `₪${p.price.toLocaleString("he-IL")}`;
-
-        const popup = `
-          <div dir="rtl" style="min-width:180px;font-family:Arial,sans-serif;">
-            <p style="font-size:13px;font-weight:600;color:#F5F5F0;margin:0 0 4px">${p.title}</p>
-            <p style="font-size:12px;color:#C9A96E;margin:0 0 4px">${priceStr}</p>
-            <p style="font-size:11px;color:#aaa;margin:0 0 8px">${p.bedrooms} חד׳ · ${p.size_sqm} מ״ר · ${p.city}</p>
-            <a href="/nadlan/${p.id}" style="font-size:11px;color:#C9A96E;text-decoration:underline;">לנכס ←</a>
-          </div>`;
-
-        L.marker([p.lat!, p.lng!], { icon }).addTo(map).bindPopup(popup, { className: "crm-popup" });
-      });
-
-      // Fit bounds if multiple markers
-      if (mapped.length > 1) {
-        const bounds = L.latLngBounds(mapped.map((p) => [p.lat!, p.lng!]));
-        map.fitBounds(bounds, { padding: [40, 40] });
-      }
+      layerGroupRef.current = L.layerGroup().addTo(map);
+      leafletRef.current = L;
+      setMapReady(true);
     });
 
     return () => {
       cancelled = true;
       if (mapInstanceRef.current) {
-        // @ts-expect-error — leaflet Map type
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
+        layerGroupRef.current = null;
+        leafletRef.current = null;
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (mapped.length === 0) {
-    return (
-      <div
-        className="flex items-center justify-center bg-charcoal border border-gray-dark rounded-xl text-center"
-        style={{ height }}
-      >
-        <div>
-          <p className="text-gray-light text-sm">אין נכסים עם קואורדינטות להצגה</p>
-          <p className="text-xs text-gray-light/60 mt-1">ייבא נכסים מ-CRM — הקואורדינטות מזוהות אוטומטית</p>
-        </div>
-      </div>
-    );
-  }
+  // Effect 2 — (re)populate markers whenever the filtered property list
+  // changes (e.g. switching the sale/rent/all filter while already in map
+  // view), or once the map finishes initializing. Never touches the map
+  // instance itself, just the marker layer, so this is cheap to re-run.
+  useEffect(() => {
+    if (!mapReady) return;
+    const L = leafletRef.current;
+    const map = mapInstanceRef.current;
+    const layerGroup = layerGroupRef.current;
+    if (!L || !map || !layerGroup) return;
+
+    layerGroup.clearLayers();
+
+    mapped.forEach((p) => {
+      const iconUrl = p.type === "rent" ? RENT_ICON_URL : SALE_ICON_URL;
+      const icon = L.icon({ iconUrl, iconSize: [28, 36], iconAnchor: [14, 36], popupAnchor: [0, -36] });
+
+      const priceStr =
+        p.type === "rent"
+          ? `₪${p.price.toLocaleString("he-IL")} / חודש`
+          : `₪${p.price.toLocaleString("he-IL")}`;
+
+      const popup = `
+        <div dir="rtl" style="min-width:180px;font-family:Arial,sans-serif;">
+          <p style="font-size:13px;font-weight:600;color:#F5F5F0;margin:0 0 4px">${p.title}</p>
+          <p style="font-size:12px;color:#C9A96E;margin:0 0 4px">${priceStr}</p>
+          <p style="font-size:11px;color:#aaa;margin:0 0 8px">${p.bedrooms} חד׳ · ${p.size_sqm} מ״ר · ${p.city}</p>
+          <a href="/nadlan/${p.id}" style="font-size:11px;color:#C9A96E;text-decoration:underline;">לנכס ←</a>
+        </div>`;
+
+      L.marker([p.lat, p.lng], { icon }).addTo(layerGroup).bindPopup(popup, { className: "crm-popup" });
+    });
+
+    if (mapped.length > 1) {
+      const bounds = L.latLngBounds(mapped.map((p) => [p.lat, p.lng]));
+      map.fitBounds(bounds, { padding: [40, 40] });
+    } else if (mapped.length === 1) {
+      map.setView([mapped[0].lat, mapped[0].lng], 14);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mapReady, mapped.map((p) => p.id).join(",")]);
 
   return (
     <>
@@ -135,7 +146,17 @@ export default function PropertyMap({
         .leaflet-popup-close-button { color:#aaa !important; }
         .leaflet-container { border-radius: inherit; }
       `}</style>
-      <div ref={mapRef} style={{ height }} className="rounded-xl overflow-hidden border border-gray-dark" />
+      <div className="relative">
+        <div ref={mapRef} style={{ height }} className="rounded-xl overflow-hidden border border-gray-dark" />
+        {mapped.length === 0 && (
+          <div className="absolute inset-0 flex items-center justify-center bg-charcoal/95 rounded-xl pointer-events-none">
+            <div className="text-center px-6">
+              <p className="text-gray-light text-sm">אין נכסים עם קואורדינטות להצגה</p>
+              <p className="text-xs text-gray-light/60 mt-1">ייבא נכסים מ-CRM — הקואורדינטות מזוהות אוטומטית</p>
+            </div>
+          </div>
+        )}
+      </div>
       <p className="mt-2 text-xs text-gray-light">
         <span className="inline-block w-2 h-2 rounded-full bg-gold mr-1" />{labels.sale}
         <span className="inline-block w-2 h-2 rounded-full bg-blue-400 mr-1 ml-3" />{labels.rent}

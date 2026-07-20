@@ -25,6 +25,12 @@ export default function PropertyCard({ property, variant = "default" }: Property
     project: pd.type_project,
   };
 
+  const statusLabel: Partial<Record<Property["status"], string>> = {
+    sold: pd.status_sold,
+    rented: pd.status_rented,
+  };
+  const isUnavailable = property.status !== "available";
+
   function formatPrice(price: number, type: Property["type"]) {
     if (type === "rent") return `₪${price.toLocaleString("he-IL")}/${pd.per_month}`;
     return `₪${price.toLocaleString("he-IL")}`;
@@ -42,7 +48,7 @@ export default function PropertyCard({ property, variant = "default" }: Property
 
   return (
     <Link href={`/nadlan/${property.id}`} className="group block h-full">
-      <div className="card-luxury overflow-hidden h-full flex flex-col">
+      <div className={`card-luxury overflow-hidden h-full flex flex-col transition-opacity ${isUnavailable ? "opacity-60" : ""}`}>
         {/* Image */}
         <div className={`relative overflow-hidden shrink-0 ${isLarge ? "h-80 sm:h-96 md:h-[420px]" : "h-56 sm:h-64"}`}>
           {!imgError ? (
@@ -51,7 +57,7 @@ export default function PropertyCard({ property, variant = "default" }: Property
               alt={title}
               fill
               sizes={isLarge ? "(max-width: 768px) 100vw, 66vw" : "(max-width: 768px) 100vw, 33vw"}
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              className={`object-cover transition-transform duration-700 group-hover:scale-105 ${isUnavailable ? "grayscale" : ""}`}
               onError={() => setImgError(true)}
             />
           ) : (
@@ -60,6 +66,13 @@ export default function PropertyCard({ property, variant = "default" }: Property
             </div>
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+
+          {/* Status badge (sold/rented) — opposite corner from the type badge */}
+          {isUnavailable && (
+            <span className="absolute top-4 start-4 text-[10px] px-3 py-1.5 bg-black/80 text-white font-semibold tracking-widest uppercase border border-white/20">
+              {statusLabel[property.status]}
+            </span>
+          )}
 
           {/* Type badge */}
           <span className="absolute top-4 end-4 text-[10px] px-3 py-1.5 bg-gold text-black font-semibold tracking-widest uppercase">
