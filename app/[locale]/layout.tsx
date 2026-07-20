@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Script from "next/script";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { David_Libre, Cormorant_Garamond, Frank_Ruhl_Libre } from "next/font/google";
 import "../globals.css";
 import { ThemeProvider } from "@/contexts/ThemeContext";
@@ -201,6 +202,9 @@ export default async function RootLayout({
           </LanguageProvider>
         </ThemeProvider>
       </body>
+      {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
+      )}
     </html>
   );
 }
