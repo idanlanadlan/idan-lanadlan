@@ -1,5 +1,8 @@
 "use client";
 
+import { useRef, useState } from "react";
+import Image from "next/image";
+import { Upload } from "lucide-react";
 import type { BlogPost } from "@/lib/types";
 
 const field =
@@ -12,6 +15,37 @@ interface Props {
 }
 
 export default function BlogForm({ action, post }: Props) {
+  const coverInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+  const [coverPreview, setCoverPreview] = useState(post?.cover_image ?? "");
+
+  async function handleFileSelect(file: File) {
+    setUploadError("");
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("files", file);
+      const res = await fetch("/api/upload-images", { method: "POST", body: formData });
+      const json = (await res.json()) as { urls?: string[]; error?: string };
+
+      if (!res.ok || json.error || !json.urls?.length) {
+        setUploadError(
+          json.error === "not_configured"
+            ? "Supabase לא מחובר — לא ניתן להעלות תמונות"
+            : "שגיאה בהעלאת תמונה — נסה שוב"
+        );
+        return;
+      }
+      const url = json.urls[0];
+      if (coverInputRef.current) coverInputRef.current.value = url;
+      setCoverPreview(url);
+    } finally {
+      setUploading(false);
+    }
+  }
+
   return (
     <form action={action} className="flex flex-col gap-6">
       {post?.id && <input type="hidden" name="id" value={post.id} />}
@@ -63,18 +97,48 @@ export default function BlogForm({ action, post }: Props) {
 
       <div>
         <label className={label}>
-          תמונת כותרת (URL) <span className="text-red-400" aria-hidden="true">*</span>
+          תמונת כותרת <span className="text-red-400" aria-hidden="true">*</span>
         </label>
+        <div className="flex gap-2">
+          <input
+            ref={coverInputRef}
+            className={`${field} flex-1`}
+            name="cover_image"
+            type="url"
+            defaultValue={post?.cover_image}
+            onChange={(e) => setCoverPreview(e.target.value)}
+            placeholder="https://images.unsplash.com/photo-... או העלה קובץ"
+            dir="ltr"
+            required
+            aria-required="true"
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            className="shrink-0 flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-xs font-semibold border border-gray-dark text-gray-light hover:border-gold/40 hover:text-gold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Upload size={14} />
+            {uploading ? "מעלה..." : "העלה קובץ"}
+          </button>
+        </div>
         <input
-          className={field}
-          name="cover_image"
-          type="url"
-          defaultValue={post?.cover_image}
-          placeholder="https://images.unsplash.com/photo-..."
-          dir="ltr"
-          required
-          aria-required="true"
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) handleFileSelect(f);
+            e.target.value = "";
+          }}
         />
+        {uploadError && <p className="mt-1.5 text-xs text-amber-400">{uploadError}</p>}
+        {coverPreview && (
+          <div className="relative w-full h-32 mt-2 rounded-lg overflow-hidden border border-gray-dark bg-black">
+            <Image src={coverPreview} alt="" fill sizes="600px" className="object-cover" unoptimized />
+          </div>
+        )}
       </div>
 
       <div>

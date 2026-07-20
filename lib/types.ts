@@ -1,6 +1,10 @@
 export type PropertyType = "sale" | "rent" | "project";
 export type PropertyStatus = "available" | "sold" | "rented";
 
+export function isPropertyType(value: string | undefined): value is PropertyType {
+  return value === "sale" || value === "rent" || value === "project";
+}
+
 export interface Property {
   id: string;
   title: string;

@@ -6,6 +6,8 @@
 export const LAYERS = {
   /** גבולות חלקות (גוש/חלקה) */
   PARCELS: "PARCEL_ALL" as string | null,
+  /** גבולות שכונות (neighborhoods_area, layerId "22") — see lib/govmap/neighborhood.ts */
+  NEIGHBORHOODS: "22" as string | null,
   /** תוכניות בניין עיר */
   TABA: null as string | null,
   /** מוסדות חינוך */

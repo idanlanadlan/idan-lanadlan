@@ -87,6 +87,10 @@ ALTER TABLE properties
   ADD COLUMN IF NOT EXISTS address_fr TEXT,
   ADD COLUMN IF NOT EXISTS address_es TEXT;`;
 
+const MIGRATION_SQL_CRM_ID = `-- שמירת מזהה CRM (Nadlan One) על נכסים שיובאו/ייובאו דרך /admin/properties/import
+ALTER TABLE properties
+  ADD COLUMN IF NOT EXISTS crm_id TEXT;`;
+
 export default function SetupPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-10" dir="rtl">
@@ -198,6 +202,15 @@ export default function SetupPage() {
           </p>
           <pre className="bg-black rounded-lg p-4 text-xs text-cream overflow-x-auto leading-relaxed font-mono">
             {MIGRATION_SQL_ADDRESS_TRANSLATIONS}
+          </pre>
+        </Step>
+
+        <Step num={11} title="עדכון: מזהה CRM על נכסים">
+          <p className="text-sm text-gray-light mb-3">
+            כדי ששמירת נכס (כולל דרך ייבוא מ-CRM) לא תיכשל ושמזהה ה-CRM יישמר, הרץ ב-<strong className="text-cream">SQL Editor</strong> את זה:
+          </p>
+          <pre className="bg-black rounded-lg p-4 text-xs text-cream overflow-x-auto leading-relaxed font-mono">
+            {MIGRATION_SQL_CRM_ID}
           </pre>
         </Step>
       </div>

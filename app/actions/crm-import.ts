@@ -1,9 +1,6 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { extractCRMId, fetchCRMProperty, geocodeAddress, mapCRMToProperty } from "@/lib/crm";
-import { createProperty } from "@/lib/db";
-import { translatePropertyFields } from "@/lib/translate-property";
 import type { Property } from "@/lib/types";
 
 export type PreviewResult =
@@ -27,12 +24,4 @@ export async function previewFromCRMLink(input: string): Promise<PreviewResult> 
   const property = mapCRMToProperty(crm, coords);
 
   return { ok: true, property };
-}
-
-export async function saveImportedProperty(
-  data: Omit<Property, "id" | "created_at">
-): Promise<{ id: string }> {
-  const translations = await translatePropertyFields(data);
-  const saved = await createProperty({ ...data, ...translations });
-  redirect("/admin/properties");
 }

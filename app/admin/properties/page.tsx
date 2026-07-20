@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Plus, Pencil, Star, Eye, EyeOff, Download } from "lucide-react";
+import { Plus, Pencil, Star, Eye, EyeOff, Download, Building2 } from "lucide-react";
 import { getProperties } from "@/lib/db";
 import { deleteProperty, toggleFeatured, updateStatus } from "@/app/actions/properties";
 import StatusSelect from "@/components/admin/StatusSelect";
@@ -32,6 +32,13 @@ export default async function PropertiesAdmin() {
           >
             <Download size={15} />
             ייבוא מ-CRM
+          </Link>
+          <Link
+            href="/admin/properties/new?type=project"
+            className="flex items-center gap-2 bg-charcoal border border-gold/30 text-gold px-4 py-2.5 rounded-lg text-sm font-semibold hover:border-gold transition-colors"
+          >
+            <Building2 size={15} />
+            פרויקט חדש
           </Link>
           <Link
             href="/admin/properties/new"

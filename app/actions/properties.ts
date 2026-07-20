@@ -15,6 +15,7 @@ function parseForm(formData: FormData) {
     .split("\n")
     .map((s) => s.trim())
     .filter(Boolean);
+  const crmId = formData.get("crm_id") as string | null;
 
   return {
     title: formData.get("title") as string,
@@ -41,6 +42,10 @@ function parseForm(formData: FormData) {
     images: images.length ? images : [],
     status: (formData.get("status") as PropertyStatus) || "available",
     featured: formData.get("featured") === "on",
+    // Only set the key when a crm_id is actually present — the column is
+    // still pending a migration (see admin/setup), and Supabase errors on
+    // an unknown column even when the value would be undefined.
+    ...(crmId ? { crm_id: crmId } : {}),
   };
 }
 
@@ -87,6 +92,7 @@ export async function updateStatus(formData: FormData) {
   const id = formData.get("id") as string;
   const status = formData.get("status") as PropertyStatus;
   await updateProperty(id, { status });
+  revalidatePath("/");
   revalidatePath("/nadlan");
   revalidatePath("/admin/properties");
 }

@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { MapPin, Check, X } from "lucide-react";
 import { govmapAutocomplete, type AddressSuggestion } from "@/lib/govmap/autocomplete";
+import { neighborhoodByPoint } from "@/lib/govmap/neighborhood";
 
 const field =
   "w-full bg-black border border-gray-dark rounded-lg px-4 py-2.5 text-sm text-cream focus:border-gold outline-none transition-colors";
@@ -11,14 +12,17 @@ interface Props {
   defaultValue?: string;
   defaultLat?: number | null;
   defaultLng?: number | null;
+  /** Called with the auto-detected neighborhood name when picking a suggestion resolves one via GovMap. */
+  onNeighborhoodDetected?: (neighborhood: string) => void;
 }
 
 /**
  * Address input with official GovMap suggestions. Picking a suggestion pins
- * the property on the map (fills hidden lat/lng inputs). Free typing still
- * works — the property just saves without coordinates.
+ * the property on the map (fills hidden lat/lng inputs) and tries to
+ * auto-detect the neighborhood at that point. Free typing still works — the
+ * property just saves without coordinates/auto-detected neighborhood.
  */
-export default function AddressAutocomplete({ defaultValue, defaultLat, defaultLng }: Props) {
+export default function AddressAutocomplete({ defaultValue, defaultLat, defaultLng, onNeighborhoodDetected }: Props) {
   const uid = useId();
   const listboxId = `${uid}-listbox`;
   const [value, setValue] = useState(defaultValue ?? "");
@@ -68,6 +72,12 @@ export default function AddressAutocomplete({ defaultValue, defaultLat, defaultL
     setCoords({ lat: s.lat, lng: s.lng });
     setSuggestions([]);
     setOpen(false);
+
+    if (onNeighborhoodDetected) {
+      neighborhoodByPoint(s.lat, s.lng).then((name) => {
+        if (name) onNeighborhoodDetected(name);
+      });
+    }
   };
 
   const onChange = (v: string) => {

@@ -1,8 +1,10 @@
 "use client";
 
 import { useRef } from "react";
-import type { Property } from "@/lib/types";
+import { useFormStatus } from "react-dom";
+import type { Property, PropertyType } from "@/lib/types";
 import AddressAutocomplete from "@/components/admin/AddressAutocomplete";
+import ImageManager from "@/components/admin/ImageManager";
 
 const field =
   "w-full bg-black border border-gray-dark rounded-lg px-4 py-2.5 text-sm text-cream focus:border-gold outline-none transition-colors";
@@ -10,15 +12,32 @@ const label = "block text-xs text-gold tracking-wider uppercase mb-1.5";
 
 interface Props {
   action: (formData: FormData) => Promise<void>;
-  property?: Property;
+  property?: Partial<Property>;
+  defaultType?: PropertyType;
 }
 
-export default function PropertyForm({ action, property }: Props) {
+function SubmitButton({ isEdit }: { isEdit: boolean }) {
+  const { pending } = useFormStatus();
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="btn-gold flex-1 py-3 rounded-lg text-sm font-semibold disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+    >
+      {pending && <span className="w-4 h-4 border-2 border-black/40 border-t-black rounded-full animate-spin" />}
+      {pending ? (isEdit ? "שומר שינויים..." : "מפרסם...") : isEdit ? "שמור שינויים" : "פרסם נכס"}
+    </button>
+  );
+}
+
+export default function PropertyForm({ action, property, defaultType }: Props) {
   const formRef = useRef<HTMLFormElement>(null);
+  const neighborhoodRef = useRef<HTMLInputElement>(null);
 
   return (
     <form ref={formRef} action={action} className="flex flex-col gap-6">
-      {property && <input type="hidden" name="id" value={property.id} />}
+      {property?.id && <input type="hidden" name="id" value={property.id} />}
+      {property?.crm_id && <input type="hidden" name="crm_id" value={property.crm_id} />}
 
       {/* Title */}
       <div>
@@ -48,7 +67,7 @@ export default function PropertyForm({ action, property }: Props) {
         </div>
         <div>
           <label className={label}>סוג עסקה *</label>
-          <select className={field} name="type" defaultValue={property?.type ?? "sale"}>
+          <select className={field} name="type" defaultValue={property?.type ?? defaultType ?? "sale"}>
             <option value="sale">למכירה</option>
             <option value="rent">להשכרה</option>
             <option value="project">פרויקט</option>
@@ -180,21 +199,25 @@ export default function PropertyForm({ action, property }: Props) {
         </label>
       </div>
 
-      {/* Address — GovMap autocomplete pins the property on the map */}
+      {/* Address — GovMap autocomplete pins the property on the map + auto-detects the neighborhood below */}
       <div>
         <label className={label}>כתובת *</label>
         <AddressAutocomplete
           defaultValue={property?.address}
           defaultLat={property?.lat}
           defaultLng={property?.lng}
+          onNeighborhoodDetected={(name) => {
+            if (neighborhoodRef.current) neighborhoodRef.current.value = name;
+          }}
         />
       </div>
 
       {/* Neighborhood + City */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className={label}>שכונה *</label>
+          <label className={label}>שכונה * <span className="text-gray-light normal-case tracking-normal">(מזוהה אוטומטית מהכתובת, ניתן לערוך)</span></label>
           <input
+            ref={neighborhoodRef}
             className={field}
             name="neighborhood"
             required
@@ -227,14 +250,8 @@ export default function PropertyForm({ action, property }: Props) {
 
       {/* Images */}
       <div>
-        <label className={label}>קישורי תמונות (שורה לכל תמונה)</label>
-        <textarea
-          className={`${field} h-24 resize-none font-mono text-xs`}
-          name="images"
-          defaultValue={(property?.images ?? []).join("\n")}
-          placeholder={"https://example.com/photo1.jpg\nhttps://example.com/photo2.jpg"}
-        />
-        <p className="text-[10px] text-gray mt-1">ניתן להשתמש בלינקים ממאגר תמונות כמו Cloudinary, Google Drive, Dropbox וכו׳</p>
+        <label className={label}>תמונות הנכס</label>
+        <ImageManager name="images" defaultImages={property?.images ?? []} />
       </div>
 
       {/* Status + Featured */}
@@ -262,12 +279,7 @@ export default function PropertyForm({ action, property }: Props) {
 
       {/* Submit */}
       <div className="flex gap-3 pt-2">
-        <button
-          type="submit"
-          className="btn-gold flex-1 py-3 rounded-lg text-sm font-semibold"
-        >
-          {property ? "שמור שינויים" : "פרסם נכס"}
-        </button>
+        <SubmitButton isEdit={!!property?.id} />
         <a
           href="/admin/properties"
           className="px-6 py-3 rounded-lg text-sm text-gray-light border border-gray-dark hover:border-gold/40 hover:text-gold transition-colors"

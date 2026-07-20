@@ -1,12 +1,10 @@
 import { mercatorToWgs84, wgs84ToMercator, wgs84ToItm } from "./itm";
+import { govmapPostJson as postJson, ENTITIES_BY_POINT_URL, AUTOCOMPLETE_URL } from "./rest-client";
 
 // Parcel (gush/helka) lookups against GovMap's internal layers-catalog REST
 // API — same undocumented family as the autocomplete service: no token, no
 // browser library, CORS-open. Discovered by tracing govmap.gov.il network
-// traffic. The API rejects requests without the fingerprint headers the SPA
-// sends, but accepts any well-formed random hex value.
-const ENTITIES_BY_POINT_URL = "https://www.govmap.gov.il/api/layers-catalog/entitiesByPoint";
-const AUTOCOMPLETE_URL = "https://www.govmap.gov.il/api/search-service/autocomplete";
+// traffic.
 const PARCEL_LAYER_ID = "15";
 
 export interface ParcelInfo {
@@ -20,41 +18,6 @@ export interface ParcelInfo {
   /** Parcel centroid. */
   lat: number;
   lng: number;
-}
-
-function randomHex32(): string {
-  const bytes = new Uint8Array(16);
-  crypto.getRandomValues(bytes);
-  return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
-}
-
-// One fingerprint per page load, like the GovMap SPA itself.
-const fingerprint = randomHex32();
-
-function govmapHeaders(): Record<string, string> {
-  return {
-    "Content-Type": "application/json",
-    "x-fingerprint-id": fingerprint,
-    "x-user-id": fingerprint,
-    "x-trace-id": randomHex32(),
-  };
-}
-
-async function postJson(url: string, body: unknown, timeoutMs = 8000): Promise<unknown> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: govmapHeaders(),
-      body: JSON.stringify(body),
-      signal: controller.signal,
-    });
-    if (!res.ok) return null;
-    return await res.json();
-  } finally {
-    clearTimeout(timer);
-  }
 }
 
 interface EntityField {

@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useTransition, useRef } from "react";
-import Image from "next/image";
 import {
-  Link2, Search, MapPin, BedDouble, Maximize2, Star, ArrowRight,
-  Upload, FileText, X, ImagePlus
+  Link2, Search, ArrowRight,
+  Upload, FileText,
 } from "lucide-react";
-import { previewFromCRMLink, saveImportedProperty } from "@/app/actions/crm-import";
+import { previewFromCRMLink } from "@/app/actions/crm-import";
 import { parsePropertyFromImage, parsePropertyFromText } from "@/app/actions/ai-import";
+import { createPropertyAction } from "@/app/actions/properties";
+import PropertyForm from "@/components/admin/PropertyForm";
 import type { Property } from "@/lib/types";
 import Link from "next/link";
 
@@ -59,8 +60,6 @@ const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
   { id: "text",  label: "הדבקת טקסט",  icon: <FileText size={14} /> },
 ];
 
-const typeLabel: Record<string, string> = { sale: "למכירה", rent: "להשכרה", project: "פרויקט" };
-
 export default function ImportPage() {
   const [tab, setTab] = useState<Tab>("crm");
 
@@ -71,19 +70,10 @@ export default function ImportPage() {
   const [textInput,     setTextInput]     = useState("");
   const screenshotRef = useRef<HTMLInputElement>(null);
 
-  // Property image upload (separate from screenshot)
-  const [propImages,       setPropImages]       = useState<{ objectUrl: string; remoteUrl?: string }[]>([]);
-  const [primaryIdx,       setPrimaryIdx]       = useState(0);
-  const [isUploadingImages, setIsUploadingImages] = useState(false);
-  const [uploadError,      setUploadError]      = useState("");
-  const propImgRef = useRef<HTMLInputElement>(null);
-
   // Shared output
   const [preview,   setPreview]   = useState<Preview | null>(null);
-  const [featured,  setFeatured]  = useState(false);
   const [error,     setError]     = useState("");
   const [isParsing, startParse]   = useTransition();
-  const [isSaving,  startSave]    = useTransition();
 
   // ── helpers ──────────────────────────────────────────────
 
@@ -97,7 +87,6 @@ export default function ImportPage() {
   ) {
     if (result.ok) {
       setPreview(result.property);
-      setFeatured(result.property.featured);
       setError("");
     } else {
       setError(errMap[result.error] ?? "שגיאה לא ידועה");
@@ -138,83 +127,6 @@ export default function ImportPage() {
     });
   }
 
-  // ── property image upload ────────────────────────────────
-
-  async function handlePropImagesSelect(files: FileList) {
-    setUploadError("");
-    const newEntries = Array.from(files)
-      .filter((f) => f.type.startsWith("image/"))
-      .map((f) => ({ objectUrl: URL.createObjectURL(f), file: f }));
-
-    if (!newEntries.length) return;
-
-    // Optimistically show thumbnails
-    setPropImages((prev) => [
-      ...prev,
-      ...newEntries.map((e) => ({ objectUrl: e.objectUrl })),
-    ]);
-
-    setIsUploadingImages(true);
-    try {
-      const formData = new FormData();
-      newEntries.forEach((e) => formData.append("files", e.file));
-
-      const res = await fetch("/api/upload-images", { method: "POST", body: formData });
-      const json = await res.json() as { urls?: string[]; error?: string };
-
-      if (!res.ok || json.error) {
-        if (json.error === "not_configured") {
-          setUploadError("Supabase לא מחובר — לא ניתן להעלות תמונות. הדבק URL ידנית בשדה הקישורים.");
-        } else {
-          setUploadError("שגיאה בהעלאת תמונות — נסה שוב");
-        }
-        // Keep thumbnails but mark without remote URL
-        return;
-      }
-
-      const urls: string[] = json.urls ?? [];
-      // Attach remote URLs to the last N entries we just added
-      setPropImages((prev) => {
-        const updated = [...prev];
-        const offset = updated.length - newEntries.length;
-        urls.forEach((url, i) => {
-          if (updated[offset + i]) updated[offset + i] = { ...updated[offset + i], remoteUrl: url };
-        });
-        return updated;
-      });
-    } finally {
-      setIsUploadingImages(false);
-    }
-  }
-
-  function removePropImage(i: number) {
-    setPropImages((prev) => {
-      const copy = [...prev];
-      URL.revokeObjectURL(copy[i].objectUrl);
-      copy.splice(i, 1);
-      return copy;
-    });
-    setPrimaryIdx((prev) => {
-      if (i === prev) return 0;
-      if (i < prev) return prev - 1;
-      return prev;
-    });
-  }
-
-  // ── save ─────────────────────────────────────────────────
-
-  function handleSave() {
-    if (!preview) return;
-    const uploaded = propImages.map((e) => e.remoteUrl).filter(Boolean) as string[];
-    // Ensure primary image is first
-    const primary = uploaded[primaryIdx];
-    const rest = uploaded.filter((_, i) => i !== primaryIdx);
-    const allImages = primary ? [primary, ...rest, ...preview.images] : [...uploaded, ...preview.images];
-    startSave(async () => {
-      await saveImportedProperty({ ...preview, images: allImages, featured });
-    });
-  }
-
   // ─────────────────────────────────────────────────────────
 
   return (
@@ -228,7 +140,7 @@ export default function ImportPage() {
         </Link>
         <p className="text-[10px] tracking-[0.4em] text-gold/80 uppercase mb-1">ייבוא</p>
         <h1 className="font-display text-3xl font-light text-white">ייבוא נכס</h1>
-        <p className="text-xs text-gray-light mt-1">בחר שיטת ייבוא — כל שיטה מובילה לתצוגה מקדימה ושמירה לאתר</p>
+        <p className="text-xs text-gray-light mt-1">בחר שיטת ייבוא — כל שיטה מובילה לטופס מלא לעריכה ואישור לפני שמירה</p>
       </div>
 
       {/* Tab bar */}
@@ -247,7 +159,7 @@ export default function ImportPage() {
       </div>
 
       {/* Input card */}
-      <div className="bg-charcoal border border-gray-dark rounded-xl p-6 mb-4">
+      <div className="bg-charcoal border border-gray-dark rounded-xl p-6 mb-6">
 
         {/* ── CRM Tab ── */}
         {tab === "crm" && (
@@ -346,162 +258,13 @@ export default function ImportPage() {
         )}
       </div>
 
-      {/* ── Property image upload (always visible) ── */}
-      <div className="bg-charcoal border border-gray-dark rounded-xl p-6 mb-6">
-        <div className="flex items-center justify-between mb-3">
-          <label className="text-xs text-gold tracking-widest uppercase">תמונות הנכס לאתר</label>
-          <span className="text-[11px] text-gray-light">{propImages.length} תמונות</span>
-        </div>
-
-        {propImages.length > 0 && (
-          <p className="text-[11px] text-gray-light/70 mb-2">לחץ על תמונה לבחירתה כ<span className="text-gold">ראשית</span> (מופיעה בכרטיס הנכס)</p>
-        )}
-
-        {/* Thumbnails */}
-        {propImages.length > 0 && (
-          <div className="grid grid-cols-4 gap-2 mb-3">
-            {propImages.map((img, i) => (
-              <div
-                key={i}
-                onClick={() => img.remoteUrl && setPrimaryIdx(i)}
-                className={`relative aspect-square rounded-lg overflow-hidden group cursor-pointer transition-all ${
-                  i === primaryIdx ? "ring-2 ring-gold ring-offset-2 ring-offset-charcoal" : "opacity-80 hover:opacity-100"
-                }`}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={img.objectUrl} alt="" className="w-full h-full object-cover" />
-                {/* Primary badge */}
-                {i === primaryIdx && img.remoteUrl && (
-                  <span className="absolute top-1 right-1 text-[9px] bg-gold text-black font-bold px-1.5 py-0.5 rounded">ראשית</span>
-                )}
-                {/* Upload indicator */}
-                {!img.remoteUrl && (
-                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  </div>
-                )}
-                {/* Remove button */}
-                <button
-                  onClick={(e) => { e.stopPropagation(); removePropImage(i); }}
-                  className="absolute top-1 left-1 w-5 h-5 bg-black/70 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  <X size={10} className="text-white" />
-                </button>
-              </div>
-            ))}
-
-            {/* Add more */}
-            <button
-              onClick={() => propImgRef.current?.click()}
-              className="aspect-square rounded-lg border-2 border-dashed border-gray-dark hover:border-gold/40 flex items-center justify-center transition-colors"
-            >
-              <ImagePlus size={18} className="text-gray-light" />
-            </button>
-          </div>
-        )}
-
-        {/* Drop zone (shown when empty) */}
-        {propImages.length === 0 && (
-          <div
-            onClick={() => propImgRef.current?.click()}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => {
-              e.preventDefault();
-              if (e.dataTransfer.files.length) handlePropImagesSelect(e.dataTransfer.files);
-            }}
-            className="border-2 border-dashed border-gray-dark hover:border-gold/30 rounded-xl py-8 text-center cursor-pointer transition-colors"
-          >
-            <ImagePlus size={24} className="mx-auto text-gray-light mb-2" />
-            <p className="text-sm text-gray-light">גרור תמונות <span className="text-white">או לחץ לבחירה</span></p>
-            <p className="text-[11px] text-gray-light/50 mt-1">ניתן לבחור מספר תמונות בבת אחת</p>
-          </div>
-        )}
-
-        <input
-          ref={propImgRef} type="file" accept="image/*" multiple className="hidden"
-          onChange={(e) => { if (e.target.files?.length) handlePropImagesSelect(e.target.files); e.target.value = ""; }}
-        />
-
-        {uploadError && (
-          <p className="mt-2 text-xs text-amber-400 bg-amber-500/10 rounded-lg px-3 py-2">{uploadError}</p>
-        )}
-        {isUploadingImages && (
-          <p className="mt-2 text-xs text-gray-light text-center">מעלה תמונות...</p>
-        )}
-      </div>
-
-      {/* Preview */}
+      {/* Review + edit before saving — the same form used for manual create/edit */}
       {preview && (
-        <div className="bg-charcoal border border-gold/20 rounded-xl overflow-hidden">
-          {/* Images from CRM or prop images */}
-          {(propImages.filter(e => e.remoteUrl).length > 0 || preview.images.length > 0) && (
-            <div className="relative h-56 bg-black">
-              <Image
-                src={propImages.find(e => e.remoteUrl)?.remoteUrl ?? preview.images[0]}
-                alt={preview.title}
-                fill className="object-cover opacity-90" unoptimized
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-              <span className="absolute bottom-3 left-3 text-xs text-white bg-black/50 px-2 py-1 rounded-full">
-                {propImages.filter(e => e.remoteUrl).length + preview.images.length} תמונות
-              </span>
-            </div>
-          )}
-
-          <div className="p-6">
-            <div className="flex items-start justify-between gap-4 mb-4">
-              <div>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-gold/10 text-gold border border-gold/20 ml-2">
-                  {typeLabel[preview.type] ?? preview.type}
-                </span>
-                {preview.crm_id && <span className="text-[10px] text-gray-light">#{preview.crm_id}</span>}
-                <h2 className="font-display text-xl text-white font-light mt-2">{preview.title}</h2>
-              </div>
-              <p className="text-lg font-semibold text-gold shrink-0">₪{preview.price.toLocaleString("he-IL")}</p>
-            </div>
-
-            <div className="flex flex-wrap gap-4 text-xs text-gray-light mb-4">
-              {(preview.neighborhood || preview.city) && (
-                <span className="flex items-center gap-1">
-                  <MapPin size={12} className="text-gold" />
-                  {[preview.neighborhood, preview.city].filter(Boolean).join(", ")}
-                </span>
-              )}
-              {preview.bedrooms > 0 && (
-                <span className="flex items-center gap-1"><BedDouble size={12} className="text-gold" />{preview.bedrooms} חדרים</span>
-              )}
-              {preview.size_sqm > 0 && (
-                <span className="flex items-center gap-1"><Maximize2 size={12} className="text-gold" />{preview.size_sqm} מ״ר</span>
-              )}
-            </div>
-
-            {preview.description && (
-              <p className="text-xs text-gray-light leading-relaxed mb-5 line-clamp-3">{preview.description}</p>
-            )}
-
-            {/* Featured toggle */}
-            <label className="flex items-center gap-3 cursor-pointer mb-5">
-              <button
-                type="button" role="switch" aria-checked={featured}
-                onClick={() => setFeatured(!featured)}
-                className={`w-10 h-5 rounded-full transition-colors relative ${featured ? "bg-gold" : "bg-gray-dark"}`}
-              >
-                <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${featured ? "translate-x-[-1.25rem]" : "translate-x-[-0.25rem]"}`} />
-              </button>
-              <span className="flex items-center gap-1 text-sm text-white">
-                <Star size={13} className={featured ? "text-gold" : "text-gray-light"} fill={featured ? "currentColor" : "none"} />
-                הצג בדף הבית (נכס מוצג)
-              </span>
-            </label>
-
-            <button
-              onClick={handleSave}
-              disabled={isSaving || isUploadingImages}
-              className="w-full bg-gold text-black py-3 rounded-lg text-sm font-semibold hover:bg-gold/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              {isSaving ? "שומר..." : isUploadingImages ? "ממתין לסיום העלאה..." : "הוסף לאתר ←"}
-            </button>
-          </div>
+        <div className="bg-charcoal border border-gold/20 rounded-xl p-6">
+          <p className="text-xs text-gray-light mb-5">
+            הנתונים חולצו אוטומטית — בדוק ותקן לפני השמירה.
+          </p>
+          <PropertyForm property={preview} action={createPropertyAction} />
         </div>
       )}
     </div>
