@@ -175,6 +175,16 @@ export default async function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-black text-cream antialiased">
+        {/* Google Consent Mode v2 default — must run before the GA tag (which
+            loads afterInteractive) so the first pageview hit respects any
+            stored cookie-banner choice instead of firing ungated. */}
+        <Script
+          id="consent-default-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `(function(){window.dataLayer=window.dataLayer||[];function gtag(){window.dataLayer.push(arguments);}var granted=false;try{var raw=localStorage.getItem('cookie-consent');if(raw){try{granted=JSON.parse(raw).choice==='accepted';}catch(e){granted=raw==='accepted';}}}catch(e){}var state=granted?'granted':'denied';gtag('consent','default',{ad_storage:state,ad_user_data:state,ad_personalization:state,analytics_storage:state});})();`,
+          }}
+        />
         {/* Anti-flash: set theme + accessibility prefs before first paint.
             Per Next.js docs, beforeInteractive scripts are always hoisted into
             <head> regardless of where they're placed — must live in <body>,

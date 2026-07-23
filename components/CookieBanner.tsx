@@ -21,6 +21,19 @@ export default function CookieBanner() {
       "cookie-consent",
       JSON.stringify({ choice, ts: new Date().toISOString() })
     );
+    const state = choice === "accepted" ? "granted" : "denied";
+    const w = window as typeof window & { dataLayer?: unknown[] };
+    w.dataLayer = w.dataLayer || [];
+    w.dataLayer.push([
+      "consent",
+      "update",
+      {
+        ad_storage: state,
+        ad_user_data: state,
+        ad_personalization: state,
+        analytics_storage: state,
+      },
+    ]);
     setVisible(false);
     window.dispatchEvent(new Event("cookiebanner:dismissed"));
   };
