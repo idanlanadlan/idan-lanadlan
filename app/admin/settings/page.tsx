@@ -1,7 +1,11 @@
 import { getSettings } from "@/lib/db";
 import { saveSettings } from "@/app/actions/settings";
+import SettingsSubmitButton from "@/components/admin/SettingsSubmitButton";
 
 export const dynamic = "force-dynamic";
+// saveSettings now calls Claude to translate the About fields on every save —
+// same timeout headroom as the blog/property forms.
+export const maxDuration = 120;
 
 const field =
   "w-full bg-black border border-gray-dark rounded-lg px-4 py-2.5 text-sm text-cream focus:border-gold outline-none transition-colors";
@@ -90,6 +94,38 @@ export default async function SettingsPage() {
           </div>
         </Section>
 
+        <Section title="עמוד אודות — כותרות ותוכן">
+          <p className="text-xs text-gray-light -mt-1">
+            ערוך בעברית בלבד — האנגלית/צרפתית/ספרדית מתורגמות אוטומטית בכל שמירה.
+          </p>
+          <div>
+            <label className={label}>תווית עילית (מעל הכותרת)</label>
+            <input className={field} name="about_eyebrow_he" defaultValue={s.about_eyebrow_he} placeholder="אודות" />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className={label}>כותרת — שורה 1</label>
+              <input className={field} name="about_heading_line1_he" defaultValue={s.about_heading_line1_he} placeholder="עידן חולי" />
+            </div>
+            <div>
+              <label className={label}>כותרת — שורה 2</label>
+              <input className={field} name="about_heading_line2_he" defaultValue={s.about_heading_line2_he} placeholder="עידן לנדל״ן" />
+            </div>
+          </div>
+          <div>
+            <label className={label}>ביו — פסקה 1</label>
+            <textarea className={`${field} h-20 resize-none`} name="about_bio1_he" defaultValue={s.about_bio1_he} />
+          </div>
+          <div>
+            <label className={label}>ביו — פסקה 2</label>
+            <textarea className={`${field} h-20 resize-none`} name="about_bio2_he" defaultValue={s.about_bio2_he} />
+          </div>
+          <div>
+            <label className={label}>ביו — פסקה 3</label>
+            <textarea className={`${field} h-20 resize-none`} name="about_bio3_he" defaultValue={s.about_bio3_he} />
+          </div>
+        </Section>
+
         <Section title="תרגומי Hero (כותרת ראשית)">
           <div>
             <label className={label}>Subtitle — עברית</label>
@@ -105,12 +141,7 @@ export default async function SettingsPage() {
           </div>
         </Section>
 
-        <button
-          type="submit"
-          className="btn-gold w-full py-3 rounded-lg text-sm font-semibold"
-        >
-          שמור הכל
-        </button>
+        <SettingsSubmitButton />
       </form>
     </div>
   );

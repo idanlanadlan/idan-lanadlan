@@ -19,6 +19,34 @@ export const DEFAULT_SETTINGS: Record<string, string> = {
   hero_subtitle_he: "מומחה לנדל״ן יוקרה בתל אביב וסביבתה. ליווי אישי, שיווק חכם ותוצאות שמדברות בעד עצמן.",
   hero_subtitle_en: "Luxury real estate expert in Tel Aviv. Personal guidance and results that speak for themselves.",
   hero_subtitle_fr: "Expert en immobilier de luxe à Tel Aviv. Accompagnement personnel et résultats probants.",
+
+  // About page — headline + bio. Hebrew is the source of truth (edited in
+  // admin); en/fr/es are auto-translated on save (see translate-about.ts)
+  // but stored here too so a failed translation never blanks the page.
+  about_eyebrow_he: "אודות",
+  about_eyebrow_en: "About",
+  about_eyebrow_fr: "À propos",
+  about_eyebrow_es: "Sobre mí",
+  about_heading_line1_he: "עידן חולי",
+  about_heading_line1_en: "Idan Huli",
+  about_heading_line1_fr: "Idan Huli",
+  about_heading_line1_es: "Idan Huli",
+  about_heading_line2_he: "עידן לנדל״ן",
+  about_heading_line2_en: "Idan LaNadlan",
+  about_heading_line2_fr: "Idan LaNadlan",
+  about_heading_line2_es: "Idan LaNadlan",
+  about_bio1_he: "אחרי כעשור של ליווי לקוחות בתהליכי קבלת החלטות פיננסיות ובהשקעות נדל״ן פרטיות, הפכתי את התשוקה לקריירה מלאה: למצוא לכם בית נכון או השקעה נכונה — עסקה שמשנה חיים.",
+  about_bio1_en: "After about a decade guiding clients through major financial decisions and private real estate investments, I turned my passion into a full-time career: finding you the right home or the right investment — a deal that changes lives.",
+  about_bio1_fr: "Après environ une décennie à accompagner des clients dans leurs décisions financières majeures et leurs investissements immobiliers privés, j'ai fait de ma passion une carrière à part entière : trouver pour vous le bon logement ou le bon investissement — une transaction qui change une vie.",
+  about_bio1_es: "Después de casi una década acompañando a clientes en decisiones financieras importantes e inversiones inmobiliarias privadas, convertí mi pasión en una carrera completa: encontrarte la casa correcta o la inversión correcta — una operación que cambia vidas.",
+  about_bio2_he: "אני מאמין בשקיפות מלאה, חשיבה יצירתית בעסקאות מורכבות, ונחישות להביא תוצאה איפה שאחרים נופלים.",
+  about_bio2_en: "I believe in full transparency, creative thinking on complex deals, and the determination to deliver results where others fall short.",
+  about_bio2_fr: "Je crois en la transparence totale, à la créativité face aux transactions complexes, et à la détermination d'obtenir des résultats là où d'autres échouent.",
+  about_bio2_es: "Creo en la transparencia total, el pensamiento creativo en operaciones complejas y la determinación de lograr resultados donde otros fallan.",
+  about_bio3_he: "וכשאני לא בשטח? אני בעלה של ויקטוריה ואבא של אליה, אלאור ואלדר — וזה מזכיר לי למה אני עובד עם לב.",
+  about_bio3_en: "And when I'm not out in the field? I'm husband to Victoria and father to Elia, Elor and Eldar — a reminder of why I work with heart.",
+  about_bio3_fr: "Et quand je ne suis pas sur le terrain? Je suis l'époux de Victoria et le père d'Elia, Elor et Eldar — un rappel de pourquoi je travaille avec cœur.",
+  about_bio3_es: "¿Y cuando no estoy en el terreno? Soy esposo de Victoria y padre de Elia, Elor y Eldar — un recordatorio de por qué trabajo con el corazón.",
 };
 
 export async function getSettings(): Promise<Record<string, string>> {

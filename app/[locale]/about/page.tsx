@@ -6,6 +6,7 @@ import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import { translations } from "@/lib/translations";
 import { isLocale } from "@/lib/locale-path";
+import { getSettings } from "@/lib/db";
 
 export async function generateMetadata({
   params,
@@ -26,6 +27,16 @@ export default async function AboutPage({
   const { locale } = await params;
   const l = isLocale(locale) ? locale : "he";
   const a = translations[l].about;
+  const settings = await getSettings();
+  // Editable in /admin/settings ("עמוד אודות") — DEFAULT_SETTINGS already
+  // mirrors these translations, so the fallback only matters if a key is
+  // ever missing from the settings table.
+  const eyebrow = settings[`about_eyebrow_${l}`] || a.eyebrow;
+  const headingLine1 = settings[`about_heading_line1_${l}`] || a.heading_line1;
+  const headingLine2 = settings[`about_heading_line2_${l}`] || a.heading_line2;
+  const bio1 = settings[`about_bio1_${l}`] || a.bio1;
+  const bio2 = settings[`about_bio2_${l}`] || a.bio2;
+  const bio3 = settings[`about_bio3_${l}`] || a.bio3;
 
   return (
     <>
@@ -36,16 +47,16 @@ export default async function AboutPage({
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="grid md:grid-cols-2 gap-16 items-center">
               <div>
-                <p className="text-xs tracking-[0.3em] text-gold uppercase mb-3">{a.eyebrow}</p>
+                <p className="text-xs tracking-[0.3em] text-gold uppercase mb-3">{eyebrow}</p>
                 <div className="divider-gold mb-6" />
                 <h1 className="font-display text-4xl sm:text-5xl font-light text-white mb-6 leading-tight">
-                  {a.heading_line1}
+                  {headingLine1}
                   <br />
-                  <span className="text-gold-gradient italic">{a.heading_line2}</span>
+                  <span className="text-gold-gradient italic">{headingLine2}</span>
                 </h1>
-                <p className="text-gray-light leading-relaxed mb-4">{a.bio1}</p>
-                <p className="text-gray-light leading-relaxed mb-4">{a.bio2}</p>
-                <p className="text-gray-light leading-relaxed mb-8">{a.bio3}</p>
+                <p className="text-gray-light leading-relaxed mb-4">{bio1}</p>
+                <p className="text-gray-light leading-relaxed mb-4">{bio2}</p>
+                <p className="text-gray-light leading-relaxed mb-8">{bio3}</p>
                 <div className="flex gap-3">
                   <a
                     href="https://wa.me/972549791171"
