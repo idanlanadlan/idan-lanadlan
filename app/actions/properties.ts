@@ -8,6 +8,7 @@ import {
   deleteProperty as dbDeleteProperty,
 } from "@/lib/db";
 import { translatePropertyFields } from "@/lib/translate-property";
+import { isAdmin } from "@/lib/require-admin";
 import type { PropertyType, PropertyStatus } from "@/lib/types";
 
 function parseForm(formData: FormData) {
@@ -50,6 +51,7 @@ function parseForm(formData: FormData) {
 }
 
 export async function createPropertyAction(formData: FormData) {
+  if (!(await isAdmin())) throw new Error("Unauthorized");
   const data = parseForm(formData);
   const translations = await translatePropertyFields(data);
   await createProperty({ ...data, ...translations });
@@ -60,6 +62,7 @@ export async function createPropertyAction(formData: FormData) {
 }
 
 export async function updatePropertyAction(formData: FormData) {
+  if (!(await isAdmin())) throw new Error("Unauthorized");
   const id = formData.get("id") as string;
   const data = parseForm(formData);
   const translations = await translatePropertyFields(data);
@@ -72,6 +75,7 @@ export async function updatePropertyAction(formData: FormData) {
 }
 
 export async function deleteProperty(formData: FormData) {
+  if (!(await isAdmin())) throw new Error("Unauthorized");
   const id = formData.get("id") as string;
   await dbDeleteProperty(id);
   revalidatePath("/");
@@ -81,6 +85,7 @@ export async function deleteProperty(formData: FormData) {
 }
 
 export async function toggleFeatured(formData: FormData) {
+  if (!(await isAdmin())) throw new Error("Unauthorized");
   const id = formData.get("id") as string;
   const featured = formData.get("featured") === "true";
   await updateProperty(id, { featured });
@@ -89,6 +94,7 @@ export async function toggleFeatured(formData: FormData) {
 }
 
 export async function updateStatus(formData: FormData) {
+  if (!(await isAdmin())) throw new Error("Unauthorized");
   const id = formData.get("id") as string;
   const status = formData.get("status") as PropertyStatus;
   await updateProperty(id, { status });

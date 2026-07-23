@@ -1,25 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-
-async function verifyToken(token: string): Promise<boolean> {
-  const password = process.env.ADMIN_PASSWORD;
-  if (!password) return false;
-  try {
-    const encoder = new TextEncoder();
-    const key = await crypto.subtle.importKey(
-      "raw",
-      encoder.encode(password),
-      { name: "HMAC", hash: "SHA-256" },
-      false,
-      ["sign"]
-    );
-    const sig = await crypto.subtle.sign("HMAC", key, encoder.encode("idan-admin-v1"));
-    const expected = btoa(String.fromCharCode(...new Uint8Array(sig)));
-    return token === expected;
-  } catch {
-    return false;
-  }
-}
+import { verifyAdminToken } from "@/lib/admin-auth";
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -31,7 +12,7 @@ export async function proxy(request: NextRequest) {
       !pathname.startsWith("/admin/reset")
     ) {
       const token = request.cookies.get("admin_session")?.value;
-      if (!token || !(await verifyToken(token))) {
+      if (!(await verifyAdminToken(token))) {
         return NextResponse.redirect(new URL("/admin/login", request.url));
       }
     }

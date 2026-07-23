@@ -3,6 +3,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { BlogPost } from "@/lib/types";
 import { getAllBlogPosts } from "@/lib/db";
+import { isAdmin } from "@/lib/require-admin";
 
 export type GenerateResult =
   | { ok: true; draft: Partial<BlogPost> }
@@ -100,6 +101,7 @@ async function uniqueSlug(base: string): Promise<string> {
 }
 
 export async function generateBlogDraft(mode: GenerateMode, value: string): Promise<GenerateResult> {
+  if (!(await isAdmin())) return { ok: false, error: "api_error" };
   const client = getClient();
   if (!client) return { ok: false, error: "not_configured" };
 

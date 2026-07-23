@@ -25,7 +25,12 @@ export default async function LoginPage({
             <PasswordInput />
           </div>
 
-          {error && (
+          {error === "locked" && (
+            <p className="text-xs text-red-400 text-center">
+              יותר מדי ניסיונות כושלים. נסה שוב בעוד 15 דקות.
+            </p>
+          )}
+          {error && error !== "locked" && (
             <p className="text-xs text-red-400 text-center">סיסמה שגויה. נסה שוב.</p>
           )}
 

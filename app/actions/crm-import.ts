@@ -1,6 +1,7 @@
 "use server";
 
 import { extractCRMId, fetchCRMProperty, geocodeAddress, mapCRMToProperty } from "@/lib/crm";
+import { isAdmin } from "@/lib/require-admin";
 import type { Property } from "@/lib/types";
 
 export type PreviewResult =
@@ -8,6 +9,7 @@ export type PreviewResult =
   | { ok: false; error: "not_configured" | "not_found" | "invalid_input" | "api_error" };
 
 export async function previewFromCRMLink(input: string): Promise<PreviewResult> {
+  if (!(await isAdmin())) return { ok: false, error: "invalid_input" };
   if (!input?.trim()) return { ok: false, error: "invalid_input" };
 
   const id = extractCRMId(input);

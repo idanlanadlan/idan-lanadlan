@@ -2,6 +2,7 @@
 
 import { isValidPhone, isValidEmail } from "@/lib/validation";
 import { consentTimestamp, consentEmailRows } from "@/lib/consent";
+import { escapeHtml } from "@/lib/html-escape";
 
 export async function sendContactForm(data: {
   category: string;
@@ -22,9 +23,14 @@ export async function sendContactForm(data: {
   if (!apiKey) return { success: false, error: "server" };
 
   const ts = consentTimestamp();
+  const name = escapeHtml(data.name);
+  const phone = escapeHtml(data.phone);
+  const city = escapeHtml(data.city);
+  const category = escapeHtml(data.category);
+  const email = data.email ? escapeHtml(data.email) : "";
 
-  const emailRow = data.email
-    ? `<tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;">מייל:</td><td style="padding:10px 0;"><a href="mailto:${data.email}" style="color:#F5F5F0;">${data.email}</a></td></tr>`
+  const emailRow = email
+    ? `<tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;">מייל:</td><td style="padding:10px 0;"><a href="mailto:${email}" style="color:#F5F5F0;">${email}</a></td></tr>`
     : "";
 
   const res = await fetch("https://api.resend.com/emails", {
@@ -36,16 +42,16 @@ export async function sendContactForm(data: {
     body: JSON.stringify({
       from: "עידן לנדל״ן <noreply@idanlanadlan.co.il>",
       to: ["idanlanadlan@gmail.com"],
-      subject: `פנייה חדשה — ${data.category}`,
+      subject: `פנייה חדשה — ${category}`,
       html: `
-        <div dir="rtl" style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;padding:32px;background:#0A0A0A;color:#F5F5F0;border-radius:12px;">
+        <div dir="rtl" style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;padding:32px;background:#14181D;color:#FAF6EE;border-radius:12px;">
           <h2 style="color:#C9A96E;margin-top:0">פנייה חדשה — עידן לנדל״ן</h2>
           <table style="width:100%;border-collapse:collapse;margin-top:16px;">
-            <tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;width:120px;">סוג פנייה:</td><td style="padding:10px 0;">${data.category}</td></tr>
-            <tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;">שם:</td><td style="padding:10px 0;">${data.name}</td></tr>
-            <tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;">טלפון:</td><td style="padding:10px 0;"><a href="tel:${data.phone}" style="color:#F5F5F0;">${data.phone}</a></td></tr>
+            <tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;width:120px;">סוג פנייה:</td><td style="padding:10px 0;">${category}</td></tr>
+            <tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;">שם:</td><td style="padding:10px 0;">${name}</td></tr>
+            <tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;">טלפון:</td><td style="padding:10px 0;"><a href="tel:${phone}" style="color:#FAF6EE;">${phone}</a></td></tr>
             ${emailRow}
-            <tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;">עיר:</td><td style="padding:10px 0;">${data.city}</td></tr>
+            <tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;">עיר:</td><td style="padding:10px 0;">${city}</td></tr>
             ${consentEmailRows(data.marketingConsent, ts)}
           </table>
         </div>

@@ -27,10 +27,10 @@ CREATE TABLE IF NOT EXISTS properties (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- אפשר גישה ציבורית לקריאה (האתר מציג נכסים)
+-- אפשר גישה ציבורית לקריאה בלבד (האתר מציג נכסים); כתיבה רק דרך service role
 ALTER TABLE properties ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "public_read" ON properties FOR SELECT USING (true);
-CREATE POLICY "service_all"  ON properties USING (true) WITH CHECK (true);`;
+CREATE POLICY "service_role_write" ON properties FOR ALL TO service_role USING (true) WITH CHECK (true);`;
 
 const MIGRATION_SQL = `-- אם הטבלה כבר קיימת (פרויקט מחובר), הרץ את זה כדי להוסיף שדות חדשים
 ALTER TABLE properties
@@ -96,12 +96,66 @@ const MIGRATION_SQL_BLOG_FEATURED = `-- בקרה ידנית על אילו מאמ
 ALTER TABLE blog_posts
   ADD COLUMN IF NOT EXISTS featured BOOLEAN NOT NULL DEFAULT true;`;
 
+// SECURITY FIX — the original "properties" policy below (see Step 2, line
+// "service_all") had no FOR/TO clause. In Postgres that silently defaults
+// to ALL commands (SELECT/INSERT/UPDATE/DELETE) for ALL roles — including
+// "anon", the public key shipped in every visitor's browser. Anyone could
+// call the Supabase REST API directly with that key and write/delete any
+// property, completely bypassing admin login. This script is idempotent —
+// safe to run even if you're not sure what state a table is in — and also
+// locks down blog_posts/site_settings the same way, since neither has any
+// CREATE TABLE/policy SQL anywhere in this file, so their real state could
+// only be confirmed by running this.
+const SECURITY_FIX_RLS = `-- === אבטחה דחופה: תיקון הרשאות Supabase ===
+-- בטוח להריץ שוב גם אם חלק כבר קיים.
+
+-- properties — היה חור אבטחה אמיתי: המדיניות הישנה נתנה לכל אחד
+-- (כולל מפתח ה-anon הציבורי) כתיבה/מחיקה מלאה בלי התחברות לאדמין.
+ALTER TABLE properties ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "service_all" ON properties;
+DROP POLICY IF EXISTS "public_read" ON properties;
+CREATE POLICY "public_read" ON properties FOR SELECT USING (true);
+CREATE POLICY "service_role_write" ON properties FOR ALL TO service_role USING (true) WITH CHECK (true);
+
+-- blog_posts — קריאה ציבורית רק למאמרים שפורסמו (טיוטות ממשיכות
+-- להיקרא באדמין דרך מפתח ה-service role, שעוקף RLS)
+ALTER TABLE blog_posts ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "service_all" ON blog_posts;
+DROP POLICY IF EXISTS "public_read" ON blog_posts;
+CREATE POLICY "public_read" ON blog_posts FOR SELECT USING (published = true);
+CREATE POLICY "service_role_write" ON blog_posts FOR ALL TO service_role USING (true) WITH CHECK (true);
+
+-- site_settings — האתר הציבורי קורא ערכים מפה (טלפון, רשתות וכו') דרך
+-- מפתח ה-anon, אז קריאה נשארת ציבורית; כתיבה רק דרך service role
+ALTER TABLE site_settings ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "service_all" ON site_settings;
+DROP POLICY IF EXISTS "public_read" ON site_settings;
+CREATE POLICY "public_read" ON site_settings FOR SELECT USING (true);
+CREATE POLICY "service_role_write" ON site_settings FOR ALL TO service_role USING (true) WITH CHECK (true);
+
+-- לבדוק שהתוצאה נכונה: כל שורה כאן צריכה להראות cmd + roles ספציפיים,
+-- לא "ALL" רשום עם roles ריק/{public}.
+SELECT tablename, policyname, cmd, roles FROM pg_policies
+WHERE tablename IN ('properties', 'blog_posts', 'site_settings')
+ORDER BY tablename, policyname;`;
+
 export default function SetupPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-10" dir="rtl">
       <div className="mb-8">
         <p className="text-[10px] tracking-[0.4em] text-gold/80 uppercase mb-1">הגדרות</p>
         <h1 className="font-display text-3xl font-light text-white">חיבור Supabase</h1>
+      </div>
+
+      <div className="bg-red-500/10 border-2 border-red-500/40 rounded-xl p-5 mb-8">
+        <p className="text-red-400 font-semibold mb-2">🚨 אבטחה דחופה — הרץ עכשיו</p>
+        <p className="text-red-300/80 text-sm mb-4">
+          נמצא שהמפתח הציבורי של האתר (זה שכל מבקר מקבל בדפדפן) יכול היה למחוק/לשכתב נכסים ישירות מול Supabase,
+          בלי להתחבר לאדמין בכלל. פתח <strong className="text-red-300">SQL Editor</strong> ב-Supabase והרץ את זה עכשיו:
+        </p>
+        <pre className="bg-black rounded-lg p-4 text-xs text-cream overflow-x-auto leading-relaxed font-mono">
+          {SECURITY_FIX_RLS}
+        </pre>
       </div>
 
       {isConfigured ? (

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createBlogPost, updateBlogPost, deleteBlogPost as dbDeleteBlogPost, getBlogPostById } from "@/lib/db";
 import { translateBlogPostFields } from "@/lib/translate-blogpost";
+import { isAdmin } from "@/lib/require-admin";
 
 function slugify(text: string): string {
   return text
@@ -36,6 +37,7 @@ function parseForm(formData: FormData) {
 }
 
 export async function createBlogPostAction(formData: FormData) {
+  if (!(await isAdmin())) throw new Error("Unauthorized");
   const data = parseForm(formData);
   const translations = await translateBlogPostFields(data);
   await createBlogPost({ ...data, ...translations });
@@ -46,6 +48,7 @@ export async function createBlogPostAction(formData: FormData) {
 }
 
 export async function updateBlogPostAction(formData: FormData) {
+  if (!(await isAdmin())) throw new Error("Unauthorized");
   const id = formData.get("id") as string;
   const data = parseForm(formData);
   const translations = await translateBlogPostFields(data);
@@ -63,6 +66,7 @@ export async function updateBlogPostAction(formData: FormData) {
  * fields and updates in place — does not touch published/slug/etc.
  */
 export async function translateExistingPost(formData: FormData) {
+  if (!(await isAdmin())) throw new Error("Unauthorized");
   const id = formData.get("id") as string;
   const post = await getBlogPostById(id);
   if (!post) return;
@@ -79,6 +83,7 @@ export async function translateExistingPost(formData: FormData) {
 }
 
 export async function deleteBlogPost(formData: FormData) {
+  if (!(await isAdmin())) throw new Error("Unauthorized");
   const id = formData.get("id") as string;
   await dbDeleteBlogPost(id);
   revalidatePath("/blog");
@@ -87,6 +92,7 @@ export async function deleteBlogPost(formData: FormData) {
 }
 
 export async function togglePublished(formData: FormData) {
+  if (!(await isAdmin())) throw new Error("Unauthorized");
   const id = formData.get("id") as string;
   const published = formData.get("published") === "true";
   await updateBlogPost(id, { published });

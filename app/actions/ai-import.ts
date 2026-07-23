@@ -1,6 +1,7 @@
 "use server";
 
 import Anthropic from "@anthropic-ai/sdk";
+import { isAdmin } from "@/lib/require-admin";
 import type { Property } from "@/lib/types";
 
 type PropertyData = Omit<Property, "id" | "created_at">;
@@ -87,6 +88,7 @@ export async function parsePropertyFromImage(
   base64: string,
   mimeType: string
 ): Promise<AIParseResult> {
+  if (!(await isAdmin())) return { ok: false, error: "api_error" };
   const client = getClient();
   if (!client) return { ok: false, error: "not_configured" };
 
@@ -125,6 +127,7 @@ export async function parsePropertyFromImage(
 }
 
 export async function parsePropertyFromText(text: string): Promise<AIParseResult> {
+  if (!(await isAdmin())) return { ok: false, error: "api_error" };
   const client = getClient();
   if (!client) return { ok: false, error: "not_configured" };
 

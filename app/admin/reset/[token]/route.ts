@@ -1,18 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSettings, upsertSettings } from "@/lib/db";
-
-async function generateSessionToken(password: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const key = await crypto.subtle.importKey(
-    "raw",
-    encoder.encode(password),
-    { name: "HMAC", hash: "SHA-256" },
-    false,
-    ["sign"]
-  );
-  const sig = await crypto.subtle.sign("HMAC", key, encoder.encode("idan-admin-v1"));
-  return btoa(String.fromCharCode(...new Uint8Array(sig)));
-}
+import { generateAdminToken, ADMIN_SESSION_MAX_AGE } from "@/lib/admin-auth";
 
 export async function GET(
   request: NextRequest,
@@ -36,15 +24,17 @@ export async function GET(
     );
   }
 
-  const password = process.env.ADMIN_PASSWORD ?? "";
-  const sessionToken = await generateSessionToken(password);
+  const sessionToken = await generateAdminToken();
+  if (!sessionToken) {
+    return NextResponse.redirect(new URL("/admin/login?error=1", request.url));
+  }
 
   const response = NextResponse.redirect(new URL("/admin", request.url));
   response.cookies.set("admin_session", sessionToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 7,
+    maxAge: ADMIN_SESSION_MAX_AGE,
     path: "/",
   });
 

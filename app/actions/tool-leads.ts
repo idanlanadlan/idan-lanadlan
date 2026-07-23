@@ -2,6 +2,7 @@
 
 import { isValidPhone, isValidEmail } from "@/lib/validation";
 import { consentTimestamp, consentEmailRows } from "@/lib/consent";
+import { escapeHtml } from "@/lib/html-escape";
 
 export async function sendToolLead(data: {
   toolName: string;
@@ -22,13 +23,18 @@ export async function sendToolLead(data: {
   if (!apiKey) return { success: false, error: "server" };
 
   const ts = consentTimestamp();
+  const name = escapeHtml(data.name);
+  const phone = escapeHtml(data.phone);
+  const toolName = escapeHtml(data.toolName);
+  const email = data.email ? escapeHtml(data.email) : "";
+  const details = data.details ? escapeHtml(data.details) : "";
 
-  const emailRow = data.email
-    ? `<tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;">מייל:</td><td style="padding:10px 0;"><a href="mailto:${data.email}" style="color:#F5F5F0;">${data.email}</a></td></tr>`
+  const emailRow = email
+    ? `<tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;">מייל:</td><td style="padding:10px 0;"><a href="mailto:${email}" style="color:#FAF6EE;">${email}</a></td></tr>`
     : "";
 
-  const detailsRow = data.details
-    ? `<tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;vertical-align:top;">פרטים:</td><td style="padding:10px 0;white-space:pre-wrap;">${data.details}</td></tr>`
+  const detailsRow = details
+    ? `<tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;vertical-align:top;">פרטים:</td><td style="padding:10px 0;white-space:pre-wrap;">${details}</td></tr>`
     : "";
 
   const res = await fetch("https://api.resend.com/emails", {
@@ -40,13 +46,13 @@ export async function sendToolLead(data: {
     body: JSON.stringify({
       from: "עידן לנדל״ן <noreply@idanlanadlan.co.il>",
       to: ["idanlanadlan@gmail.com"],
-      subject: `ליד חדש מארגז הכלים — ${data.toolName}`,
+      subject: `ליד חדש מארגז הכלים — ${toolName}`,
       html: `
-        <div dir="rtl" style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;padding:32px;background:#0A0A0A;color:#F5F5F0;border-radius:12px;">
-          <h2 style="color:#C9A96E;margin-top:0">ליד חדש — ${data.toolName}</h2>
+        <div dir="rtl" style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;padding:32px;background:#14181D;color:#FAF6EE;border-radius:12px;">
+          <h2 style="color:#C9A96E;margin-top:0">ליד חדש — ${toolName}</h2>
           <table style="width:100%;border-collapse:collapse;margin-top:16px;">
-            <tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;width:120px;">שם:</td><td style="padding:10px 0;">${data.name}</td></tr>
-            <tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;">טלפון:</td><td style="padding:10px 0;"><a href="tel:${data.phone}" style="color:#F5F5F0;">${data.phone}</a></td></tr>
+            <tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;width:120px;">שם:</td><td style="padding:10px 0;">${name}</td></tr>
+            <tr><td style="padding:10px 0;color:#C9A96E;font-weight:bold;">טלפון:</td><td style="padding:10px 0;"><a href="tel:${phone}" style="color:#FAF6EE;">${phone}</a></td></tr>
             ${emailRow}
             ${detailsRow}
             ${consentEmailRows(data.marketingConsent, ts)}

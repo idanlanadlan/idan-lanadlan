@@ -61,19 +61,25 @@ async function sendResetLink() {
     }
   }
 
-  if (emailSent) {
-    redirect("/admin/forgot-password?sent=1");
-  } else {
-    redirect(`/admin/forgot-password?link=${encodeURIComponent(resetUrl)}`);
+  if (!emailSent) {
+    // Never hand the working login link back to the requester — that's a
+    // full account-takeover path for anyone who clicks the button (no
+    // password needed). Log server-side so the failure is still visible.
+    console.error("[forgot-password] failed to send reset email", {
+      configured: !!apiKey,
+      to: adminEmail,
+    });
   }
+
+  redirect(emailSent ? "/admin/forgot-password?sent=1" : "/admin/forgot-password?failed=1");
 }
 
 export default async function ForgotPasswordPage({
   searchParams,
 }: {
-  searchParams: Promise<{ sent?: string; link?: string; expired?: string }>;
+  searchParams: Promise<{ sent?: string; failed?: string; expired?: string }>;
 }) {
-  const { sent, link, expired } = await searchParams;
+  const { sent, failed, expired } = await searchParams;
 
   if (expired) {
     return (
@@ -122,46 +128,23 @@ export default async function ForgotPasswordPage({
     );
   }
 
-  if (link) {
+  if (failed) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center px-4" dir="rtl">
-        <div className="w-full max-w-sm">
-          <div className="mb-6 text-center">
-            <h1 className="font-display text-3xl font-light text-white mb-2">
-              קישור כניסה
-            </h1>
-            <p className="text-xs text-gold/70">
-              שירות אימייל לא מוגדר — הקישור מוצג ישירות
-            </p>
+        <div className="w-full max-w-sm text-center">
+          <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+            <span className="text-3xl">⚠️</span>
           </div>
-          <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-5 mb-6">
-            <p className="text-xs text-amber-300 mb-3">
-              ⚠️ לחץ על הקישור כדי להיכנס לדשבורד. תקף לשעה.
-            </p>
-            <a
-              href={link}
-              className="btn-gold block text-center py-3 rounded-lg text-sm font-semibold"
-            >
-              כניסה לדשבורד
-            </a>
-          </div>
-          <div className="bg-charcoal border border-gray-dark rounded-xl p-4">
-            <p className="text-[10px] text-gray-light mb-2 uppercase tracking-wider">
-              להגדרת שליחת מייל אוטומטית:
-            </p>
-            <p className="text-xs text-gray-light leading-relaxed">
-              הוסף <code className="text-gold">RESEND_API_KEY</code> ב-Vercel env vars (
-              <a href="https://resend.com" target="_blank" className="text-gold hover:underline">
-                resend.com
-              </a>
-              {" "}— חינם עד 3,000 מיילים/חודש)
-            </p>
-          </div>
-          <p className="text-center mt-6">
-            <Link href="/admin/login" className="text-xs text-gray-light hover:text-gold transition-colors">
-              ← חזור להתחברות
-            </Link>
+          <h1 className="font-display text-3xl font-light text-white mb-3">
+            השליחה נכשלה
+          </h1>
+          <p className="text-sm text-gray-light mb-8">
+            לא הצלחנו לשלוח את קישור הכניסה. ודא ש-<code className="text-gold">RESEND_API_KEY</code> מוגדר
+            ב-Vercel, או נסה שוב בעוד כמה דקות.
           </p>
+          <Link href="/admin/login" className="text-xs text-gray-light hover:text-gold transition-colors">
+            ← חזור להתחברות
+          </Link>
         </div>
       </div>
     );

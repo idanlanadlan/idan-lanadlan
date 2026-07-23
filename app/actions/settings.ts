@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { upsertSettings } from "@/lib/db";
 import { translateAboutFields, type AboutFields } from "@/lib/translate-about";
 import { translateSiteCopy } from "@/lib/translate-site-copy";
+import { isAdmin } from "@/lib/require-admin";
 
 const ABOUT_HE_KEYS = [
   "about_eyebrow_he",
@@ -46,6 +47,7 @@ const HOME_COPY_HE_KEYS = [
 ] as const;
 
 export async function saveSettings(formData: FormData) {
+  if (!(await isAdmin())) throw new Error("Unauthorized");
   const keys = [
     "phone", "phone_raw", "email", "whatsapp", "whatsapp_catalog",
     "facebook", "tiktok", "linkedin", "instagram",
