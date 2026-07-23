@@ -6,6 +6,7 @@ import { Plus, Minus } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { pickCopy } from "@/lib/site-copy";
+import { safeJsonLd } from "@/lib/json-ld";
 
 export default function FaqSection() {
   const [open, setOpen] = useState<number | null>(null);
@@ -31,7 +32,7 @@ export default function FaqSection() {
     <section className="py-24 bg-black" aria-labelledby="faq-heading">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(schema) }}
       />
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-14">

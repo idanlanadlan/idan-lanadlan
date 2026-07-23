@@ -8,6 +8,7 @@ import { getProperties } from "@/lib/db";
 import { localizedField } from "@/lib/property-utils";
 import { isLocale, localizedPath } from "@/lib/locale-path";
 import { translations, type Locale } from "@/lib/translations";
+import { safeJsonLd } from "@/lib/json-ld";
 
 export const dynamic = "force-dynamic";
 
@@ -76,7 +77,7 @@ export default async function ProjectsPage({
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(schema) }}
       />
       <Header />
       <main id="main-content" className="min-h-screen pt-28">

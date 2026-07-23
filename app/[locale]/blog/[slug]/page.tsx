@@ -10,6 +10,7 @@ import { getBlogPostBySlug } from "@/lib/db";
 import { localizedBlogField, localizedBlogKeywords } from "@/lib/blog-utils";
 import { translations, type Locale } from "@/lib/translations";
 import { isLocale } from "@/lib/locale-path";
+import { safeJsonLd } from "@/lib/json-ld";
 
 const BASE = "https://idanlanadlan.co.il";
 
@@ -102,7 +103,7 @@ export default async function BlogPostPage({
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(schema) }}
       />
       <Header />
       <main id="main-content" className="min-h-screen pt-28">

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSettings, upsertSettings } from "@/lib/db";
-import { generateAdminToken, ADMIN_SESSION_MAX_AGE } from "@/lib/admin-auth";
+import { generateAdminToken, timingSafeEqualStr, ADMIN_SESSION_MAX_AGE } from "@/lib/admin-auth";
 
 export async function GET(
   request: NextRequest,
@@ -13,9 +13,10 @@ export async function GET(
   const expiryStr = settings.reset_token_expiry;
 
   const isValid =
-    storedToken &&
-    storedToken === token &&
-    expiryStr &&
+    !!storedToken &&
+    !!token &&
+    timingSafeEqualStr(storedToken, token) &&
+    !!expiryStr &&
     new Date(expiryStr) > new Date();
 
   if (!isValid) {

@@ -101,6 +101,44 @@ export async function upsertSettings(settings: Record<string, string>): Promise<
   if (error) throw new Error(error.message);
 }
 
+/**
+ * Atomically increments a numeric setting (currently only used for
+ * login_fail_count) via an optimistic-concurrency retry loop: read the
+ * current value, then write conditioned on the row still holding that same
+ * value. If a concurrent request already changed it, the conditioned write
+ * affects 0 rows and we retry with a fresh read. A plain read-then-write
+ * (getSettings + upsertSettings) would lose updates under concurrent
+ * requests — e.g. many parallel login attempts could all read the same
+ * stale count and only one increment would stick, letting a brute-force
+ * script bypass the lockout threshold by racing requests.
+ */
+export async function incrementSetting(key: string, attempts = 5): Promise<number> {
+  const client = createAdminClient();
+  for (let i = 0; i < attempts; i++) {
+    const { data: existing } = await client.from("site_settings").select("value").eq("key", key).maybeSingle();
+    const current = Number(existing?.value) || 0;
+    const next = current + 1;
+
+    if (!existing) {
+      const { error } = await client
+        .from("site_settings")
+        .insert({ key, value: String(next), updated_at: new Date().toISOString() });
+      if (!error) return next;
+      continue; // another request inserted first (unique key conflict) — retry via the update path
+    }
+
+    const { data: updated, error } = await client
+      .from("site_settings")
+      .update({ value: String(next), updated_at: new Date().toISOString() })
+      .eq("key", key)
+      .eq("value", existing.value) // optimistic lock — only applies if unchanged since we read it
+      .select();
+    if (!error && updated && updated.length > 0) return next;
+    // lost the race — loop and retry with a fresh read
+  }
+  return -1;
+}
+
 // ── Blog posts ────────────────────────────────────────────
 
 export async function getProperties(): Promise<Property[]> {

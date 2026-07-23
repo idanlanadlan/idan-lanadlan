@@ -27,6 +27,7 @@ import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { Property } from "@/lib/types";
 import { grossSize, pricePerSqm, localizedField } from "@/lib/property-utils";
+import { safeJsonLd } from "@/lib/json-ld";
 
 interface Props {
   property: Property;
@@ -80,7 +81,7 @@ export default function PropertyPageClient({ property, schema }: Props) {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(schema) }}
       />
       <Header />
       <main id="main-content" className="min-h-screen pt-28">

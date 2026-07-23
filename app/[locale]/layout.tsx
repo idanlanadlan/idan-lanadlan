@@ -14,6 +14,7 @@ import AmbientBackground from "@/components/AmbientBackground";
 import { getSettings } from "@/lib/db";
 import { locales, isLocale } from "@/lib/locale-path";
 import { translations } from "@/lib/translations";
+import { safeJsonLd } from "@/lib/json-ld";
 
 const davidLibre = David_Libre({
   variable: "--font-david-libre",
@@ -164,7 +165,7 @@ export default async function RootLayout({
       <head>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrg) }}
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(schemaOrg) }}
         />
       </head>
       <body className="min-h-screen bg-black text-cream antialiased">
