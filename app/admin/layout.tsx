@@ -3,7 +3,7 @@ import Link from "next/link";
 import Script from "next/script";
 import { David_Libre, Cormorant_Garamond, Frank_Ruhl_Libre } from "next/font/google";
 import "../globals.css";
-import { Home, Plus, List, LogOut, BarChart2, FileText, Settings } from "lucide-react";
+import { Home, Plus, List, LogOut, BarChart2, FileText, Settings, Database } from "lucide-react";
 import { logout } from "@/app/actions/logout";
 
 const davidLibre = David_Libre({
@@ -93,6 +93,13 @@ function AdminChrome({ children }: { children: React.ReactNode }) {
           >
             <Settings size={14} />
             הגדרות
+          </Link>
+          <Link
+            href="/admin/setup"
+            className="flex items-center gap-1.5 text-xs text-gray-light hover:text-gold px-3 py-1.5 rounded transition-colors"
+          >
+            <Database size={14} />
+            חיבור DB
           </Link>
           <Link
             href="/admin/properties/new"
