@@ -10,13 +10,11 @@ import SocialFeed from "@/components/home/SocialFeed";
 import BlogPreview from "@/components/home/BlogPreview";
 import CtaSection from "@/components/home/CtaSection";
 import FaqSection from "@/components/home/FaqSection";
-import MapSection from "@/components/home/MapSection";
-import { getFeaturedProperties, getProperties, getFeaturedBlogPosts } from "@/lib/db";
+import { getFeaturedProperties, getFeaturedBlogPosts } from "@/lib/db";
 
 export default async function HomePage() {
-  const [featuredProperties, allProperties, blogPosts] = await Promise.all([
+  const [featuredProperties, blogPosts] = await Promise.all([
     getFeaturedProperties(),
-    getProperties(),
     getFeaturedBlogPosts(),
   ]);
 
@@ -27,7 +25,6 @@ export default async function HomePage() {
         <Hero />
         <StatsBar />
         <FeaturedProperties properties={featuredProperties} />
-        <MapSection properties={allProperties} />
         <AboutSnippet />
         <Testimonials />
         <BlogPreview posts={blogPosts} />

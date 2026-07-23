@@ -19,8 +19,7 @@ export default function MapSection({ properties }: Props) {
   const eyebrow = pickCopy(settings, "map_eyebrow", locale, m.eyebrow);
   const title = pickCopy(settings, "map_title", locale, m.title);
   const subtitle = pickCopy(settings, "map_subtitle", locale, m.subtitle);
-  // Map popups have no status badge, so sold/rented properties would look active — show available only
-  const mapped = properties.filter((prop) => prop.lat && prop.lng && prop.status === "available");
+  const mapped = properties.filter((prop) => prop.lat && prop.lng);
 
   // No coordinates yet — the whole section stays hidden (site convention: missing data → no section)
   if (mapped.length === 0) return null;

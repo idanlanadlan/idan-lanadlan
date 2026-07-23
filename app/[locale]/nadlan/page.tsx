@@ -2,6 +2,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import PropertiesClient from "@/components/properties/PropertiesClient";
+import MapSection from "@/components/home/MapSection";
 import { getProperties } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
@@ -27,6 +28,7 @@ export default async function PropertiesPage() {
           </div>
         </section>
 
+        <MapSection properties={properties} />
         <PropertiesClient properties={properties} />
       </main>
       <Footer />
