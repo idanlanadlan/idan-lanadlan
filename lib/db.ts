@@ -21,6 +21,35 @@ export const DEFAULT_SETTINGS: Record<string, string> = {
   hero_subtitle_fr: "Nous accompagnons chaque transaction immobilière — de la vente à l'achat, de l'appartement au projet.",
   hero_subtitle_es: "Te acompañamos en cada operación inmobiliaria — de la venta a la compra, del piso al proyecto.",
 
+  // Homepage section headings — editable in admin/settings ("כותרות עמוד
+  // הבית"). Only the Hebrew (_he) values are seeded here; en/fr/es are
+  // populated by translateSiteCopy() on first save. Until then, components
+  // fall back to the matching static translations.ts value (see
+  // lib/site-copy.ts) so nothing breaks with only _he present.
+  hero_eyebrow_he: 'הירקון 319, נמל ת"א',
+  hero_line1_he: "עידן חולי",
+  hero_line2_he: "עידן לנדל״ן",
+  properties_eyebrow_he: "הפורטפוליו שלנו",
+  properties_title_he: "נכסים",
+  snippet_eyebrow_he: "אודות",
+  snippet_quote_he: "עסקת נדל״ן טובה\nמשנה חיים.",
+  testimonials_eyebrow_he: "לקוחות מדברים",
+  testimonials_title_he: "מה אומרים עלינו",
+  cta_eyebrow_he: "מוכנים לצעד הבא?",
+  cta_title1_he: "בואו נמצא את",
+  cta_title2_he: "הנכס המושלם שלכם",
+  cta_subtitle_he: "מוכרים, קונים, משכירים או מחפשים השקעה — עידן חולי כאן לענות על כל שאלה.",
+  blog_eyebrow_he: "נכסים של ידע",
+  blog_title_he: "מדריכים ועדכונים חמים",
+  map_eyebrow_he: "מפת הנכסים",
+  map_title_he: "הנכסים שלנו על המפה",
+  map_subtitle_he: "כל נכס ממוקם במפה לפי כתובתו המדויקת — לחצו על סמן לפרטי הנכס.",
+  social_eyebrow_he: "עקבו אחרינו",
+  social_title_he: "ברשתות החברתיות",
+  faq_eyebrow_he: "שאלות ותשובות",
+  faq_title_he: 'שאלות נפוצות בנדל"ן',
+  faq_subtitle_he: 'תשובות לשאלות הכי נפוצות בעסקאות נדל"ן בישראל',
+
   // About page — headline + bio. Hebrew is the source of truth (edited in
   // admin); en/fr/es are auto-translated on save (see translate-about.ts)
   // but stored here too so a failed translation never blanks the page.

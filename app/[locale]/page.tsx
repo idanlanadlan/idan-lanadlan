@@ -11,27 +11,20 @@ import BlogPreview from "@/components/home/BlogPreview";
 import CtaSection from "@/components/home/CtaSection";
 import FaqSection from "@/components/home/FaqSection";
 import MapSection from "@/components/home/MapSection";
-import { getFeaturedProperties, getProperties, getFeaturedBlogPosts, getSettings } from "@/lib/db";
+import { getFeaturedProperties, getProperties, getFeaturedBlogPosts } from "@/lib/db";
 
 export default async function HomePage() {
-  const [featuredProperties, allProperties, blogPosts, settings] = await Promise.all([
+  const [featuredProperties, allProperties, blogPosts] = await Promise.all([
     getFeaturedProperties(),
     getProperties(),
     getFeaturedBlogPosts(),
-    getSettings(),
   ]);
-  const heroSubtitles = {
-    he: settings.hero_subtitle_he,
-    en: settings.hero_subtitle_en,
-    fr: settings.hero_subtitle_fr,
-    es: settings.hero_subtitle_es,
-  };
 
   return (
     <>
       <Header />
       <main id="main-content">
-        <Hero subtitleOverride={heroSubtitles} />
+        <Hero />
         <StatsBar />
         <FeaturedProperties properties={featuredProperties} />
         <MapSection properties={allProperties} />

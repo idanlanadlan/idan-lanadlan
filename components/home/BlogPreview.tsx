@@ -5,12 +5,17 @@ import Link from "@/components/LocaleLink";
 import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSettings } from "@/contexts/SettingsContext";
+import { pickCopy } from "@/lib/site-copy";
 import { localizedBlogField, localizedBlogKeywords } from "@/lib/blog-utils";
 import type { BlogPost } from "@/lib/types";
 
 export default function BlogPreview({ posts }: { posts: BlogPost[] }) {
   const { t, locale } = useLanguage();
+  const settings = useSettings();
   const b = t.sections.blog;
+  const eyebrow = pickCopy(settings, "blog_eyebrow", locale, b.eyebrow);
+  const title = pickCopy(settings, "blog_title", locale, b.title);
 
   if (posts.length === 0) return null;
 
@@ -24,10 +29,10 @@ export default function BlogPreview({ posts }: { posts: BlogPost[] }) {
           className="flex items-end justify-between mb-12"
         >
           <div>
-            <p className="text-xs tracking-[0.3em] text-gold uppercase mb-3">{b.eyebrow}</p>
+            <p className="text-xs tracking-[0.3em] text-gold uppercase mb-3">{eyebrow}</p>
             <div className="divider-gold mb-4" />
             <h2 id="blog-heading" className="font-display text-4xl sm:text-5xl font-light text-white">
-              {b.title}
+              {title}
             </h2>
           </div>
           <Link

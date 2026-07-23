@@ -20,6 +20,15 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   );
 }
 
+function SubGroup({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="border-t border-gray-dark pt-5 flex flex-col gap-4">
+      <h3 className="text-xs font-semibold text-cream">{title}</h3>
+      {children}
+    </div>
+  );
+}
+
 export default async function SettingsPage() {
   const s = await getSettings();
 
@@ -126,14 +135,149 @@ export default async function SettingsPage() {
           </div>
         </Section>
 
-        <Section title="משפט פתיחה (עמוד הבית)">
+        <Section title="כותרות עמוד הבית">
           <p className="text-xs text-gray-light -mt-1">
-            השורה שמופיעה מתחת לכותרת הראשית בדף הבית. ערוך בעברית בלבד — האנגלית/צרפתית/ספרדית מתורגמות אוטומטית בכל שמירה.
+            כל הכותרות והתת-כותרות בכל הסקשנים בדף הבית. ערוך בעברית בלבד — האנגלית/צרפתית/ספרדית מתורגמות אוטומטית בכל שמירה.
           </p>
-          <div>
-            <label className={label}>משפט פתיחה — עברית</label>
-            <textarea className={`${field} h-20 resize-none`} name="hero_subtitle_he" defaultValue={s.hero_subtitle_he} />
-          </div>
+
+          <SubGroup title="Hero (כותרת ראשית)">
+            <div>
+              <label className={label}>תווית עילית</label>
+              <input className={field} name="hero_eyebrow_he" defaultValue={s.hero_eyebrow_he} />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className={label}>כותרת — שורה 1</label>
+                <input className={field} name="hero_line1_he" defaultValue={s.hero_line1_he} />
+              </div>
+              <div>
+                <label className={label}>כותרת — שורה 2</label>
+                <input className={field} name="hero_line2_he" defaultValue={s.hero_line2_he} />
+              </div>
+            </div>
+            <div>
+              <label className={label}>משפט פתיחה</label>
+              <textarea className={`${field} h-20 resize-none`} name="hero_subtitle_he" defaultValue={s.hero_subtitle_he} />
+            </div>
+          </SubGroup>
+
+          <SubGroup title="נכסים מומלצים">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className={label}>תווית עילית</label>
+                <input className={field} name="properties_eyebrow_he" defaultValue={s.properties_eyebrow_he} />
+              </div>
+              <div>
+                <label className={label}>כותרת</label>
+                <input className={field} name="properties_title_he" defaultValue={s.properties_title_he} />
+              </div>
+            </div>
+          </SubGroup>
+
+          <SubGroup title="אודות בקצרה">
+            <div>
+              <label className={label}>תווית עילית</label>
+              <input className={field} name="snippet_eyebrow_he" defaultValue={s.snippet_eyebrow_he} />
+            </div>
+            <div>
+              <label className={label}>ציטוט (שתי שורות, הפרד בירידת שורה)</label>
+              <textarea className={`${field} h-16 resize-none`} name="snippet_quote_he" defaultValue={s.snippet_quote_he} />
+            </div>
+          </SubGroup>
+
+          <SubGroup title="המלצות לקוחות">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className={label}>תווית עילית</label>
+                <input className={field} name="testimonials_eyebrow_he" defaultValue={s.testimonials_eyebrow_he} />
+              </div>
+              <div>
+                <label className={label}>כותרת</label>
+                <input className={field} name="testimonials_title_he" defaultValue={s.testimonials_title_he} />
+              </div>
+            </div>
+          </SubGroup>
+
+          <SubGroup title="מפת נכסים">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className={label}>תווית עילית</label>
+                <input className={field} name="map_eyebrow_he" defaultValue={s.map_eyebrow_he} />
+              </div>
+              <div>
+                <label className={label}>כותרת</label>
+                <input className={field} name="map_title_he" defaultValue={s.map_title_he} />
+              </div>
+            </div>
+            <div>
+              <label className={label}>תת-כותרת</label>
+              <input className={field} name="map_subtitle_he" defaultValue={s.map_subtitle_he} />
+            </div>
+          </SubGroup>
+
+          <SubGroup title="בלוג">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className={label}>תווית עילית</label>
+                <input className={field} name="blog_eyebrow_he" defaultValue={s.blog_eyebrow_he} />
+              </div>
+              <div>
+                <label className={label}>כותרת</label>
+                <input className={field} name="blog_title_he" defaultValue={s.blog_title_he} />
+              </div>
+            </div>
+          </SubGroup>
+
+          <SubGroup title="רשתות חברתיות">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className={label}>תווית עילית</label>
+                <input className={field} name="social_eyebrow_he" defaultValue={s.social_eyebrow_he} />
+              </div>
+              <div>
+                <label className={label}>כותרת</label>
+                <input className={field} name="social_title_he" defaultValue={s.social_title_he} />
+              </div>
+            </div>
+          </SubGroup>
+
+          <SubGroup title="שאלות נפוצות">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className={label}>תווית עילית</label>
+                <input className={field} name="faq_eyebrow_he" defaultValue={s.faq_eyebrow_he} />
+              </div>
+              <div>
+                <label className={label}>כותרת</label>
+                <input className={field} name="faq_title_he" defaultValue={s.faq_title_he} />
+              </div>
+            </div>
+            <div>
+              <label className={label}>תת-כותרת</label>
+              <input className={field} name="faq_subtitle_he" defaultValue={s.faq_subtitle_he} />
+            </div>
+          </SubGroup>
+
+          <SubGroup title="קריאה לפעולה (CTA)">
+            <div>
+              <label className={label}>תווית עילית</label>
+              <input className={field} name="cta_eyebrow_he" defaultValue={s.cta_eyebrow_he} />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className={label}>כותרת — שורה 1</label>
+                <input className={field} name="cta_title1_he" defaultValue={s.cta_title1_he} />
+              </div>
+              <div>
+                <label className={label}>כותרת — שורה 2</label>
+                <input className={field} name="cta_title2_he" defaultValue={s.cta_title2_he} />
+              </div>
+            </div>
+            <div>
+              <label className={label}>תת-כותרת</label>
+              <textarea className={`${field} h-16 resize-none`} name="cta_subtitle_he" defaultValue={s.cta_subtitle_he} />
+            </div>
+          </SubGroup>
         </Section>
 
         <SettingsSubmitButton />

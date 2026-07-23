@@ -4,10 +4,15 @@ import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import { mockTestimonials } from "@/lib/mock-data";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSettings } from "@/contexts/SettingsContext";
+import { pickCopy } from "@/lib/site-copy";
 
 export default function Testimonials() {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
+  const settings = useSettings();
   const te = t.sections.testimonials;
+  const eyebrow = pickCopy(settings, "testimonials_eyebrow", locale, te.eyebrow);
+  const title = pickCopy(settings, "testimonials_title", locale, te.title);
   const testimonials = mockTestimonials.filter((r) => r.featured).slice(0, 6);
 
   return (
@@ -23,10 +28,10 @@ export default function Testimonials() {
           className="mb-16"
         >
           <span className="text-[10px] tracking-[0.45em] text-gold uppercase block mb-5" aria-hidden="true">
-            {te.eyebrow}
+            {eyebrow}
           </span>
           <h2 id="testimonials-heading" className="font-display text-4xl sm:text-5xl font-extralight text-white">
-            {te.title}
+            {title}
           </h2>
         </motion.div>
 

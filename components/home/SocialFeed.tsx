@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSettings } from "@/contexts/SettingsContext";
+import { pickCopy } from "@/lib/site-copy";
 
 function InstagramIcon({ className }: { className?: string }) {
   return (
@@ -13,9 +14,11 @@ function InstagramIcon({ className }: { className?: string }) {
 }
 
 export default function SocialFeed() {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const s = useSettings();
   const so = t.sections.social;
+  const eyebrow = pickCopy(s, "social_eyebrow", locale, so.eyebrow);
+  const title = pickCopy(s, "social_title", locale, so.title);
 
   return (
     <section className="py-24 bg-charcoal" aria-labelledby="social-heading">
@@ -26,10 +29,10 @@ export default function SocialFeed() {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <p className="text-xs tracking-[0.3em] text-gold uppercase mb-3" aria-hidden="true">{so.eyebrow}</p>
+          <p className="text-xs tracking-[0.3em] text-gold uppercase mb-3" aria-hidden="true">{eyebrow}</p>
           <div className="divider-gold mx-auto mb-6" aria-hidden="true" />
           <h2 id="social-heading" className="font-display text-4xl font-light text-white">
-            {so.title}
+            {title}
           </h2>
         </motion.div>
 

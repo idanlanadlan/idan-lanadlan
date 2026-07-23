@@ -6,14 +6,19 @@ import { ArrowLeft } from "lucide-react";
 import PropertyCard from "@/components/properties/PropertyCard";
 import type { Property } from "@/lib/types";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSettings } from "@/contexts/SettingsContext";
+import { pickCopy } from "@/lib/site-copy";
 
 interface Props {
   properties: Property[];
 }
 
 export default function FeaturedProperties({ properties }: Props) {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
+  const settings = useSettings();
   const p = t.sections.properties;
+  const eyebrow = pickCopy(settings, "properties_eyebrow", locale, p.eyebrow);
+  const title = pickCopy(settings, "properties_title", locale, p.title);
   const featured = properties;
 
   return (
@@ -28,13 +33,13 @@ export default function FeaturedProperties({ properties }: Props) {
       >
         <div>
           <span className="text-[10px] tracking-[0.45em] text-gold uppercase block mb-5" aria-hidden="true">
-            {p.eyebrow}
+            {eyebrow}
           </span>
           <h2
             id="properties-heading"
             className="font-display text-4xl sm:text-5xl font-extralight text-white leading-tight"
           >
-            {p.title}
+            {title}
           </h2>
         </div>
         <Link

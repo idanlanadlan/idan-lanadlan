@@ -3,10 +3,17 @@
 import { motion } from "framer-motion";
 import { Phone, MessageCircle } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSettings } from "@/contexts/SettingsContext";
+import { pickCopy } from "@/lib/site-copy";
 
 export default function CtaSection() {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
+  const settings = useSettings();
   const c = t.sections.cta;
+  const eyebrow = pickCopy(settings, "cta_eyebrow", locale, c.eyebrow);
+  const title1 = pickCopy(settings, "cta_title1", locale, c.title1);
+  const title2 = pickCopy(settings, "cta_title2", locale, c.title2);
+  const subtitle = pickCopy(settings, "cta_subtitle", locale, c.subtitle);
 
   return (
     <section className="relative overflow-hidden border-y border-gray-dark/40">
@@ -29,15 +36,15 @@ export default function CtaSection() {
             transition={{ duration: 0.7 }}
           >
             <span className="text-[10px] tracking-[0.45em] text-gold uppercase block mb-5" aria-hidden="true">
-              {c.eyebrow}
+              {eyebrow}
             </span>
             <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-extralight text-white leading-[1.05]">
-              {c.title1}
+              {title1}
               <br />
-              <em className="not-italic text-gold-gradient">{c.title2}</em>
+              <em className="not-italic text-gold-gradient">{title2}</em>
             </h2>
             <p className="text-sm text-gray-light mt-6 leading-[2] max-w-md">
-              {c.subtitle}
+              {subtitle}
             </p>
           </motion.div>
 

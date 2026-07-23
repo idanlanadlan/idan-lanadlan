@@ -5,13 +5,18 @@ import Link from "@/components/LocaleLink";
 import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSettings } from "@/contexts/SettingsContext";
+import { pickCopy } from "@/lib/site-copy";
 
 export default function AboutSnippet() {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
+  const settings = useSettings();
   const a = t.sections.about;
   const s = t.stats;
+  const eyebrow = pickCopy(settings, "snippet_eyebrow", locale, a.eyebrow);
+  const quote = pickCopy(settings, "snippet_quote", locale, a.quote);
 
-  const [quoteLine1, quoteLine2] = a.quote.split("\n");
+  const [quoteLine1, quoteLine2] = quote.split("\n");
 
   return (
     <section className="py-28 bg-charcoal overflow-hidden" aria-labelledby="about-heading">
@@ -54,10 +59,10 @@ export default function AboutSnippet() {
             transition={{ duration: 0.8 }}
           >
             <span className="text-[10px] tracking-[0.45em] text-gold uppercase block mb-5" aria-hidden="true">
-              {a.eyebrow}
+              {eyebrow}
             </span>
 
-            <h2 id="about-heading" className="sr-only">{a.eyebrow}</h2>
+            <h2 id="about-heading" className="sr-only">{eyebrow}</h2>
 
             <blockquote className="font-display text-2xl sm:text-3xl text-white font-extralight leading-snug mb-8 border-s-2 border-gold/30 ps-6 italic">
               {quoteLine1}

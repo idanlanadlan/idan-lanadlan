@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import Link from "@/components/LocaleLink";
 import { ArrowLeft } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSettings } from "@/contexts/SettingsContext";
+import { pickCopy } from "@/lib/site-copy";
 
 function CharReveal({ text, delay = 0 }: { text: string; delay?: number }) {
   return (
@@ -27,11 +29,13 @@ function CharReveal({ text, delay = 0 }: { text: string; delay?: number }) {
   );
 }
 
-type SubtitleOverride = { he: string; en: string; fr: string; es: string };
-
-export default function Hero({ subtitleOverride }: { subtitleOverride?: SubtitleOverride }) {
+export default function Hero() {
   const { t, locale } = useLanguage();
-  const subtitle = subtitleOverride?.[locale] || t.hero.subtitle;
+  const settings = useSettings();
+  const eyebrow = pickCopy(settings, "hero_eyebrow", locale, t.hero.eyebrow);
+  const line1 = pickCopy(settings, "hero_line1", locale, t.hero.line1);
+  const line2 = pickCopy(settings, "hero_line2", locale, t.hero.line2);
+  const subtitle = pickCopy(settings, "hero_subtitle", locale, t.hero.subtitle);
 
   return (
     <section className="min-h-screen overflow-hidden md:grid md:grid-cols-[1fr_1fr]">
@@ -45,7 +49,7 @@ export default function Hero({ subtitleOverride }: { subtitleOverride?: Subtitle
           transition={{ duration: 0.9 }}
           className="text-[10px] tracking-[0.5em] text-gold/80 uppercase mb-8 block"
         >
-          {t.hero.eyebrow}
+          {eyebrow}
         </motion.span>
 
         <h1
@@ -54,7 +58,7 @@ export default function Hero({ subtitleOverride }: { subtitleOverride?: Subtitle
         >
           {/* Line 1 — char-by-char blur reveal */}
           <span className="block">
-            <CharReveal text={t.hero.line1} delay={0.15} />
+            <CharReveal text={line1} delay={0.15} />
           </span>
 
           {/* Separator — animated gold scan line */}
@@ -93,7 +97,7 @@ export default function Hero({ subtitleOverride }: { subtitleOverride?: Subtitle
               animation: "shimmer-sweep 5s linear infinite",
             }}
           >
-            {t.hero.line2}
+            {line2}
           </motion.em>
         </h1>
 

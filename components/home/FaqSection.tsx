@@ -4,12 +4,18 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Minus } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSettings } from "@/contexts/SettingsContext";
+import { pickCopy } from "@/lib/site-copy";
 
 export default function FaqSection() {
   const [open, setOpen] = useState<number | null>(null);
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
+  const settings = useSettings();
   const faq = t.sections.faq;
   const faqs = faq.items;
+  const eyebrow = pickCopy(settings, "faq_eyebrow", locale, faq.eyebrow);
+  const title = pickCopy(settings, "faq_title", locale, faq.title);
+  const subtitle = pickCopy(settings, "faq_subtitle", locale, faq.subtitle);
 
   const schema = {
     "@context": "https://schema.org",
@@ -29,13 +35,13 @@ export default function FaqSection() {
       />
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-14">
-          <p className="text-xs tracking-[0.3em] text-gold uppercase mb-3" aria-hidden="true">{faq.eyebrow}</p>
+          <p className="text-xs tracking-[0.3em] text-gold uppercase mb-3" aria-hidden="true">{eyebrow}</p>
           <div className="divider-gold mx-auto mb-6" aria-hidden="true" />
           <h2 id="faq-heading" className="font-display text-4xl font-light text-white">
-            {faq.title}
+            {title}
           </h2>
           <p className="text-gray-light mt-3 text-sm">
-            {faq.subtitle}
+            {subtitle}
           </p>
         </div>
 
