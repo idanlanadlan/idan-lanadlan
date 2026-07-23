@@ -16,9 +16,10 @@ export const DEFAULT_SETTINGS: Record<string, string> = {
   maps_url: "https://maps.app.goo.gl/RG3BgZUUxTh1g9u89",
   address: "הירקון 319, נמל תל אביב",
   about_snippet: "כעשור של ניסיון בשוק הנדל״ן בתל אביב וסביבתה. מתמחה בנכסי יוקרה, דירות ופרויקטים חדשים.",
-  hero_subtitle_he: "מומחה לנדל״ן יוקרה בתל אביב וסביבתה. ליווי אישי, שיווק חכם ותוצאות שמדברות בעד עצמן.",
-  hero_subtitle_en: "Luxury real estate expert in Tel Aviv. Personal guidance and results that speak for themselves.",
-  hero_subtitle_fr: "Expert en immobilier de luxe à Tel Aviv. Accompagnement personnel et résultats probants.",
+  hero_subtitle_he: "מלווים כל עסקת נדל״ן — ממכירה ועד קנייה, מדירה ועד פרויקט.",
+  hero_subtitle_en: "Guiding every real estate deal — from selling to buying, from apartment to project.",
+  hero_subtitle_fr: "Nous accompagnons chaque transaction immobilière — de la vente à l'achat, de l'appartement au projet.",
+  hero_subtitle_es: "Te acompañamos en cada operación inmobiliaria — de la venta a la compra, del piso al proyecto.",
 
   // About page — headline + bio. Hebrew is the source of truth (edited in
   // admin); en/fr/es are auto-translated on save (see translate-about.ts)

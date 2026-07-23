@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { upsertSettings } from "@/lib/db";
 import { translateAboutFields, type AboutFields } from "@/lib/translate-about";
+import { translateHeroSubtitle } from "@/lib/translate-hero";
 
 const ABOUT_HE_KEYS = [
   "about_eyebrow_he",
@@ -18,7 +19,7 @@ export async function saveSettings(formData: FormData) {
     "phone", "phone_raw", "email", "whatsapp", "whatsapp_catalog",
     "facebook", "tiktok", "linkedin", "instagram",
     "maps_url", "address", "about_snippet",
-    "hero_subtitle_he", "hero_subtitle_en", "hero_subtitle_fr",
+    "hero_subtitle_he",
     ...ABOUT_HE_KEYS,
   ];
 
@@ -49,6 +50,15 @@ export async function saveSettings(formData: FormData) {
     }
   }
 
+  if (settings.hero_subtitle_he) {
+    const heroTranslations = await translateHeroSubtitle(settings.hero_subtitle_he);
+    if (heroTranslations) {
+      settings.hero_subtitle_en = heroTranslations.en;
+      settings.hero_subtitle_fr = heroTranslations.fr;
+      settings.hero_subtitle_es = heroTranslations.es;
+    }
+  }
+
   await upsertSettings(settings);
   revalidatePath("/", "layout");
   revalidatePath("/contact");
@@ -56,4 +66,8 @@ export async function saveSettings(formData: FormData) {
   revalidatePath("/en/about");
   revalidatePath("/fr/about");
   revalidatePath("/es/about");
+  revalidatePath("/");
+  revalidatePath("/en");
+  revalidatePath("/fr");
+  revalidatePath("/es");
 }

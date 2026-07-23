@@ -27,8 +27,11 @@ function CharReveal({ text, delay = 0 }: { text: string; delay?: number }) {
   );
 }
 
-export default function Hero() {
-  const { t } = useLanguage();
+type SubtitleOverride = { he: string; en: string; fr: string; es: string };
+
+export default function Hero({ subtitleOverride }: { subtitleOverride?: SubtitleOverride }) {
+  const { t, locale } = useLanguage();
+  const subtitle = subtitleOverride?.[locale] || t.hero.subtitle;
 
   return (
     <section className="min-h-screen overflow-hidden md:grid md:grid-cols-[1fr_1fr]">
@@ -108,7 +111,7 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 1.5 }}
           className="text-sm text-gray-light leading-[2] max-w-[17rem] mb-12"
         >
-          {t.hero.subtitle}
+          {subtitle}
         </motion.p>
 
         <motion.div

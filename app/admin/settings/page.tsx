@@ -126,18 +126,13 @@ export default async function SettingsPage() {
           </div>
         </Section>
 
-        <Section title="תרגומי Hero (כותרת ראשית)">
+        <Section title="משפט פתיחה (עמוד הבית)">
+          <p className="text-xs text-gray-light -mt-1">
+            השורה שמופיעה מתחת לכותרת הראשית בדף הבית. ערוך בעברית בלבד — האנגלית/צרפתית/ספרדית מתורגמות אוטומטית בכל שמירה.
+          </p>
           <div>
-            <label className={label}>Subtitle — עברית</label>
+            <label className={label}>משפט פתיחה — עברית</label>
             <textarea className={`${field} h-20 resize-none`} name="hero_subtitle_he" defaultValue={s.hero_subtitle_he} />
-          </div>
-          <div>
-            <label className={label}>Subtitle — English</label>
-            <textarea className={`${field} h-20 resize-none`} name="hero_subtitle_en" defaultValue={s.hero_subtitle_en} dir="ltr" />
-          </div>
-          <div>
-            <label className={label}>Subtitle — Français</label>
-            <textarea className={`${field} h-20 resize-none`} name="hero_subtitle_fr" defaultValue={s.hero_subtitle_fr} dir="ltr" />
           </div>
         </Section>
 
