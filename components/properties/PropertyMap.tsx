@@ -118,7 +118,7 @@ export default function PropertyMap({
 
       const popup = `
         <div dir="rtl" style="min-width:180px;font-family:Arial,sans-serif;">
-          <p style="font-size:13px;font-weight:600;color:#F5F5F0;margin:0 0 4px">${p.title}</p>
+          <p style="font-size:13px;font-weight:600;color:#FAF6EE;margin:0 0 4px">${p.title}</p>
           <p style="font-size:12px;color:#C9A96E;margin:0 0 4px">${priceStr}</p>
           <p style="font-size:11px;color:#aaa;margin:0 0 8px">${p.bedrooms} חד׳ · ${p.size_sqm} מ״ר · ${p.city}</p>
           <a href="/nadlan/${p.id}" style="font-size:11px;color:#C9A96E;text-decoration:underline;">לנכס ←</a>

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Script from "next/script";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import { David_Libre, Cormorant_Garamond, Frank_Ruhl_Libre } from "next/font/google";
+import { David_Libre, Assistant } from "next/font/google";
 import "../globals.css";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
@@ -21,17 +21,10 @@ const davidLibre = David_Libre({
   weight: ["400", "500", "700"],
 });
 
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
-  subsets: ["latin"],
-  weight: ["300", "400", "600", "700"],
-  style: ["normal", "italic"],
-});
-
-const frankRuhl = Frank_Ruhl_Libre({
-  variable: "--font-frankruhl",
+const assistant = Assistant({
+  variable: "--font-assistant",
   subsets: ["hebrew", "latin"],
-  weight: ["300", "400", "500"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 const BASE = "https://idanlanadlan.co.il";
@@ -165,7 +158,7 @@ export default async function RootLayout({
     <html
       lang={locale}
       dir={locale === "he" ? "rtl" : "ltr"}
-      className={`${davidLibre.variable} ${cormorant.variable} ${frankRuhl.variable}`}
+      className={`${davidLibre.variable} ${assistant.variable}`}
       suppressHydrationWarning
     >
       <head>

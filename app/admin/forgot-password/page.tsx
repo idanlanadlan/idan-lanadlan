@@ -39,12 +39,12 @@ async function sendResetLink() {
           to: [adminEmail],
           subject: "כניסה לדשבורד — עידן לנדל״ן",
           html: `
-            <div dir="rtl" style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;padding:32px;background:#0A0A0A;color:#F5F5F0;border-radius:12px;">
+            <div dir="rtl" style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;padding:32px;background:#14181D;color:#FAF6EE;border-radius:12px;">
               <h2 style="color:#C9A96E;margin-top:0">עידן לנדל״ן — כניסה לדשבורד</h2>
               <p>קיבלת הודעה זו כי ביקשת קישור כניסה לדשבורד הניהול.</p>
               <p>לחץ על הכפתור להלן לכניסה. הקישור תקף לשעה אחת בלבד.</p>
               <a href="${resetUrl}"
-                 style="display:inline-block;background:#C9A96E;color:#000;padding:14px 28px;text-decoration:none;border-radius:8px;font-weight:bold;margin:16px 0;">
+                 style="display:inline-block;background:#C9A96E;color:#14181D;padding:14px 28px;text-decoration:none;border-radius:8px;font-weight:bold;margin:16px 0;">
                 כניסה לדשבורד
               </a>
               <p style="color:#666;font-size:12px;margin-top:24px;">

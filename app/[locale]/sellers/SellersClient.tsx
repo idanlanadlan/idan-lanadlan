@@ -159,7 +159,7 @@ export default function SellersClient() {
               {s.comparison_rows.map((row, i) => (
                 <div
                   key={i}
-                  className={`grid grid-cols-3 border-t border-gray-dark ${i % 2 === 0 ? "bg-black" : "bg-[#0d0d0d]"}`}
+                  className={`grid grid-cols-3 border-t border-gray-dark ${i % 2 === 0 ? "bg-black" : "bg-charcoal"}`}
                 >
                   <div className="px-5 py-4 text-sm font-semibold text-cream">{row.aspect}</div>
                   <div className="px-5 py-4 text-sm text-gold border-x border-gray-dark flex items-start gap-2">

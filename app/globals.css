@@ -7,21 +7,24 @@
 }
 
 @theme {
-  /* Luxury palette */
-  --color-black:      #0A0A0A;
-  --color-charcoal:   #1A1A1A;
-  --color-gray-dark:  #2A2A2A;
-  --color-gray:       #4A4A4A;
-  --color-gray-light: #8A8A8A;
-  --color-cream:      #F5F5F0;
+  /* "White City" palette — Tel Aviv limestone, ink, and brass instead of a
+     flat black-and-gold luxury template. See sea/stone below for the two
+     accents this replaces the old single-gold system with. */
+  --color-black:      #14181D; /* Ink — default (dark) background */
+  --color-charcoal:   #1E262C;
+  --color-gray-dark:  #2C363D;
+  --color-gray:       #6B675E;
+  --color-gray-light: #9A9186;
+  --color-cream:      #FAF6EE;
   --color-white:      #FFFFFF;
   --color-gold:       #C9A96E;
   --color-gold-light: #E8D5B0;
   --color-gold-dark:  #9B7A45;
+  --color-sea:        #2F5057; /* Mediterranean accent — used sparingly */
 
   /* Fonts */
-  --font-sans: var(--font-david-libre), Georgia, 'Times New Roman', serif;
-  --font-display: var(--font-frankruhl), var(--font-cormorant), Georgia, serif;
+  --font-sans: var(--font-assistant), 'Segoe UI', Arial, sans-serif;
+  --font-display: var(--font-david-libre), Georgia, serif;
 
   /* Spacing */
   --spacing-section: 5rem;
@@ -33,8 +36,8 @@ html {
 }
 
 body {
-  background-color: #0A0A0A;
-  color: #F5F5F0;
+  background-color: #14181D;
+  color: #FAF6EE;
   font-family: var(--font-sans);
 }
 
@@ -67,8 +70,8 @@ body {
 
 /* ── Card styles ── */
 .card-luxury {
-  background: #141414;
-  border: 1px solid #222222;
+  background: #191F24;
+  border: 1px solid #262F35;
   transition: border-color 0.4s ease, box-shadow 0.4s ease;
 }
 .card-luxury:hover {
@@ -79,7 +82,7 @@ body {
 /* ── Button styles ── */
 .btn-gold {
   background: linear-gradient(135deg, #C9A96E, #9B7A45);
-  color: #0A0A0A;
+  color: #14181D;
   font-weight: 700;
   letter-spacing: 0.08em;
   font-size: 0.75rem;
@@ -109,7 +112,7 @@ body {
 
 /* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #1A1A1A; }
+::-webkit-scrollbar-track { background: #1E262C; }
 ::-webkit-scrollbar-thumb { background: #C9A96E; border-radius: 3px; }
 
 /* ── RTL helpers ── */
@@ -124,7 +127,7 @@ body {
   inset-inline-start: 0;
   padding: 0.5rem 1.25rem;
   background: #C9A96E;
-  color: #0A0A0A;
+  color: #14181D;
   font-weight: 700;
   font-size: 0.875rem;
   z-index: 9999;
@@ -135,48 +138,49 @@ body {
   top: 0;
 }
 
-/* ── Light mode overrides ── */
+/* ── Light mode overrides ──
+   "Limestone" — the warm plaster tone of Tel Aviv's Bauhaus facades, not a
+   sterile white. Text/border tones are shifted warm to match (no cool grays). */
 [data-theme="light"] body {
-  background-color: #F5F5F0;
-  color: #0A0A0A;
+  background-color: #F3EEE3;
+  color: #14181D;
 }
-[data-theme="light"] .bg-black    { background-color: #F5F5F0 !important; }
-[data-theme="light"] .bg-charcoal { background-color: #E8E8E3 !important; }
-[data-theme="light"] .bg-gray-dark { background-color: #D5D5D0 !important; }
-[data-theme="light"] .text-white  { color: #0A0A0A !important; }
-[data-theme="light"] .text-cream  { color: #0A0A0A !important; }
-[data-theme="light"] .text-gray-light { color: #505050 !important; }
-[data-theme="light"] .text-gray   { color: #636363 !important; }
+[data-theme="light"] .bg-black    { background-color: #F3EEE3 !important; }
+[data-theme="light"] .bg-charcoal { background-color: #EAE2D2 !important; }
+[data-theme="light"] .bg-gray-dark { background-color: #DED3BE !important; }
+[data-theme="light"] .text-white  { color: #14181D !important; }
+[data-theme="light"] .text-cream  { color: #14181D !important; }
+[data-theme="light"] .text-gray-light { color: #6B6155 !important; }
+[data-theme="light"] .text-gray   { color: #847A6C !important; }
 [data-theme="light"] .card-luxury {
-  background: #FFFFFF !important;
-  border-color: #DFDFD8 !important;
+  background: #FBF8F2 !important;
+  border-color: #E4DBC8 !important;
 }
 [data-theme="light"] .card-luxury:hover {
-  border-color: rgba(201,169,110,0.5) !important;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.10) !important;
+  border-color: rgba(173,138,84,0.5) !important;
+  box-shadow: 0 8px 32px rgba(20,24,29,0.10) !important;
 }
-[data-theme="light"] .border-gray-dark { border-color: #D0D0CB !important; }
-[data-theme="light"] ::-webkit-scrollbar-track { background: #E8E8E3; }
-/* Gold #C9A96E is ~2:1 on light backgrounds — fails WCAG AA. Deep bronze
-   #6F5628 keeps the antique-gold read at 6.3:1 on #F5F5F0 (4.7:1 even on
-   the darkest light-mode surface #D5D5D0). */
-[data-theme="light"] .text-gold { color: #6F5628 !important; }
+[data-theme="light"] .border-gray-dark { border-color: #DCD0BB !important; }
+[data-theme="light"] ::-webkit-scrollbar-track { background: #EAE2D2; }
+/* Gold #C9A96E is ~2:1 on light backgrounds — fails WCAG AA. Deep brass
+   #7A5C34 keeps the antique-brass read at 5.3:1 on #F3EEE3. */
+[data-theme="light"] .text-gold { color: #7A5C34 !important; }
 [data-theme="light"] .text-gold-gradient {
-  background-image: linear-gradient(135deg, #6F5628 0%, #9B7A45 50%, #6F5628 100%);
+  background-image: linear-gradient(135deg, #7A5C34 0%, #9B7A45 50%, #7A5C34 100%);
 }
-[data-theme="light"] .btn-outline-gold { color: #6F5628; border-color: rgba(111,86,40,0.5); }
-[data-theme="light"] .btn-outline-gold:hover { color: #6F5628; border-color: #6F5628; background: rgba(111,86,40,0.08); }
+[data-theme="light"] .btn-outline-gold { color: #7A5C34; border-color: rgba(122,92,52,0.5); }
+[data-theme="light"] .btn-outline-gold:hover { color: #7A5C34; border-color: #7A5C34; background: rgba(122,92,52,0.08); }
 /* Hero headline shimmer is an inline style — needs !important to re-color */
 [data-theme="light"] .hero-shimmer {
-  background-image: linear-gradient(110deg, #6F5628 0%, #6F5628 20%, #9B7A45 45%, #A98950 50%, #9B7A45 55%, #6F5628 80%, #6F5628 100%) !important;
+  background-image: linear-gradient(110deg, #7A5C34 0%, #7A5C34 20%, #9B7A45 45%, #AD8A54 50%, #9B7A45 55%, #7A5C34 80%, #7A5C34 100%) !important;
 }
 /* Floating panels (advisor, group modal, a11y widget) keep a dark background
    in both themes — exempt their text from the light-mode remaps. */
-[data-theme="light"] .dark-panel .text-cream { color: #F5F5F0 !important; }
+[data-theme="light"] .dark-panel .text-cream { color: #FAF6EE !important; }
 [data-theme="light"] .dark-panel .text-white { color: #FFFFFF !important; }
-[data-theme="light"] .dark-panel .text-gray-light { color: #9A9A9A !important; }
+[data-theme="light"] .dark-panel .text-gray-light { color: #9A9186 !important; }
 [data-theme="light"] .dark-panel .text-gold { color: #C9A96E !important; }
-[data-theme="light"] .dark-panel .border-gray-dark { border-color: #2A2A2A !important; }
+[data-theme="light"] .dark-panel .border-gray-dark { border-color: #2C363D !important; }
 
 
 /* ── Focus ring (WCAG 2.4.7) ── */
@@ -186,14 +190,14 @@ body {
   border-radius: 2px;
 }
 [data-theme="light"] :focus-visible {
-  outline-color: #6F5628;
+  outline-color: #7A5C34;
 }
 
 /* ── Placeholders (WCAG 1.4.3) ── */
 /* Single global rule; per-component placeholder:* utilities were removed —
-   they would win on specificity and reintroduce the old #4A4A4A (~2.2:1). */
-::placeholder { color: #8A8A8A; opacity: 1; }
-[data-theme="light"] ::placeholder { color: #5A5A5A; }
+   they would win on specificity and reintroduce a low-contrast gray. */
+::placeholder { color: #9A9186; opacity: 1; }
+[data-theme="light"] ::placeholder { color: #6B6155; }
 
 /* ── Reduced motion (WCAG 1.4.3 / IS 5568) ── */
 @media (prefers-reduced-motion: reduce) {
@@ -219,7 +223,7 @@ body {
   100% { background-position: 200% center; }
 }
 .animate-shimmer {
-  background: linear-gradient(90deg, #1A1A1A 25%, #2A2A2A 50%, #1A1A1A 75%);
+  background: linear-gradient(90deg, #1E262C 25%, #2C363D 50%, #1E262C 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }

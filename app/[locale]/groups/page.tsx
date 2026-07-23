@@ -65,7 +65,7 @@ export default function GroupsPage() {
                   transition={{ delay: i * 0.1 }}
                   className="flex flex-col rounded-2xl overflow-hidden"
                   style={{
-                    background: "linear-gradient(160deg, #141414 0%, #0e0e0e 100%)",
+                    background: "linear-gradient(160deg, #191F24 0%, #12161B 100%)",
                     border: "1px solid rgba(201,169,110,0.2)",
                   }}
                 >

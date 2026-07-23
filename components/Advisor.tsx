@@ -155,7 +155,7 @@ export default function Advisor() {
             <div
               className="flex items-center justify-between px-4 py-3 shrink-0"
               style={{
-                background: "linear-gradient(135deg, #0A0A0A 0%, #1a1510 100%)",
+                background: "linear-gradient(135deg, #14181D 0%, #1F1811 100%)",
                 borderBottom: "1px solid rgba(201, 169, 110, 0.2)",
               }}
             >
@@ -194,15 +194,15 @@ export default function Advisor() {
             {/* Messages */}
             <div
               className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3"
-              style={{ background: "#0e0e0e" }}
+              style={{ background: "#12161B" }}
             >
               {/* Welcome bubble */}
               <div
                 className="self-start max-w-[88%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm leading-relaxed"
                 style={{
-                  background: "#1a1a1a",
+                  background: "#1E262C",
                   border: "1px solid rgba(201,169,110,0.15)",
-                  color: "#F5F5F0",
+                  color: "#FAF6EE",
                 }}
               >
                 {renderMessage(getWelcome(locale))}
@@ -220,9 +220,9 @@ export default function Advisor() {
                     msg.role === "user"
                       ? { background: "#C9A96E" }
                       : {
-                          background: "#1a1a1a",
+                          background: "#1E262C",
                           border: "1px solid rgba(201,169,110,0.15)",
-                          color: "#F5F5F0",
+                          color: "#FAF6EE",
                         }
                   }
                 >
@@ -236,7 +236,7 @@ export default function Advisor() {
                 <div
                   className="self-start flex items-center gap-1.5 px-4 py-3 rounded-2xl rounded-tl-sm"
                   style={{
-                    background: "#1a1a1a",
+                    background: "#1E262C",
                     border: "1px solid rgba(201,169,110,0.15)",
                   }}
                 >
@@ -307,7 +307,7 @@ export default function Advisor() {
             <div
               className="px-4 py-2 text-center shrink-0"
               style={{
-                background: "#0e0e0e",
+                background: "#12161B",
                 borderTop: "1px solid rgba(201,169,110,0.08)",
               }}
             >

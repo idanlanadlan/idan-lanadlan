@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Script from "next/script";
-import { David_Libre, Cormorant_Garamond, Frank_Ruhl_Libre } from "next/font/google";
+import { David_Libre, Assistant } from "next/font/google";
 import "../globals.css";
 import { Home, Plus, List, LogOut, BarChart2, FileText, Settings, Database } from "lucide-react";
 import { logout } from "@/app/actions/logout";
@@ -12,17 +12,10 @@ const davidLibre = David_Libre({
   weight: ["400", "500", "700"],
 });
 
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
-  subsets: ["latin"],
-  weight: ["300", "400", "600", "700"],
-  style: ["normal", "italic"],
-});
-
-const frankRuhl = Frank_Ruhl_Libre({
-  variable: "--font-frankruhl",
+const assistant = Assistant({
+  variable: "--font-assistant",
   subsets: ["hebrew", "latin"],
-  weight: ["300", "400", "500"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -35,7 +28,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     <html
       lang="he"
       dir="rtl"
-      className={`${davidLibre.variable} ${cormorant.variable} ${frankRuhl.variable}`}
+      className={`${davidLibre.variable} ${assistant.variable}`}
       suppressHydrationWarning
     >
       <body className="min-h-screen bg-black text-cream antialiased">
