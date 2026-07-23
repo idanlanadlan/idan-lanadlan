@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useFormStatus } from "react-dom";
 import Image from "next/image";
 import { Upload } from "lucide-react";
 import type { BlogPost } from "@/lib/types";
@@ -12,6 +13,20 @@ const label = "block text-xs text-gold tracking-wider uppercase mb-1.5";
 interface Props {
   action: (formData: FormData) => Promise<void>;
   post?: Partial<BlogPost>;
+}
+
+function SubmitButton({ isEdit }: { isEdit: boolean }) {
+  const { pending } = useFormStatus();
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="btn-gold flex-1 py-3 rounded-lg text-sm font-semibold disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+    >
+      {pending && <span className="w-4 h-4 border-2 border-black/40 border-t-black rounded-full animate-spin" />}
+      {pending ? "שומר... (כולל תרגום אוטומטי, עד כדקה)" : isEdit ? "שמור שינויים" : "צור מאמר"}
+    </button>
+  );
 }
 
 export default function BlogForm({ action, post }: Props) {
@@ -165,12 +180,7 @@ export default function BlogForm({ action, post }: Props) {
       </div>
 
       <div className="flex gap-3 pt-2">
-        <button
-          type="submit"
-          className="btn-gold flex-1 py-3 rounded-lg text-sm font-semibold"
-        >
-          {post?.id ? "שמור שינויים" : "צור מאמר"}
-        </button>
+        <SubmitButton isEdit={!!post?.id} />
         <a
           href="/admin/blog"
           className="px-6 py-3 rounded-lg text-sm text-gray-light border border-gray-dark hover:border-gold/40 hover:text-gold transition-colors"
