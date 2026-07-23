@@ -57,6 +57,7 @@ export interface BlogPost {
   cover_image: string;
   keywords: string[];
   published: boolean;
+  featured?: boolean;
   created_at: string;
   updated_at: string;
   title_en?: string;

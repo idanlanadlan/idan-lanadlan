@@ -179,6 +179,19 @@ export default function BlogForm({ action, post }: Props) {
         </label>
       </div>
 
+      <div className="flex items-center gap-3">
+        <input
+          type="checkbox"
+          name="featured"
+          id="featured"
+          defaultChecked={post?.featured ?? true}
+          className="w-4 h-4 accent-gold"
+        />
+        <label htmlFor="featured" className="text-sm text-cream cursor-pointer">
+          הצג בעמוד הבית
+        </label>
+      </div>
+
       <div className="flex gap-3 pt-2">
         <SubmitButton isEdit={!!post?.id} />
         <a

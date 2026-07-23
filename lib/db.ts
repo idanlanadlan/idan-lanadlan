@@ -129,6 +129,22 @@ export async function getPublishedBlogPosts(): Promise<BlogPost[]> {
   return posts.length > 0 ? posts : mockBlogPosts.filter((p) => p.published);
 }
 
+/** Homepage preview picks: published posts explicitly marked to show there.
+ *  Falls back to the 3 most recent published posts if the `featured` column
+ *  hasn't been migrated yet, or if nothing is marked featured. */
+export async function getFeaturedBlogPosts(): Promise<BlogPost[]> {
+  if (!isConfigured) return mockBlogPosts.filter((p) => p.published).slice(0, 3);
+  const { data, error } = await createClient()
+    .from("blog_posts")
+    .select("*")
+    .eq("published", true)
+    .eq("featured", true)
+    .order("created_at", { ascending: false })
+    .limit(3);
+  const posts = error ? [] : ((data as BlogPost[]) ?? []);
+  return posts.length > 0 ? posts : (await getPublishedBlogPosts()).slice(0, 3);
+}
+
 export async function getAllBlogPosts(): Promise<BlogPost[]> {
   if (!isConfigured) return mockBlogPosts;
   const { data } = await createAdminClient()

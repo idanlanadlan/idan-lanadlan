@@ -91,6 +91,11 @@ const MIGRATION_SQL_CRM_ID = `-- שמירת מזהה CRM (Nadlan One) על נכ�
 ALTER TABLE properties
   ADD COLUMN IF NOT EXISTS crm_id TEXT;`;
 
+const MIGRATION_SQL_BLOG_FEATURED = `-- בקרה ידנית על אילו מאמרים מוצגים בעמוד הבית (כמו "featured" בנכסים)
+-- DEFAULT true כדי שמאמרים קיימים ימשיכו להופיע כרגיל אחרי המיגרציה
+ALTER TABLE blog_posts
+  ADD COLUMN IF NOT EXISTS featured BOOLEAN NOT NULL DEFAULT true;`;
+
 export default function SetupPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-10" dir="rtl">
@@ -211,6 +216,15 @@ export default function SetupPage() {
           </p>
           <pre className="bg-black rounded-lg p-4 text-xs text-cream overflow-x-auto leading-relaxed font-mono">
             {MIGRATION_SQL_CRM_ID}
+          </pre>
+        </Step>
+
+        <Step num={12} title="עדכון: בחירת מאמרים לעמוד הבית">
+          <p className="text-sm text-gray-light mb-3">
+            כדי לבחור ידנית אילו מאמרי בלוג מוצגים בעמוד הבית (כמו הבחירה הקיימת לנכסים), הרץ ב-<strong className="text-cream">SQL Editor</strong> את זה:
+          </p>
+          <pre className="bg-black rounded-lg p-4 text-xs text-cream overflow-x-auto leading-relaxed font-mono">
+            {MIGRATION_SQL_BLOG_FEATURED}
           </pre>
         </Step>
       </div>

@@ -31,6 +31,7 @@ function parseForm(formData: FormData) {
     cover_image: formData.get("cover_image") as string,
     keywords,
     published: formData.get("published") === "on",
+    featured: formData.get("featured") === "on",
   };
 }
 
