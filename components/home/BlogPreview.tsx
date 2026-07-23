@@ -4,13 +4,15 @@ import { motion } from "framer-motion";
 import Link from "@/components/LocaleLink";
 import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
-import { mockBlogPosts } from "@/lib/mock-data";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { localizedBlogField, localizedBlogKeywords } from "@/lib/blog-utils";
+import type { BlogPost } from "@/lib/types";
 
-export default function BlogPreview() {
-  const { t } = useLanguage();
+export default function BlogPreview({ posts }: { posts: BlogPost[] }) {
+  const { t, locale } = useLanguage();
   const b = t.sections.blog;
-  const posts = mockBlogPosts.filter((p) => p.published).slice(0, 3);
+
+  if (posts.length === 0) return null;
 
   return (
     <section className="py-24 bg-black" aria-labelledby="blog-heading">
@@ -38,42 +40,49 @@ export default function BlogPreview() {
         </motion.div>
 
         <div className="grid md:grid-cols-3 gap-6">
-          {posts.map((post, i) => (
-            <motion.article
-              key={post.id}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.5 }}
-            >
-              <Link href={`/blog/${post.slug}`} className="group block card-luxury rounded-lg overflow-hidden">
-                <div className="relative h-44 overflow-hidden">
-                  <Image
-                    src={post.cover_image}
-                    alt={post.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                </div>
-                <div className="p-5">
-                  <div className="flex flex-wrap gap-1 mb-3">
-                    {post.keywords.slice(0, 2).map((kw) => (
-                      <span key={kw} className="text-[10px] px-2 py-0.5 rounded-full bg-gray-dark text-gold">
-                        {kw}
-                      </span>
-                    ))}
+          {posts.map((post, i) => {
+            const title = localizedBlogField(post, "title", locale);
+            const excerpt = localizedBlogField(post, "excerpt", locale);
+            const keywords = localizedBlogKeywords(post, locale);
+            return (
+              <motion.article
+                key={post.id}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, duration: 0.5 }}
+              >
+                <Link href={`/blog/${post.slug}`} className="group block card-luxury rounded-lg overflow-hidden">
+                  <div className="relative h-44 overflow-hidden bg-charcoal">
+                    {post.cover_image ? (
+                      <Image
+                        src={post.cover_image}
+                        alt={title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    ) : null}
                   </div>
-                  <h3 className="text-sm font-semibold text-cream mb-2 line-clamp-2 group-hover:text-gold transition-colors">
-                    {post.title}
-                  </h3>
-                  <p className="text-xs text-gray-light line-clamp-2 leading-relaxed">
-                    {post.excerpt}
-                  </p>
-                </div>
-              </Link>
-            </motion.article>
-          ))}
+                  <div className="p-5">
+                    <div className="flex flex-wrap gap-1 mb-3">
+                      {keywords.slice(0, 2).map((kw) => (
+                        <span key={kw} className="text-[10px] px-2 py-0.5 rounded-full bg-gray-dark text-gold">
+                          {kw}
+                        </span>
+                      ))}
+                    </div>
+                    <h3 className="text-sm font-semibold text-cream mb-2 line-clamp-2 group-hover:text-gold transition-colors">
+                      {title}
+                    </h3>
+                    <p className="text-xs text-gray-light line-clamp-2 leading-relaxed">
+                      {excerpt}
+                    </p>
+                  </div>
+                </Link>
+              </motion.article>
+            );
+          })}
         </div>
       </div>
     </section>

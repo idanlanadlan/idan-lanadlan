@@ -6,6 +6,7 @@ import { X, Send, RotateCcw, MessageCircle } from "lucide-react";
 import LocaleLink from "@/components/LocaleLink";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCookieBannerVisible } from "@/lib/use-cookie-banner-visible";
+import { renderRich } from "@/lib/rich-text";
 import type { Locale } from "@/lib/translations";
 
 type Message = {
@@ -113,19 +114,7 @@ export default function Advisor() {
     }
   };
 
-  const renderMessage = (text: string) => {
-    return text
-      .split(/(\*\*[^*]+\*\*)/g)
-      .map((part, i) =>
-        part.startsWith("**") && part.endsWith("**") ? (
-          <strong key={i} className="text-gold">
-            {part.slice(2, -2)}
-          </strong>
-        ) : (
-          <span key={i}>{part}</span>
-        )
-      );
-  };
+  const renderMessage = (text: string) => renderRich(text);
 
   return (
     <>

@@ -135,7 +135,28 @@ export interface T {
   };
   blog_page: { meta_title: string; meta_description: string; eyebrow: string; title: string; subtitle: string; read_more: string };
   blog_post: { questions_eyebrow: string; questions_title: string; whatsapp_button: string; content_coming_soon: string };
+  legal: {
+    common: {
+      eyebrow_legal: string; eyebrow_accessibility: string; updated: string;
+      label_name: string; label_phone: string; label_email: string; label_address: string;
+      address: string;
+    };
+    privacy: { meta_title: string; meta_description: string; title: string; sections: LegalSection[]; contact_name: string };
+    terms: { meta_title: string; meta_description: string; title: string; sections: LegalSection[]; contact_name: string };
+    accessibility: {
+      meta_title: string; meta_description: string; title: string; sections: LegalSection[];
+      contact_name: string; contact_note: string;
+    };
+  };
 }
+
+export type LegalBlock =
+  | { type: "p"; text: string }
+  | { type: "list"; items: string[] }
+  | { type: "link"; before: string; linkText: string; href: string; after: string; internal?: boolean }
+  | { type: "contact" };
+
+export type LegalSection = { heading: string; blocks: LegalBlock[] };
 
 export const translations: Record<Locale, T> = {
   he: {
@@ -805,6 +826,239 @@ export const translations: Record<Locale, T> = {
       questions_title: "דברו ישירות עם עידן",
       whatsapp_button: "שלח הודעה ב-WhatsApp",
       content_coming_soon: "תוכן המאמר יופיע כאן בקרוב.",
+    },
+    legal: {
+      common: {
+        eyebrow_legal: "משפטי",
+        eyebrow_accessibility: "נגישות",
+        updated: "עדכון אחרון: יולי 2026",
+        label_name: "שם:",
+        label_phone: "טלפון / WhatsApp:",
+        label_email: "מייל:",
+        label_address: "כתובת:",
+        address: 'הירקון 319, נמל ת"א',
+      },
+      privacy: {
+        meta_title: "מדיניות פרטיות | עידן לנדל״ן",
+        meta_description: "מדיניות הפרטיות של עידן לנדל״ן — איזה מידע נאסף, לאיזו מטרה, למי הוא מועבר ומהן זכויותיכם.",
+        title: "מדיניות פרטיות",
+        contact_name: "עידן חולי",
+        sections: [
+          {
+            heading: "1. כללי",
+            blocks: [
+              { type: "p", text: "עידן לנדל״ן (עידן חולי, מס׳ רישיון תיווך **3205360**) מחויב להגן על פרטיות המשתמשים באתר idanlanadlan.co.il בהתאם לחוק הגנת הפרטיות תשמ״א-1981 ותקנותיו, **לרבות תיקון 13 לחוק** (בתוקף מאוגוסט 2025), ולתקנות האיחוד האירופי (GDPR) ככל שחלות. מסירת מידע באתר היא וולונטרית — אינכם חייבים על פי חוק למסור מידע, אך בלעדיו לא נוכל לחזור אליכם." },
+            ],
+          },
+          {
+            heading: "2. המידע שנאסף — לפי ערוץ",
+            blocks: [
+              { type: "list", items: [
+                "**טופס יצירת קשר** — סוג הפנייה, שם מלא, טלפון, עיר, ומייל (אם נמסר)",
+                "**טפסי ארגז הכלים** (צ׳קליסט, שאלון התאמה, איתור גוש/חלקה ועוד) — שם, טלפון, מייל (אופציונלי) ופרטי החיפוש/הסימולציה שהזנתם (למשל כתובת או מספרי גוש וחלקה)",
+                "**טופס הצטרפות לקבוצות וואטסאפ** — שם, טלפון, מה אתם מחפשים, תקציב ומטרת הנכס; הפרטים נשלחים כהודעת וואטסאפ מהמכשיר שלכם ישירות לעידן",
+                "**היועץ הדיגיטלי (צ׳אט AI)** — תוכן השיחה בלבד, לצורך הפקת מענה; השיחה אינה נשמרת אצלנו לאחר סגירת החלון",
+                "**העדפות דפדפן** — שפה, ערכת נושא, הגדרות נגישות ובחירת עוגיות נשמרות מקומית בדפדפן שלכם בלבד (localStorage) ואינן נשלחות לשרת",
+              ] },
+            ],
+          },
+          {
+            heading: "3. מטרות השימוש במידע",
+            blocks: [
+              { type: "list", items: [
+                "מענה לפנייתכם ומתן שירותי תיווך ושיווק נדל״ן",
+                "תיעוד הסכמות כנדרש על פי דין",
+                "**דיוור שיווקי (טלפון/וואטסאפ/מייל) — אך ורק אם סימנתם במפורש את תיבת ההסכמה הנפרדת**, בהתאם לסעיף 30א לחוק התקשורת (תיקון 40, ״חוק הספאם״). ניתן לבטל את ההסכמה בכל עת בהודעה חוזרת, בוואטסאפ או בטלפון, ונחדל מהדיוור בתוך 3 ימי עסקים",
+              ] },
+            ],
+          },
+          {
+            heading: "4. למי המידע מועבר (מעבדי מידע)",
+            blocks: [
+              { type: "p", text: "איננו סוחרים במידע שלכם. המידע מועבר אך ורק לספקי השירות התפעוליים של האתר, בהיקף המינימלי הנדרש:" },
+              { type: "list", items: [
+                "**Resend** — שליחת התראת מייל על פנייתכם אל עידן",
+                "**Vercel** — אירוח האתר ותשתית השרתים",
+                "**Supabase** — מסד הנתונים של תוכן האתר (נכסים ומאמרים); פניותיכם אינן נשמרות בו",
+                "**נדל״ן וואן (Nadlan One)** — מערכת ניהול הלידים המשרדית, אליה עשויה פנייה מטופס יצירת הקשר להיות מועברת",
+                "**Anthropic** — עיבוד שיחות היועץ הדיגיטלי (AI)",
+                "**Google (Google Analytics 4)** — ניתוח סטטיסטי אנונימי של השימוש באתר, אך ורק בכפוף להסכמתכם בבאנר העוגיות",
+                "**GovMap / המרכז למיפוי ישראל** — בכלי איתור גוש/חלקה ובמפות, שאילתת הכתובת שהקלדתם נשלחת לשירות הממשלתי לצורך האיתור",
+                "**WhatsApp (Meta)** — כאשר בחרתם ליצור קשר או להצטרף לקבוצה דרך וואטסאפ",
+              ] },
+              { type: "p", text: "חלק מהספקים מאחסנים מידע מחוץ לישראל; ההעברה נעשית בכפוף לתקנות הגנת הפרטיות (העברת מידע אל מאגרי מידע שמחוץ לגבולות המדינה). מעבר לכך, מידע אישי לא יועבר לצד שלישי ללא הסכמתכם, אלא אם נדרש על פי דין או צו שיפוטי." },
+            ],
+          },
+          {
+            heading: "5. עוגיות ואחסון מקומי",
+            blocks: [
+              { type: "p", text: "האתר משתמש **באחסון מקומי ובעוגיות פונקציונליות** — לשמירת העדפות השפה, ערכת הנושא, הגדרות הנגישות ובחירתכם בבאנר העוגיות; אלה פעילים תמיד. בנוסף, **אך ורק בכפוף להסכמתכם המפורשת בבאנר העוגיות**, מופעלת עוגיית אנליטיקס (Google Analytics 4) לצורך הבנה סטטיסטית אנונימית של השימוש באתר — לא לצרכי פרסום. **איננו מפעילים פיקסלים פרסומיים.** ניתן לשנות את בחירתכם בכל עת דרך מחיקת עוגיות בהגדרות הדפדפן." },
+            ],
+          },
+          {
+            heading: "6. תקופת שמירת המידע",
+            blocks: [
+              { type: "p", text: "פניות שהתקבלו נשמרות בתיבת המייל העסקית ובמערכת ניהול הלידים כל עוד הדבר נדרש לטיפול בפנייה, לקיום קשר עסקי או לעמידה בחובות על פי דין. ניתן לבקש מחיקה בכל עת (ראו סעיף 8) ונפעל בהתאם, בכפוף לחובות שמירה חוקיות." },
+            ],
+          },
+          {
+            heading: "7. אבטחת מידע",
+            blocks: [
+              { type: "p", text: "אנו נוקטים אמצעי אבטחה בהתאם לתקנות הגנת הפרטיות (אבטחת מידע) תשע״ז-2017: כל תעבורת האתר מוצפנת (HTTPS), הגישה למידע מוגבלת לעידן חולי בלבד, ופרטי הפניות אינם נשמרים במסד הנתונים הציבורי של האתר." },
+            ],
+          },
+          {
+            heading: "8. זכויותיכם",
+            blocks: [
+              { type: "p", text: "על פי חוק הגנת הפרטיות (כולל תיקון 13), עומדות לכם הזכויות הבאות:" },
+              { type: "list", items: [
+                "זכות עיון — לדעת אילו נתונים מוחזקים אודותיכם",
+                "זכות תיקון — לתקן מידע שגוי או לא מעודכן",
+                "זכות מחיקה — לבקש מחיקת מידע אישי",
+                "זכות לביטול הסכמה לדיוור — בכל עת וללא נימוק",
+              ] },
+              { type: "link", before: "לא נענינו לפנייתכם? ניתן לפנות לרשות להגנת הפרטיות (", linkText: "gov.il", href: "https://www.gov.il/he/departments/the_privacy_protection_authority", after: ")." },
+            ],
+          },
+          {
+            heading: "9. יצירת קשר לעניין פרטיות",
+            blocks: [{ type: "contact" }],
+          },
+        ],
+      },
+      terms: {
+        meta_title: "תנאי שימוש | עידן לנדל״ן",
+        meta_description: "תנאי השימוש באתר עידן לנדל״ן.",
+        title: "תנאי שימוש",
+        contact_name: "עידן חולי — עידן לנדל״ן",
+        sections: [
+          {
+            heading: "1. כללי והסכמה לתנאים",
+            blocks: [
+              { type: "p", text: "אתר idanlanadlan.co.il (להלן: ״האתר״) מופעל על ידי עידן חולי — עידן לנדל״ן, מתווך מורשה מס׳ רישיון **3205360**. הגלישה והשימוש באתר מהווים הסכמה לתנאים אלה. אם אינכם מסכימים לתנאים — אנא הימנעו משימוש באתר." },
+            ],
+          },
+          {
+            heading: "2. אופי השירות והמידע באתר",
+            blocks: [
+              { type: "list", items: [
+                "האתר מציג מידע על נכסים, מאמרים מקצועיים וכלים חישוביים אינטראקטיביים",
+                "**המידע באתר אינו מהווה ייעוץ משפטי, מיסויי, פיננסי או שמאי**, ואינו תחליף לייעוץ מקצועי פרטני",
+                "תוצאות המחשבונים והכלים (תשואה, משכנתא, מיסים, גוש/חלקה ועוד) הן **הערכה להמחשה בלבד**, על בסיס הנתונים שהוזנו ונתונים כלליים שעשויים להשתנות; אין להסתמך עליהן לביצוע עסקה ללא בדיקה מול הגורמים המוסמכים",
+                "פרטי הנכסים המוצגים עשויים להשתנות, להתעדכן או להימכר/להיות מושכרים בכל עת, ואינם מהווים הצעה מחייבת",
+              ] },
+            ],
+          },
+          {
+            heading: "3. שירותי תיווך",
+            blocks: [
+              { type: "p", text: "שירותי תיווך במקרקעין ניתנים בהתאם לחוק המתווכים במקרקעין תשנ״ו-1996, וכפופים לחתימה על הזמנת שירותי תיווך בכתב. הצגת נכס באתר או פנייה דרכו אינן יוצרות כשלעצמן התחייבות לתיווך או זכאות לדמי תיווך, אלא בהתאם להסכם שייחתם." },
+            ],
+          },
+          {
+            heading: "4. היועץ הדיגיטלי (AI)",
+            blocks: [
+              { type: "link", before: "הצ׳אט באתר מופעל באמצעות בינה מלאכותית ומספק מידע כללי בלבד. התשובות עשויות להכיל אי-דיוקים או מידע שאינו מעודכן, ואין להסתמך עליהן ללא אימות מול גורם מוסמך. השימוש בצ׳אט כפוף גם ל", linkText: "מדיניות הפרטיות", href: "/privacy", after: ".", internal: true },
+            ],
+          },
+          {
+            heading: "5. קניין רוחני",
+            blocks: [
+              { type: "p", text: "כל הזכויות בתכני האתר — טקסטים, עיצוב, לוגו, תמונות (למעט תמונות שסופקו על ידי צדדים שלישיים) וקוד — שמורות לעידן לנדל״ן. אין להעתיק, לשכפל או לעשות שימוש מסחרי בתכנים ללא אישור מראש ובכתב." },
+            ],
+          },
+          {
+            heading: "6. הגבלת אחריות וקישורים חיצוניים",
+            blocks: [
+              { type: "list", items: [
+                "האתר ותכניו מסופקים כפי שהם (As-Is); איננו מתחייבים לזמינות רציפה או להיעדר שגיאות",
+                "האתר מקושר לשירותים חיצוניים (וואטסאפ, מפות GovMap וגוגל, רשתות חברתיות) — איננו אחראים לתכניהם, לזמינותם או למדיניות הפרטיות שלהם",
+                "בכפוף לכל דין, לא נישא באחריות לנזק עקיף שנגרם מהסתמכות על מידע או כלי באתר",
+              ] },
+            ],
+          },
+          {
+            heading: "7. שימוש אסור",
+            blocks: [
+              { type: "p", text: "אין לעשות באתר שימוש בלתי חוקי, לפגוע בפעולתו התקינה, לבצע כריית נתונים אוטומטית או להזין תוכן פוגעני או שקרי בטפסים ובצ׳אט." },
+            ],
+          },
+          {
+            heading: "8. שינויים בתנאים, דין וסמכות שיפוט",
+            blocks: [
+              { type: "p", text: "אנו רשאים לעדכן תנאים אלה מעת לעת; הנוסח המחייב הוא זה המפורסם באתר במועד השימוש. על השימוש באתר יחול הדין הישראלי בלבד, וסמכות השיפוט הבלעדית נתונה לבתי המשפט המוסמכים בתל אביב-יפו." },
+            ],
+          },
+          {
+            heading: "9. יצירת קשר",
+            blocks: [{ type: "contact" }],
+          },
+        ],
+      },
+      accessibility: {
+        meta_title: "הצהרת נגישות | עידן לנדל״ן",
+        meta_description: "הצהרת נגישות אתר עידן לנדל״ן בהתאם לתקן ישראלי ת״י 5568 ורמת WCAG 2.1 AA.",
+        title: "הצהרת נגישות",
+        contact_name: "עידן חולי — רכז נגישות",
+        contact_note: "אנו מתחייבים לחזור תוך 5 ימי עסקים.",
+        sections: [
+          {
+            heading: "1. מחויבותנו לנגישות",
+            blocks: [
+              { type: "p", text: "עידן לנדל״ן מחויב לאפשר לאנשים עם מוגבלויות גישה מלאה ושוויונית לתכני האתר, בהתאם לחוק שוויון זכויות לאנשים עם מוגבלות תשנ״ח-1998 ותקנות הנגישות לשירות (תיקון מס׳ 19), וכן בהתאם להנחיות WCAG 2.1 ברמת AA." },
+            ],
+          },
+          {
+            heading: "2. תקן הנגישות",
+            blocks: [
+              { type: "p", text: "האתר פועל לעמוד בדרישות **תקן ישראלי ת״י 5568** המבוסס על **WCAG 2.1 ברמת AA**. תקן זה מחייב עסקים בישראל המספקים שירות לציבור לוודא שאתריהם נגישים מאז ינואר 2021." },
+            ],
+          },
+          {
+            heading: "3. מה בוצע לשיפור הנגישות",
+            blocks: [
+              { type: "list", items: [
+                "**רכיב נגישות ייעודי** — כפתור צף בפינת המסך המאפשר הגדלת טקסט (עד 125%), מצב ניגודיות גבוהה, עצירת אנימציות והדגשת קישורים; ההעדפות נשמרות בין ביקורים",
+                "מצב תצוגה בהיר/כהה לבחירת המשתמש",
+                "תוויות נגישות (aria) על הרכיבים האינטראקטיביים, כולל טפסים, חלונות דו-שיח ורשימות הצעות",
+                "טקסט חלופי (alt) תיאורי לתמונות התוכן באתר",
+                "ניגודיות צבעים העומדת בדרישות רמת AA, ובנוסף מצב ניגודיות גבוהה ייעודי ברכיב הנגישות",
+                "ניווט מקלדת — האלמנטים האינטראקטיביים נגישים ב-Tab, עם סימון פוקוס נראה; חלונות נסגרים ב-Escape",
+                "קישור ״דלג לתוכן״ בראש העמוד לניווט מהיר לקוראי מסך",
+                "תוויות מקושרות לשדות בכל הטפסים והכרזת שגיאות לקוראי מסך",
+                "מבנה כותרות היררכי ותמיכה בכיוון RTL (עברית) ו-LTR (אנגלית, צרפתית, ספרדית)",
+                "אנימציות מכבדות את הגדרת מערכת ההפעלה (prefers-reduced-motion) וניתנות לעצירה מלאה דרך רכיב הנגישות",
+                "גופנים ניתנים להגדלה ללא שבירת הפריסה",
+              ] },
+            ],
+          },
+          {
+            heading: "4. הסדרי נגישות באתר",
+            blocks: [
+              { type: "p", text: "לפתיחת רכיב הנגישות לחצו על כפתור הנגישות העגול (סמל אדם) בפינה התחתונה של המסך, או נווטו אליו באמצעות מקש Tab. מהרכיב ניתן להגדיל את הטקסט, להפעיל ניגודיות גבוהה, לעצור אנימציות ולהדגיש קישורים — וההגדרות נשמרות לביקורים הבאים." },
+            ],
+          },
+          {
+            heading: "5. מגבלות ידועות",
+            blocks: [
+              { type: "p", text: "אנו עובדים באופן שוטף לשיפור הנגישות, וייתכן שחלקים מסוימים טרם הונגשו במלואם. בנוסף, האתר משלב תכנים ושירותים של גורמים חיצוניים שאינם בשליטתנו הישירה — כגון מפות מוטמעות (Google Maps, GovMap), נגני רשתות חברתיות ושירות WhatsApp — ונגישותם תלויה בספקים אלה. נתקלתם בקושי? דווחו לנו ונדאג לחלופה נגישה." },
+            ],
+          },
+          {
+            heading: "6. רכז הנגישות — דיווח על בעיות",
+            blocks: [
+              { type: "p", text: "נתקלתם בבעיית נגישות? נשמח לדעת כדי לפתור אותה בהקדם." },
+              { type: "contact" },
+            ],
+          },
+          {
+            heading: "7. רשות לנגישות",
+            blocks: [
+              { type: "link", before: "אם לא קיבלתם מענה מספק, ניתן לפנות ל", linkText: "הנציבות לשוויון זכויות של אנשים עם מוגבלות", href: "https://www.gov.il/he/departments/bureaus/disabilities-equal-rights-commission", after: " במשרד המשפטים." },
+            ],
+          },
+        ],
+      },
     },
   },
 
@@ -1476,6 +1730,239 @@ export const translations: Record<Locale, T> = {
       whatsapp_button: "Send a WhatsApp message",
       content_coming_soon: "The article content will appear here soon.",
     },
+    legal: {
+      common: {
+        eyebrow_legal: "Legal",
+        eyebrow_accessibility: "Accessibility",
+        updated: "Last updated: July 2026",
+        label_name: "Name:",
+        label_phone: "Phone / WhatsApp:",
+        label_email: "Email:",
+        label_address: "Address:",
+        address: "319 HaYarkon St., Tel Aviv Port",
+      },
+      privacy: {
+        meta_title: "Privacy Policy | Idan LaNadlan",
+        meta_description: "Idan LaNadlan's privacy policy — what information is collected, for what purpose, who it is shared with, and your rights.",
+        title: "Privacy Policy",
+        contact_name: "Idan Huli",
+        sections: [
+          {
+            heading: "1. General",
+            blocks: [
+              { type: "p", text: "Idan LaNadlan (Idan Huli, real estate broker license no. **3205360**) is committed to protecting the privacy of users of idanlanadlan.co.il in accordance with the Israeli Privacy Protection Law 5741-1981 and its regulations, **including Amendment 13 to the law** (in effect since August 2025), and EU regulations (GDPR) where applicable. Providing information on the site is voluntary — you are not legally required to provide information, but without it we won't be able to get back to you." },
+            ],
+          },
+          {
+            heading: "2. Information collected — by channel",
+            blocks: [
+              { type: "list", items: [
+                "**Contact form** — type of inquiry, full name, phone, city, and email (if provided)",
+                "**Toolbox forms** (inspection checklist, property-match quiz, plot lookup, and others) — name, phone, email (optional), and the search/simulation details you entered (e.g. an address or plot/parcel numbers)",
+                "**WhatsApp group sign-up form** — name, phone, what you're looking for, budget, and property purpose; the details are sent as a WhatsApp message from your own device directly to Idan",
+                "**Digital advisor (AI chat)** — the conversation content only, to generate a response; the conversation is not stored by us after the window is closed",
+                "**Browser preferences** — language, theme, accessibility settings, and your cookie-banner choice are stored locally in your browser only (localStorage) and are never sent to our server",
+              ] },
+            ],
+          },
+          {
+            heading: "3. Purposes of use",
+            blocks: [
+              { type: "list", items: [
+                "Responding to your inquiry and providing real estate brokerage and marketing services",
+                "Recording consents as required by law",
+                "**Marketing communications (phone/WhatsApp/email) — only if you explicitly checked the separate consent box**, in accordance with Section 30A of the Israeli Communications Law (Amendment 40, the \"Anti-Spam Law\"). You may withdraw consent at any time by replying, via WhatsApp or phone, and we will stop sending marketing messages within 3 business days",
+              ] },
+            ],
+          },
+          {
+            heading: "4. Who the information is shared with (data processors)",
+            blocks: [
+              { type: "p", text: "We do not sell your information. It is shared only with the operational service providers of the site, to the minimum extent required:" },
+              { type: "list", items: [
+                "**Resend** — sending an email notification about your inquiry to Idan",
+                "**Vercel** — hosting the site and server infrastructure",
+                "**Supabase** — the site's content database (properties and articles); your inquiries are not stored in it",
+                "**Nadlan One** — the office's lead-management system, to which an inquiry from the contact form may be forwarded",
+                "**Anthropic** — processing the digital advisor's (AI) conversations",
+                "**Google (Google Analytics 4)** — anonymous statistical analysis of site usage, only subject to your consent in the cookie banner",
+                "**GovMap / The Survey of Israel** — in the plot/parcel lookup tool and maps, the address you type is sent to the government service to perform the lookup",
+                "**WhatsApp (Meta)** — when you choose to get in touch or join a group via WhatsApp",
+              ] },
+              { type: "p", text: "Some providers store data outside Israel; the transfer is made in accordance with the Privacy Protection Regulations (transfer of data to databases outside Israel's borders). Beyond this, personal information will not be shared with a third party without your consent, unless required by law or court order." },
+            ],
+          },
+          {
+            heading: "5. Cookies and local storage",
+            blocks: [
+              { type: "p", text: "The site uses **local storage and functional cookies** — to remember your language, theme, accessibility settings, and cookie-banner choice; these are always active. In addition, **only subject to your explicit consent in the cookie banner**, an analytics cookie (Google Analytics 4) is activated for anonymous statistical understanding of site usage — not for advertising purposes. **We do not run any advertising pixels.** You can change your choice at any time by clearing cookies in your browser settings." },
+            ],
+          },
+          {
+            heading: "6. Data retention period",
+            blocks: [
+              { type: "p", text: "Inquiries received are kept in the business email inbox and the lead-management system for as long as needed to handle the inquiry, maintain a business relationship, or comply with legal obligations. You may request deletion at any time (see Section 8) and we will act accordingly, subject to legal retention obligations." },
+            ],
+          },
+          {
+            heading: "7. Data security",
+            blocks: [
+              { type: "p", text: "We take security measures in accordance with the Privacy Protection Regulations (Data Security) 5777-2017: all site traffic is encrypted (HTTPS), access to information is restricted to Idan Huli alone, and inquiry details are not stored in the site's public database." },
+            ],
+          },
+          {
+            heading: "8. Your rights",
+            blocks: [
+              { type: "p", text: "Under the Privacy Protection Law (including Amendment 13), you have the following rights:" },
+              { type: "list", items: [
+                "Right of access — to know what data is held about you",
+                "Right of rectification — to correct inaccurate or outdated information",
+                "Right of erasure — to request deletion of your personal information",
+                "Right to withdraw marketing consent — at any time and without justification",
+              ] },
+              { type: "link", before: "Didn't get a satisfactory response? You may contact the Privacy Protection Authority (", linkText: "gov.il", href: "https://www.gov.il/he/departments/the_privacy_protection_authority", after: ")." },
+            ],
+          },
+          {
+            heading: "9. Contact regarding privacy",
+            blocks: [{ type: "contact" }],
+          },
+        ],
+      },
+      terms: {
+        meta_title: "Terms of Use | Idan LaNadlan",
+        meta_description: "Terms of use for the Idan LaNadlan website.",
+        title: "Terms of Use",
+        contact_name: "Idan Huli — Idan LaNadlan",
+        sections: [
+          {
+            heading: "1. General and acceptance of terms",
+            blocks: [
+              { type: "p", text: "The website idanlanadlan.co.il (the \"Site\") is operated by Idan Huli — Idan LaNadlan, a licensed real estate broker, license no. **3205360**. Browsing and using the site constitutes acceptance of these terms. If you do not agree to these terms — please refrain from using the site." },
+            ],
+          },
+          {
+            heading: "2. Nature of the service and information on the site",
+            blocks: [
+              { type: "list", items: [
+                "The site presents information about properties, professional articles, and interactive calculation tools",
+                "**Information on the site does not constitute legal, tax, financial, or appraisal advice**, and is not a substitute for individual professional advice",
+                "Results from the calculators and tools (yield, mortgage, taxes, plot/parcel, and others) are **illustrative estimates only**, based on the data entered and general figures that may change; they should not be relied upon to carry out a transaction without checking with the relevant authorities",
+                "Property details shown may change, be updated, or be sold/rented at any time, and do not constitute a binding offer",
+              ] },
+            ],
+          },
+          {
+            heading: "3. Brokerage services",
+            blocks: [
+              { type: "p", text: "Real estate brokerage services are provided in accordance with the Israeli Real Estate Brokers Law 5756-1996, and are subject to signing a written brokerage services order. Displaying a property on the site or contacting through it does not in itself create an obligation to broker or an entitlement to a brokerage fee, except in accordance with a signed agreement." },
+            ],
+          },
+          {
+            heading: "4. The digital advisor (AI)",
+            blocks: [
+              { type: "link", before: "The site's chat is powered by artificial intelligence and provides general information only. Answers may contain inaccuracies or outdated information, and should not be relied upon without verification from a qualified professional. Use of the chat is also subject to the ", linkText: "Privacy Policy", href: "/privacy", after: ".", internal: true },
+            ],
+          },
+          {
+            heading: "5. Intellectual property",
+            blocks: [
+              { type: "p", text: "All rights in the site's content — text, design, logo, images (excluding images provided by third parties), and code — are reserved to Idan LaNadlan. You may not copy, reproduce, or make commercial use of the content without prior written permission." },
+            ],
+          },
+          {
+            heading: "6. Limitation of liability and external links",
+            blocks: [
+              { type: "list", items: [
+                "The site and its content are provided as-is; we do not guarantee continuous availability or error-free operation",
+                "The site links to external services (WhatsApp, GovMap and Google maps, social networks) — we are not responsible for their content, availability, or privacy policies",
+                "Subject to applicable law, we shall not be liable for indirect damage caused by reliance on information or tools on the site",
+              ] },
+            ],
+          },
+          {
+            heading: "7. Prohibited use",
+            blocks: [
+              { type: "p", text: "You may not make unlawful use of the site, interfere with its proper operation, perform automated data mining, or submit offensive or false content in the forms or chat." },
+            ],
+          },
+          {
+            heading: "8. Changes to the terms, governing law, and jurisdiction",
+            blocks: [
+              { type: "p", text: "We may update these terms from time to time; the binding version is the one published on the site at the time of use. Israeli law alone shall apply to the use of the site, and exclusive jurisdiction is granted to the competent courts in Tel Aviv-Jaffa." },
+            ],
+          },
+          {
+            heading: "9. Contact",
+            blocks: [{ type: "contact" }],
+          },
+        ],
+      },
+      accessibility: {
+        meta_title: "Accessibility Statement | Idan LaNadlan",
+        meta_description: "Accessibility statement for the Idan LaNadlan website, in accordance with Israeli Standard 5568 and WCAG 2.1 level AA.",
+        title: "Accessibility Statement",
+        contact_name: "Idan Huli — Accessibility Coordinator",
+        contact_note: "We are committed to responding within 5 business days.",
+        sections: [
+          {
+            heading: "1. Our commitment to accessibility",
+            blocks: [
+              { type: "p", text: "Idan LaNadlan is committed to providing people with disabilities full and equal access to the site's content, in accordance with the Israeli Equal Rights for Persons with Disabilities Law 5758-1998 and the Accessibility of Service Regulations (Amendment No. 19), as well as the WCAG 2.1 level AA guidelines." },
+            ],
+          },
+          {
+            heading: "2. Accessibility standard",
+            blocks: [
+              { type: "p", text: "The site works to meet the requirements of **Israeli Standard 5568**, based on **WCAG 2.1 level AA**. This standard requires businesses in Israel providing service to the public to ensure their websites are accessible, since January 2021." },
+            ],
+          },
+          {
+            heading: "3. What was done to improve accessibility",
+            blocks: [
+              { type: "list", items: [
+                "**A dedicated accessibility widget** — a floating button in the corner of the screen that enables text enlargement (up to 125%), a high-contrast mode, stopping animations, and highlighting links; preferences are saved between visits",
+                "Light/dark display mode by user choice",
+                "Accessibility labels (aria) on interactive elements, including forms, dialogs, and suggestion lists",
+                "Descriptive alternative text (alt) for content images on the site",
+                "Color contrast meeting level AA requirements, plus a dedicated high-contrast mode in the accessibility widget",
+                "Keyboard navigation — interactive elements are reachable via Tab, with a visible focus indicator; dialogs close on Escape",
+                "A \"skip to content\" link at the top of the page for quick navigation by screen-reader users",
+                "Labels linked to fields in all forms, and error announcements for screen readers",
+                "Hierarchical heading structure and support for RTL (Hebrew) and LTR (English, French, Spanish) direction",
+                "Animations respect the operating system's setting (prefers-reduced-motion) and can be fully stopped via the accessibility widget",
+                "Fonts can be enlarged without breaking the layout",
+              ] },
+            ],
+          },
+          {
+            heading: "4. Accessibility arrangements on the site",
+            blocks: [
+              { type: "p", text: "To open the accessibility widget, click the round accessibility button (person icon) at the bottom corner of the screen, or navigate to it using the Tab key. From the widget you can enlarge text, enable high contrast, stop animations, and highlight links — and the settings are saved for future visits." },
+            ],
+          },
+          {
+            heading: "5. Known limitations",
+            blocks: [
+              { type: "p", text: "We work continuously to improve accessibility, and some parts may not yet be fully accessible. In addition, the site incorporates content and services from external parties not under our direct control — such as embedded maps (Google Maps, GovMap), social network players, and the WhatsApp service — and their accessibility depends on these providers. Encountered a difficulty? Let us know and we'll arrange an accessible alternative." },
+            ],
+          },
+          {
+            heading: "6. Accessibility coordinator — reporting issues",
+            blocks: [
+              { type: "p", text: "Encountered an accessibility issue? We'd be glad to know so we can resolve it promptly." },
+              { type: "contact" },
+            ],
+          },
+          {
+            heading: "7. Accessibility authority",
+            blocks: [
+              { type: "link", before: "If you did not receive a satisfactory response, you may contact the ", linkText: "Commission for Equal Rights of Persons with Disabilities", href: "https://www.gov.il/he/departments/bureaus/disabilities-equal-rights-commission", after: " at the Ministry of Justice." },
+            ],
+          },
+        ],
+      },
+    },
   },
 
   fr: {
@@ -2146,6 +2633,239 @@ export const translations: Record<Locale, T> = {
       whatsapp_button: "Envoyer un message WhatsApp",
       content_coming_soon: "Le contenu de l'article apparaîtra ici bientôt.",
     },
+    legal: {
+      common: {
+        eyebrow_legal: "Mentions légales",
+        eyebrow_accessibility: "Accessibilité",
+        updated: "Dernière mise à jour : juillet 2026",
+        label_name: "Nom :",
+        label_phone: "Téléphone / WhatsApp :",
+        label_email: "E-mail :",
+        label_address: "Adresse :",
+        address: "319 HaYarkon, Port de Tel Aviv",
+      },
+      privacy: {
+        meta_title: "Politique de confidentialité | Idan LaNadlan",
+        meta_description: "La politique de confidentialité d'Idan LaNadlan — quelles informations sont collectées, dans quel but, à qui elles sont transmises, et vos droits.",
+        title: "Politique de confidentialité",
+        contact_name: "Idan Huli",
+        sections: [
+          {
+            heading: "1. Généralités",
+            blocks: [
+              { type: "p", text: "Idan LaNadlan (Idan Huli, agent immobilier titulaire de la licence n° **3205360**) s'engage à protéger la vie privée des utilisateurs du site idanlanadlan.co.il conformément à la loi israélienne sur la protection de la vie privée 5741-1981 et ses règlements, **y compris l'amendement 13 de la loi** (en vigueur depuis août 2025), ainsi qu'au règlement européen (RGPD) le cas échéant. La communication d'informations sur le site est volontaire — vous n'êtes pas légalement tenu de fournir des informations, mais sans elles nous ne pourrons pas vous recontacter." },
+            ],
+          },
+          {
+            heading: "2. Informations collectées — par canal",
+            blocks: [
+              { type: "list", items: [
+                "**Formulaire de contact** — type de demande, nom complet, téléphone, ville, et e-mail (si fourni)",
+                "**Formulaires de la boîte à outils** (check-list d'inspection, questionnaire de compatibilité, recherche de parcelle, etc.) — nom, téléphone, e-mail (facultatif) et les détails de recherche/simulation que vous avez saisis (par exemple une adresse ou des numéros de parcelle)",
+                "**Formulaire d'inscription aux groupes WhatsApp** — nom, téléphone, ce que vous recherchez, budget et objectif du bien ; les informations sont envoyées sous forme de message WhatsApp depuis votre propre appareil directement à Idan",
+                "**Conseiller numérique (chat IA)** — le contenu de la conversation uniquement, pour générer une réponse ; la conversation n'est pas conservée par nos soins après la fermeture de la fenêtre",
+                "**Préférences du navigateur** — langue, thème, paramètres d'accessibilité et votre choix concernant la bannière de cookies sont stockés localement dans votre navigateur uniquement (localStorage) et ne sont jamais envoyés à notre serveur",
+              ] },
+            ],
+          },
+          {
+            heading: "3. Finalités du traitement",
+            blocks: [
+              { type: "list", items: [
+                "Répondre à votre demande et fournir des services de courtage et de marketing immobilier",
+                "Enregistrer les consentements comme requis par la loi",
+                "**Communications marketing (téléphone/WhatsApp/e-mail) — uniquement si vous avez explicitement coché la case de consentement séparée**, conformément à l'article 30A de la loi israélienne sur les communications (amendement 40, la « loi anti-spam »). Vous pouvez retirer votre consentement à tout moment en répondant, par WhatsApp ou par téléphone, et nous cesserons les communications marketing sous 3 jours ouvrés",
+              ] },
+            ],
+          },
+          {
+            heading: "4. À qui les informations sont transmises (sous-traitants)",
+            blocks: [
+              { type: "p", text: "Nous ne vendons pas vos informations. Elles ne sont partagées qu'avec les prestataires de services opérationnels du site, dans la mesure minimale nécessaire :" },
+              { type: "list", items: [
+                "**Resend** — envoi d'une notification par e-mail à Idan concernant votre demande",
+                "**Vercel** — hébergement du site et infrastructure serveur",
+                "**Supabase** — la base de données de contenu du site (biens et articles) ; vos demandes n'y sont pas stockées",
+                "**Nadlan One** — le système de gestion des prospects du cabinet, auquel une demande du formulaire de contact peut être transmise",
+                "**Anthropic** — traitement des conversations du conseiller numérique (IA)",
+                "**Google (Google Analytics 4)** — analyse statistique anonyme de l'utilisation du site, uniquement sous réserve de votre consentement dans la bannière de cookies",
+                "**GovMap / l'Institut cartographique d'Israël** — dans l'outil de recherche de parcelle et les cartes, l'adresse que vous saisissez est envoyée au service gouvernemental pour effectuer la recherche",
+                "**WhatsApp (Meta)** — lorsque vous choisissez de nous contacter ou de rejoindre un groupe via WhatsApp",
+              ] },
+              { type: "p", text: "Certains prestataires stockent des données hors d'Israël ; le transfert est effectué conformément à la réglementation sur la protection de la vie privée (transfert de données vers des bases de données situées hors des frontières du pays). Au-delà de cela, les informations personnelles ne seront pas transmises à un tiers sans votre consentement, sauf si la loi ou une décision de justice l'exige." },
+            ],
+          },
+          {
+            heading: "5. Cookies et stockage local",
+            blocks: [
+              { type: "p", text: "Le site utilise **le stockage local et des cookies fonctionnels** — pour mémoriser votre langue, votre thème, vos paramètres d'accessibilité et votre choix concernant la bannière de cookies ; ceux-ci sont toujours actifs. De plus, **uniquement sous réserve de votre consentement explicite dans la bannière de cookies**, un cookie analytique (Google Analytics 4) est activé pour une compréhension statistique anonyme de l'utilisation du site — non à des fins publicitaires. **Nous n'utilisons aucun pixel publicitaire.** Vous pouvez modifier votre choix à tout moment en supprimant les cookies dans les paramètres de votre navigateur." },
+            ],
+          },
+          {
+            heading: "6. Durée de conservation des données",
+            blocks: [
+              { type: "p", text: "Les demandes reçues sont conservées dans la boîte e-mail professionnelle et le système de gestion des prospects aussi longtemps que nécessaire pour traiter la demande, maintenir une relation commerciale, ou respecter des obligations légales. Vous pouvez demander leur suppression à tout moment (voir section 8) et nous agirons en conséquence, sous réserve des obligations légales de conservation." },
+            ],
+          },
+          {
+            heading: "7. Sécurité des données",
+            blocks: [
+              { type: "p", text: "Nous prenons des mesures de sécurité conformément au règlement sur la protection de la vie privée (sécurité des données) 5777-2017 : tout le trafic du site est chiffré (HTTPS), l'accès aux informations est limité à Idan Huli uniquement, et les détails des demandes ne sont pas stockés dans la base de données publique du site." },
+            ],
+          },
+          {
+            heading: "8. Vos droits",
+            blocks: [
+              { type: "p", text: "En vertu de la loi sur la protection de la vie privée (y compris l'amendement 13), vous disposez des droits suivants :" },
+              { type: "list", items: [
+                "Droit d'accès — connaître les données détenues à votre sujet",
+                "Droit de rectification — corriger des informations inexactes ou obsolètes",
+                "Droit à l'effacement — demander la suppression de vos informations personnelles",
+                "Droit de retirer votre consentement au marketing — à tout moment et sans justification",
+              ] },
+              { type: "link", before: "Vous n'avez pas obtenu de réponse satisfaisante ? Vous pouvez contacter l'Autorité de protection de la vie privée (", linkText: "gov.il", href: "https://www.gov.il/he/departments/the_privacy_protection_authority", after: ")." },
+            ],
+          },
+          {
+            heading: "9. Contact pour les questions de confidentialité",
+            blocks: [{ type: "contact" }],
+          },
+        ],
+      },
+      terms: {
+        meta_title: "Conditions d'utilisation | Idan LaNadlan",
+        meta_description: "Conditions d'utilisation du site Idan LaNadlan.",
+        title: "Conditions d'utilisation",
+        contact_name: "Idan Huli — Idan LaNadlan",
+        sections: [
+          {
+            heading: "1. Généralités et acceptation des conditions",
+            blocks: [
+              { type: "p", text: "Le site idanlanadlan.co.il (le « Site ») est exploité par Idan Huli — Idan LaNadlan, agent immobilier agréé, licence n° **3205360**. La navigation et l'utilisation du site valent acceptation des présentes conditions. Si vous n'acceptez pas ces conditions — veuillez vous abstenir d'utiliser le site." },
+            ],
+          },
+          {
+            heading: "2. Nature du service et des informations du site",
+            blocks: [
+              { type: "list", items: [
+                "Le site présente des informations sur des biens, des articles professionnels et des outils de calcul interactifs",
+                "**Les informations du site ne constituent pas un conseil juridique, fiscal, financier ou d'expertise**, et ne remplacent pas un conseil professionnel individualisé",
+                "Les résultats des calculateurs et outils (rendement, prêt, taxes, parcelle, etc.) sont des **estimations à titre indicatif uniquement**, fondées sur les données saisies et des données générales susceptibles d'évoluer ; ils ne doivent pas être utilisés pour réaliser une transaction sans vérification auprès des autorités compétentes",
+                "Les détails des biens présentés peuvent changer, être mis à jour, ou être vendus/loués à tout moment, et ne constituent pas une offre contraignante",
+              ] },
+            ],
+          },
+          {
+            heading: "3. Services de courtage",
+            blocks: [
+              { type: "p", text: "Les services de courtage immobilier sont fournis conformément à la loi israélienne sur les agents immobiliers 5756-1996, et sont soumis à la signature d'un mandat de courtage écrit. La présentation d'un bien sur le site ou une prise de contact via celui-ci ne crée pas en soi d'obligation de courtage ni de droit à des honoraires de courtage, sauf accord signé." },
+            ],
+          },
+          {
+            heading: "4. Le conseiller numérique (IA)",
+            blocks: [
+              { type: "link", before: "Le chat du site fonctionne grâce à l'intelligence artificielle et fournit des informations générales uniquement. Les réponses peuvent contenir des inexactitudes ou des informations obsolètes, et ne doivent pas être utilisées sans vérification auprès d'un professionnel qualifié. L'utilisation du chat est également soumise à la ", linkText: "politique de confidentialité", href: "/privacy", after: ".", internal: true },
+            ],
+          },
+          {
+            heading: "5. Propriété intellectuelle",
+            blocks: [
+              { type: "p", text: "Tous les droits sur le contenu du site — textes, design, logo, images (à l'exception des images fournies par des tiers) et code — sont réservés à Idan LaNadlan. Il est interdit de copier, reproduire ou faire un usage commercial du contenu sans autorisation écrite préalable." },
+            ],
+          },
+          {
+            heading: "6. Limitation de responsabilité et liens externes",
+            blocks: [
+              { type: "list", items: [
+                "Le site et son contenu sont fournis « tels quels » ; nous ne garantissons ni disponibilité continue ni absence d'erreurs",
+                "Le site est relié à des services externes (WhatsApp, cartes GovMap et Google, réseaux sociaux) — nous ne sommes pas responsables de leur contenu, de leur disponibilité, ni de leurs politiques de confidentialité",
+                "Sous réserve du droit applicable, nous ne serons pas tenus responsables des dommages indirects résultant de la confiance accordée aux informations ou outils du site",
+              ] },
+            ],
+          },
+          {
+            heading: "7. Utilisation interdite",
+            blocks: [
+              { type: "p", text: "Il est interdit de faire un usage illégal du site, de nuire à son bon fonctionnement, d'effectuer une extraction automatisée de données, ou de saisir un contenu offensant ou mensonger dans les formulaires ou le chat." },
+            ],
+          },
+          {
+            heading: "8. Modifications des conditions, droit applicable et juridiction",
+            blocks: [
+              { type: "p", text: "Nous pouvons mettre à jour ces conditions de temps à autre ; la version faisant foi est celle publiée sur le site au moment de l'utilisation. Seul le droit israélien s'applique à l'utilisation du site, et la juridiction exclusive est attribuée aux tribunaux compétents de Tel Aviv-Jaffa." },
+            ],
+          },
+          {
+            heading: "9. Contact",
+            blocks: [{ type: "contact" }],
+          },
+        ],
+      },
+      accessibility: {
+        meta_title: "Déclaration d'accessibilité | Idan LaNadlan",
+        meta_description: "Déclaration d'accessibilité du site Idan LaNadlan, conforme à la norme israélienne 5568 et au niveau AA des WCAG 2.1.",
+        title: "Déclaration d'accessibilité",
+        contact_name: "Idan Huli — Coordinateur accessibilité",
+        contact_note: "Nous nous engageons à répondre sous 5 jours ouvrés.",
+        sections: [
+          {
+            heading: "1. Notre engagement envers l'accessibilité",
+            blocks: [
+              { type: "p", text: "Idan LaNadlan s'engage à offrir aux personnes en situation de handicap un accès complet et équitable au contenu du site, conformément à la loi israélienne sur l'égalité des droits des personnes handicapées 5758-1998 et au règlement sur l'accessibilité des services (amendement n° 19), ainsi qu'aux directives WCAG 2.1 niveau AA." },
+            ],
+          },
+          {
+            heading: "2. Norme d'accessibilité",
+            blocks: [
+              { type: "p", text: "Le site s'efforce de respecter les exigences de la **norme israélienne 5568**, fondée sur les **WCAG 2.1 niveau AA**. Cette norme impose aux entreprises israéliennes fournissant un service au public de garantir l'accessibilité de leur site, depuis janvier 2021." },
+            ],
+          },
+          {
+            heading: "3. Mesures prises pour améliorer l'accessibilité",
+            blocks: [
+              { type: "list", items: [
+                "**Widget d'accessibilité dédié** — un bouton flottant dans un coin de l'écran permettant d'agrandir le texte (jusqu'à 125 %), un mode contraste élevé, l'arrêt des animations et la mise en évidence des liens ; les préférences sont conservées entre les visites",
+                "Mode d'affichage clair/sombre au choix de l'utilisateur",
+                "Étiquettes d'accessibilité (aria) sur les éléments interactifs, y compris les formulaires, les boîtes de dialogue et les listes de suggestions",
+                "Texte alternatif (alt) descriptif pour les images de contenu du site",
+                "Contraste des couleurs conforme aux exigences du niveau AA, avec en plus un mode contraste élevé dédié dans le widget d'accessibilité",
+                "Navigation au clavier — les éléments interactifs sont accessibles via Tab, avec un indicateur de focus visible ; les boîtes de dialogue se ferment avec Échap",
+                "Un lien « aller au contenu » en haut de page pour une navigation rapide par les lecteurs d'écran",
+                "Étiquettes associées aux champs dans tous les formulaires et annonce des erreurs pour les lecteurs d'écran",
+                "Structure de titres hiérarchique et prise en charge des sens RTL (hébreu) et LTR (anglais, français, espagnol)",
+                "Les animations respectent le réglage du système d'exploitation (prefers-reduced-motion) et peuvent être totalement arrêtées via le widget d'accessibilité",
+                "Les polices peuvent être agrandies sans casser la mise en page",
+              ] },
+            ],
+          },
+          {
+            heading: "4. Dispositifs d'accessibilité sur le site",
+            blocks: [
+              { type: "p", text: "Pour ouvrir le widget d'accessibilité, cliquez sur le bouton rond d'accessibilité (icône personnage) en bas de l'écran, ou naviguez jusqu'à lui avec la touche Tab. Depuis le widget, vous pouvez agrandir le texte, activer le contraste élevé, arrêter les animations et mettre en évidence les liens — les réglages sont conservés pour vos prochaines visites." },
+            ],
+          },
+          {
+            heading: "5. Limitations connues",
+            blocks: [
+              { type: "p", text: "Nous œuvrons en permanence à l'amélioration de l'accessibilité, et certaines parties peuvent ne pas encore être entièrement accessibles. De plus, le site intègre des contenus et services de tiers qui ne sont pas sous notre contrôle direct — comme les cartes intégrées (Google Maps, GovMap), les lecteurs de réseaux sociaux et le service WhatsApp — et leur accessibilité dépend de ces prestataires. Vous rencontrez une difficulté ? Faites-le-nous savoir et nous vous proposerons une alternative accessible." },
+            ],
+          },
+          {
+            heading: "6. Coordinateur accessibilité — signaler un problème",
+            blocks: [
+              { type: "p", text: "Vous avez rencontré un problème d'accessibilité ? Nous serons heureux d'en être informés afin de le résoudre rapidement." },
+              { type: "contact" },
+            ],
+          },
+          {
+            heading: "7. Autorité en matière d'accessibilité",
+            blocks: [
+              { type: "link", before: "Si vous n'avez pas reçu de réponse satisfaisante, vous pouvez contacter la ", linkText: "Commission pour l'égalité des droits des personnes handicapées", href: "https://www.gov.il/he/departments/bureaus/disabilities-equal-rights-commission", after: " au ministère de la Justice." },
+            ],
+          },
+        ],
+      },
+    },
   },
 
   es: {
@@ -2815,6 +3535,239 @@ export const translations: Record<Locale, T> = {
       questions_title: "Habla directamente con Idan",
       whatsapp_button: "Enviar mensaje por WhatsApp",
       content_coming_soon: "El contenido del artículo aparecerá aquí pronto.",
+    },
+    legal: {
+      common: {
+        eyebrow_legal: "Legal",
+        eyebrow_accessibility: "Accesibilidad",
+        updated: "Última actualización: julio de 2026",
+        label_name: "Nombre:",
+        label_phone: "Teléfono / WhatsApp:",
+        label_email: "Correo electrónico:",
+        label_address: "Dirección:",
+        address: "HaYarkon 319, Puerto de Tel Aviv",
+      },
+      privacy: {
+        meta_title: "Política de privacidad | Idan LaNadlan",
+        meta_description: "La política de privacidad de Idan LaNadlan — qué información se recopila, con qué fin, a quién se transmite y cuáles son tus derechos.",
+        title: "Política de privacidad",
+        contact_name: "Idan Huli",
+        sections: [
+          {
+            heading: "1. General",
+            blocks: [
+              { type: "p", text: "Idan LaNadlan (Idan Huli, agente inmobiliario con licencia n.º **3205360**) se compromete a proteger la privacidad de los usuarios del sitio idanlanadlan.co.il de acuerdo con la Ley israelí de Protección de la Privacidad 5741-1981 y sus reglamentos, **incluida la Enmienda 13 de la ley** (en vigor desde agosto de 2025), y con el reglamento de la Unión Europea (RGPD) cuando corresponda. Proporcionar información en el sitio es voluntario — no estás legalmente obligado a proporcionar información, pero sin ella no podremos responderte." },
+            ],
+          },
+          {
+            heading: "2. Información recopilada — por canal",
+            blocks: [
+              { type: "list", items: [
+                "**Formulario de contacto** — tipo de consulta, nombre completo, teléfono, ciudad y correo electrónico (si se proporciona)",
+                "**Formularios de la caja de herramientas** (lista de verificación de inspección, cuestionario de compatibilidad, búsqueda de parcela, y otros) — nombre, teléfono, correo electrónico (opcional) y los detalles de búsqueda/simulación que introdujiste (por ejemplo, una dirección o números de parcela)",
+                "**Formulario de inscripción a grupos de WhatsApp** — nombre, teléfono, qué estás buscando, presupuesto y propósito de la propiedad; los datos se envían como mensaje de WhatsApp desde tu propio dispositivo directamente a Idan",
+                "**Asesor digital (chat de IA)** — solo el contenido de la conversación, para generar una respuesta; la conversación no se almacena por nuestra parte después de cerrar la ventana",
+                "**Preferencias del navegador** — idioma, tema, ajustes de accesibilidad y tu elección en el banner de cookies se almacenan localmente solo en tu navegador (localStorage) y nunca se envían a nuestro servidor",
+              ] },
+            ],
+          },
+          {
+            heading: "3. Finalidades del tratamiento",
+            blocks: [
+              { type: "list", items: [
+                "Responder a tu consulta y prestar servicios de intermediación y marketing inmobiliario",
+                "Registrar los consentimientos según lo exige la ley",
+                "**Comunicaciones de marketing (teléfono/WhatsApp/correo electrónico) — únicamente si marcaste explícitamente la casilla de consentimiento independiente**, de acuerdo con el artículo 30A de la Ley israelí de Comunicaciones (Enmienda 40, la «ley antispam»). Puedes retirar tu consentimiento en cualquier momento respondiendo, por WhatsApp o por teléfono, y dejaremos de enviar comunicaciones de marketing en un plazo de 3 días hábiles",
+              ] },
+            ],
+          },
+          {
+            heading: "4. A quién se transmite la información (encargados del tratamiento)",
+            blocks: [
+              { type: "p", text: "No vendemos tu información. Solo se comparte con los proveedores de servicios operativos del sitio, en la medida mínima necesaria:" },
+              { type: "list", items: [
+                "**Resend** — envío de una notificación por correo electrónico a Idan sobre tu consulta",
+                "**Vercel** — alojamiento del sitio e infraestructura de servidores",
+                "**Supabase** — la base de datos de contenido del sitio (propiedades y artículos); tus consultas no se almacenan en ella",
+                "**Nadlan One** — el sistema de gestión de contactos de la oficina, al que puede transmitirse una consulta del formulario de contacto",
+                "**Anthropic** — procesamiento de las conversaciones del asesor digital (IA)",
+                "**Google (Google Analytics 4)** — análisis estadístico anónimo del uso del sitio, únicamente sujeto a tu consentimiento en el banner de cookies",
+                "**GovMap / el Instituto Cartográfico de Israel** — en la herramienta de búsqueda de parcelas y los mapas, la dirección que escribes se envía al servicio gubernamental para realizar la búsqueda",
+                "**WhatsApp (Meta)** — cuando eliges contactarnos o unirte a un grupo a través de WhatsApp",
+              ] },
+              { type: "p", text: "Algunos proveedores almacenan datos fuera de Israel; la transferencia se realiza conforme al Reglamento de Protección de la Privacidad (transferencia de datos a bases de datos fuera de las fronteras del país). Más allá de esto, la información personal no se transmitirá a un tercero sin tu consentimiento, salvo que la ley o una orden judicial lo exijan." },
+            ],
+          },
+          {
+            heading: "5. Cookies y almacenamiento local",
+            blocks: [
+              { type: "p", text: "El sitio utiliza **almacenamiento local y cookies funcionales** — para recordar tu idioma, tema, ajustes de accesibilidad y tu elección en el banner de cookies; estos están siempre activos. Además, **únicamente sujeto a tu consentimiento explícito en el banner de cookies**, se activa una cookie analítica (Google Analytics 4) para una comprensión estadística anónima del uso del sitio — no con fines publicitarios. **No utilizamos ningún píxel publicitario.** Puedes cambiar tu elección en cualquier momento eliminando las cookies en la configuración de tu navegador." },
+            ],
+          },
+          {
+            heading: "6. Período de conservación de los datos",
+            blocks: [
+              { type: "p", text: "Las consultas recibidas se conservan en el correo electrónico empresarial y en el sistema de gestión de contactos mientras sea necesario para atender la consulta, mantener una relación comercial o cumplir con obligaciones legales. Puedes solicitar su eliminación en cualquier momento (ver sección 8) y actuaremos en consecuencia, sujeto a las obligaciones legales de conservación." },
+            ],
+          },
+          {
+            heading: "7. Seguridad de los datos",
+            blocks: [
+              { type: "p", text: "Adoptamos medidas de seguridad conforme al Reglamento de Protección de la Privacidad (Seguridad de los Datos) 5777-2017: todo el tráfico del sitio está cifrado (HTTPS), el acceso a la información está restringido únicamente a Idan Huli, y los detalles de las consultas no se almacenan en la base de datos pública del sitio." },
+            ],
+          },
+          {
+            heading: "8. Tus derechos",
+            blocks: [
+              { type: "p", text: "En virtud de la Ley de Protección de la Privacidad (incluida la Enmienda 13), tienes los siguientes derechos:" },
+              { type: "list", items: [
+                "Derecho de acceso — saber qué datos se conservan sobre ti",
+                "Derecho de rectificación — corregir información incorrecta u desactualizada",
+                "Derecho de supresión — solicitar la eliminación de tu información personal",
+                "Derecho a retirar el consentimiento de marketing — en cualquier momento y sin justificación",
+              ] },
+              { type: "link", before: "¿No recibiste una respuesta satisfactoria? Puedes contactar a la Autoridad de Protección de la Privacidad (", linkText: "gov.il", href: "https://www.gov.il/he/departments/the_privacy_protection_authority", after: ")." },
+            ],
+          },
+          {
+            heading: "9. Contacto para temas de privacidad",
+            blocks: [{ type: "contact" }],
+          },
+        ],
+      },
+      terms: {
+        meta_title: "Términos de uso | Idan LaNadlan",
+        meta_description: "Términos de uso del sitio Idan LaNadlan.",
+        title: "Términos de uso",
+        contact_name: "Idan Huli — Idan LaNadlan",
+        sections: [
+          {
+            heading: "1. General y aceptación de los términos",
+            blocks: [
+              { type: "p", text: "El sitio idanlanadlan.co.il (el «Sitio») es operado por Idan Huli — Idan LaNadlan, agente inmobiliario con licencia n.º **3205360**. Navegar y usar el sitio constituye la aceptación de estos términos. Si no estás de acuerdo con estos términos, por favor abstente de usar el sitio." },
+            ],
+          },
+          {
+            heading: "2. Naturaleza del servicio y de la información del sitio",
+            blocks: [
+              { type: "list", items: [
+                "El sitio presenta información sobre propiedades, artículos profesionales y herramientas de cálculo interactivas",
+                "**La información del sitio no constituye asesoramiento legal, fiscal, financiero o de tasación**, y no sustituye el asesoramiento profesional individualizado",
+                "Los resultados de las calculadoras y herramientas (rentabilidad, hipoteca, impuestos, parcela, y otros) son **estimaciones meramente ilustrativas**, basadas en los datos introducidos y en datos generales que pueden cambiar; no deben utilizarse para realizar una transacción sin verificación ante las autoridades competentes",
+                "Los detalles de las propiedades mostradas pueden cambiar, actualizarse o venderse/alquilarse en cualquier momento, y no constituyen una oferta vinculante",
+              ] },
+            ],
+          },
+          {
+            heading: "3. Servicios de intermediación",
+            blocks: [
+              { type: "p", text: "Los servicios de intermediación inmobiliaria se prestan de acuerdo con la Ley israelí de Agentes Inmobiliarios 5756-1996, y están sujetos a la firma de un encargo de servicios de intermediación por escrito. Presentar una propiedad en el sitio o contactar a través de él no crea, por sí mismo, una obligación de intermediación ni el derecho a una comisión, salvo conforme a un acuerdo firmado." },
+            ],
+          },
+          {
+            heading: "4. El asesor digital (IA)",
+            blocks: [
+              { type: "link", before: "El chat del sitio funciona mediante inteligencia artificial y proporciona información general únicamente. Las respuestas pueden contener imprecisiones o información desactualizada, y no deben utilizarse sin verificación ante un profesional cualificado. El uso del chat también está sujeto a la ", linkText: "política de privacidad", href: "/privacy", after: ".", internal: true },
+            ],
+          },
+          {
+            heading: "5. Propiedad intelectual",
+            blocks: [
+              { type: "p", text: "Todos los derechos sobre el contenido del sitio — textos, diseño, logotipo, imágenes (excepto las imágenes proporcionadas por terceros) y código — están reservados a Idan LaNadlan. No está permitido copiar, reproducir ni hacer un uso comercial del contenido sin autorización previa y por escrito." },
+            ],
+          },
+          {
+            heading: "6. Limitación de responsabilidad y enlaces externos",
+            blocks: [
+              { type: "list", items: [
+                "El sitio y su contenido se ofrecen «tal cual»; no garantizamos disponibilidad continua ni ausencia de errores",
+                "El sitio enlaza a servicios externos (WhatsApp, mapas de GovMap y Google, redes sociales) — no somos responsables de su contenido, disponibilidad o políticas de privacidad",
+                "Sujeto a la legislación aplicable, no seremos responsables de daños indirectos derivados de la confianza depositada en la información o herramientas del sitio",
+              ] },
+            ],
+          },
+          {
+            heading: "7. Uso prohibido",
+            blocks: [
+              { type: "p", text: "No está permitido hacer un uso ilícito del sitio, perjudicar su correcto funcionamiento, realizar extracción automatizada de datos, ni introducir contenido ofensivo o falso en los formularios o el chat." },
+            ],
+          },
+          {
+            heading: "8. Cambios en los términos, ley aplicable y jurisdicción",
+            blocks: [
+              { type: "p", text: "Podemos actualizar estos términos de vez en cuando; la versión vinculante es la publicada en el sitio en el momento del uso. Al uso del sitio se aplicará exclusivamente la legislación israelí, y la jurisdicción exclusiva corresponde a los tribunales competentes de Tel Aviv-Jaffa." },
+            ],
+          },
+          {
+            heading: "9. Contacto",
+            blocks: [{ type: "contact" }],
+          },
+        ],
+      },
+      accessibility: {
+        meta_title: "Declaración de accesibilidad | Idan LaNadlan",
+        meta_description: "Declaración de accesibilidad del sitio Idan LaNadlan, conforme a la norma israelí 5568 y al nivel AA de las WCAG 2.1.",
+        title: "Declaración de accesibilidad",
+        contact_name: "Idan Huli — Coordinador de accesibilidad",
+        contact_note: "Nos comprometemos a responder en un plazo de 5 días hábiles.",
+        sections: [
+          {
+            heading: "1. Nuestro compromiso con la accesibilidad",
+            blocks: [
+              { type: "p", text: "Idan LaNadlan se compromete a ofrecer a las personas con discapacidad un acceso completo y equitativo al contenido del sitio, de acuerdo con la Ley israelí de Igualdad de Derechos de las Personas con Discapacidad 5758-1998 y el Reglamento de Accesibilidad de Servicios (Enmienda n.º 19), así como con las pautas WCAG 2.1 nivel AA." },
+            ],
+          },
+          {
+            heading: "2. Norma de accesibilidad",
+            blocks: [
+              { type: "p", text: "El sitio trabaja para cumplir los requisitos de la **norma israelí 5568**, basada en las **WCAG 2.1 nivel AA**. Esta norma exige a las empresas en Israel que prestan servicio al público garantizar que sus sitios sean accesibles, desde enero de 2021." },
+            ],
+          },
+          {
+            heading: "3. Qué se hizo para mejorar la accesibilidad",
+            blocks: [
+              { type: "list", items: [
+                "**Widget de accesibilidad dedicado** — un botón flotante en la esquina de la pantalla que permite agrandar el texto (hasta el 125%), un modo de alto contraste, detener animaciones y resaltar enlaces; las preferencias se guardan entre visitas",
+                "Modo de visualización claro/oscuro a elección del usuario",
+                "Etiquetas de accesibilidad (aria) en los elementos interactivos, incluidos formularios, cuadros de diálogo y listas de sugerencias",
+                "Texto alternativo (alt) descriptivo para las imágenes de contenido del sitio",
+                "Contraste de color que cumple los requisitos del nivel AA, además de un modo de alto contraste dedicado en el widget de accesibilidad",
+                "Navegación por teclado — los elementos interactivos son accesibles mediante Tab, con un indicador de foco visible; los cuadros de diálogo se cierran con Escape",
+                "Un enlace «saltar al contenido» en la parte superior de la página para una navegación rápida por lectores de pantalla",
+                "Etiquetas vinculadas a los campos en todos los formularios y anuncio de errores para lectores de pantalla",
+                "Estructura de encabezados jerárquica y compatibilidad con las direcciones RTL (hebreo) y LTR (inglés, francés, español)",
+                "Las animaciones respetan la configuración del sistema operativo (prefers-reduced-motion) y pueden detenerse por completo mediante el widget de accesibilidad",
+                "Las fuentes pueden ampliarse sin romper el diseño",
+              ] },
+            ],
+          },
+          {
+            heading: "4. Disposiciones de accesibilidad en el sitio",
+            blocks: [
+              { type: "p", text: "Para abrir el widget de accesibilidad, haz clic en el botón redondo de accesibilidad (icono de persona) en la esquina inferior de la pantalla, o navega hasta él con la tecla Tab. Desde el widget puedes agrandar el texto, activar el alto contraste, detener animaciones y resaltar enlaces — y la configuración se guarda para tus próximas visitas." },
+            ],
+          },
+          {
+            heading: "5. Limitaciones conocidas",
+            blocks: [
+              { type: "p", text: "Trabajamos de forma continua para mejorar la accesibilidad, y es posible que algunas partes aún no sean totalmente accesibles. Además, el sitio incorpora contenidos y servicios de terceros que no están bajo nuestro control directo — como mapas incrustados (Google Maps, GovMap), reproductores de redes sociales y el servicio de WhatsApp — y su accesibilidad depende de estos proveedores. ¿Encontraste una dificultad? Avísanos y te ofreceremos una alternativa accesible." },
+            ],
+          },
+          {
+            heading: "6. Coordinador de accesibilidad — informar de problemas",
+            blocks: [
+              { type: "p", text: "¿Encontraste un problema de accesibilidad? Nos alegrará saberlo para poder resolverlo cuanto antes." },
+              { type: "contact" },
+            ],
+          },
+          {
+            heading: "7. Autoridad en materia de accesibilidad",
+            blocks: [
+              { type: "link", before: "Si no recibiste una respuesta satisfactoria, puedes contactar a la ", linkText: "Comisión para la Igualdad de Derechos de las Personas con Discapacidad", href: "https://www.gov.il/he/departments/bureaus/disabilities-equal-rights-commission", after: " del Ministerio de Justicia." },
+            ],
+          },
+        ],
+      },
     },
   },
 };
