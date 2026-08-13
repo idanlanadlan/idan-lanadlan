@@ -5,7 +5,7 @@ import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import ToolShell from "@/components/tools/ToolShell";
 import RoiCalculator from "@/components/tools/RoiCalculator";
 import { translations } from "@/lib/translations";
-import { isLocale } from "@/lib/locale-path";
+import { isLocale, canonicalAlternates } from "@/lib/locale-path";
 
 export async function generateMetadata({
   params,
@@ -15,7 +15,7 @@ export async function generateMetadata({
   const { locale } = await params;
   const l = isLocale(locale) ? locale : "he";
   const t = translations[l].toolbox.tools.roi_calculator;
-  return { title: t.meta_title, description: t.meta_description };
+  return { title: t.meta_title, description: t.meta_description, alternates: canonicalAlternates("/toolbox/roi-calculator", l) };
 }
 
 export default async function RoiCalculatorPage({

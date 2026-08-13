@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
@@ -11,6 +12,17 @@ import BlogPreview from "@/components/home/BlogPreview";
 import CtaSection from "@/components/home/CtaSection";
 import FaqSection from "@/components/home/FaqSection";
 import { getFeaturedProperties, getFeaturedBlogPosts } from "@/lib/db";
+import { isLocale, canonicalAlternates } from "@/lib/locale-path";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const l = isLocale(locale) ? locale : "he";
+  return { alternates: canonicalAlternates("", l) };
+}
 
 export default async function HomePage() {
   const [featuredProperties, blogPosts] = await Promise.all([

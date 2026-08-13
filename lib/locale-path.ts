@@ -29,3 +29,20 @@ export function localizedPath(path: string, locale: Locale): string {
   const prefixed = pathname === "/" ? `/${locale}` : `/${locale}${pathname}`;
   return `${prefixed}${suffix}`;
 }
+
+const BASE = "https://idanlanadlan.co.il";
+
+/** Builds the `alternates` field of a page's `generateMetadata` — a self-referential
+ * canonical for the given locale plus the full hreflang set for all locales. */
+export function canonicalAlternates(path: string, locale: Locale) {
+  return {
+    canonical: `${BASE}${localizedPath(path, locale)}`,
+    languages: {
+      he: `${BASE}${localizedPath(path, "he")}`,
+      en: `${BASE}${localizedPath(path, "en")}`,
+      fr: `${BASE}${localizedPath(path, "fr")}`,
+      es: `${BASE}${localizedPath(path, "es")}`,
+      "x-default": `${BASE}${localizedPath(path, "he")}`,
+    },
+  };
+}

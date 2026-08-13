@@ -5,7 +5,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import { translations } from "@/lib/translations";
-import { isLocale } from "@/lib/locale-path";
+import { isLocale, canonicalAlternates } from "@/lib/locale-path";
 import { getSettings } from "@/lib/db";
 
 export async function generateMetadata({
@@ -16,7 +16,7 @@ export async function generateMetadata({
   const { locale } = await params;
   const l = isLocale(locale) ? locale : "he";
   const a = translations[l].about;
-  return { title: a.meta_title, description: a.meta_description };
+  return { title: a.meta_title, description: a.meta_description, alternates: canonicalAlternates("/about", l) };
 }
 
 export default async function AboutPage({

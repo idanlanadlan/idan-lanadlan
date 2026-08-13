@@ -16,7 +16,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import { translations, type T } from "@/lib/translations";
-import { isLocale } from "@/lib/locale-path";
+import { isLocale, canonicalAlternates } from "@/lib/locale-path";
 
 export async function generateMetadata({
   params,
@@ -26,7 +26,7 @@ export async function generateMetadata({
   const { locale } = await params;
   const l = isLocale(locale) ? locale : "he";
   const idx = translations[l].toolbox.index;
-  return { title: idx.meta_title, description: idx.meta_description };
+  return { title: idx.meta_title, description: idx.meta_description, alternates: canonicalAlternates("/toolbox", l) };
 }
 
 const TOOL_META: { href: string; Icon: typeof TrendingUp; key: keyof T["toolbox"]["tools"] }[] = [

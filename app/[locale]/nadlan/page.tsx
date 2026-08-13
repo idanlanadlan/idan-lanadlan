@@ -1,11 +1,23 @@
+import type { Metadata } from "next";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import PropertiesClient from "@/components/properties/PropertiesClient";
 import MapSection from "@/components/home/MapSection";
 import { getProperties } from "@/lib/db";
+import { isLocale, canonicalAlternates } from "@/lib/locale-path";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const l = isLocale(locale) ? locale : "he";
+  return { alternates: canonicalAlternates("/nadlan", l) };
+}
 
 export default async function PropertiesPage() {
   const properties = (await getProperties()).filter((p) => p.type !== "project");

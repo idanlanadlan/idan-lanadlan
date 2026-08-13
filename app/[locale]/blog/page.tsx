@@ -8,7 +8,7 @@ import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import { getPublishedBlogPosts } from "@/lib/db";
 import { localizedBlogField, localizedBlogKeywords } from "@/lib/blog-utils";
 import { translations } from "@/lib/translations";
-import { isLocale } from "@/lib/locale-path";
+import { isLocale, canonicalAlternates } from "@/lib/locale-path";
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +20,7 @@ export async function generateMetadata({
   const { locale } = await params;
   const l = isLocale(locale) ? locale : "he";
   const b = translations[l].blog_page;
-  return { title: b.meta_title, description: b.meta_description };
+  return { title: b.meta_title, description: b.meta_description, alternates: canonicalAlternates("/blog", l) };
 }
 
 export default async function BlogPage({

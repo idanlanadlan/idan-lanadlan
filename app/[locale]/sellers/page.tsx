@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import SellersClient from "./SellersClient";
 import { translations } from "@/lib/translations";
-import { isLocale } from "@/lib/locale-path";
+import { isLocale, canonicalAlternates } from "@/lib/locale-path";
 
 export async function generateMetadata({
   params,
@@ -11,7 +11,7 @@ export async function generateMetadata({
   const { locale } = await params;
   const l = isLocale(locale) ? locale : "he";
   const s = translations[l].sellers;
-  return { title: s.meta_title, description: s.meta_description };
+  return { title: s.meta_title, description: s.meta_description, alternates: canonicalAlternates("/sellers", l) };
 }
 
 export default function SellersPage() {

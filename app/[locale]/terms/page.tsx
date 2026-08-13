@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import LegalPage from "@/components/legal/LegalPage";
 import { translations } from "@/lib/translations";
-import { isLocale } from "@/lib/locale-path";
+import { isLocale, canonicalAlternates } from "@/lib/locale-path";
 
 export async function generateMetadata({
   params,
@@ -15,6 +15,7 @@ export async function generateMetadata({
     title: terms.meta_title,
     description: terms.meta_description,
     robots: { index: false, follow: false },
+    alternates: canonicalAlternates("/terms", l),
   };
 }
 

@@ -5,7 +5,7 @@ import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import { ContactForm } from "@/components/contact/ContactForm";
 import { translations } from "@/lib/translations";
-import { isLocale } from "@/lib/locale-path";
+import { isLocale, canonicalAlternates } from "@/lib/locale-path";
 
 export async function generateMetadata({
   params,
@@ -15,7 +15,7 @@ export async function generateMetadata({
   const { locale } = await params;
   const l = isLocale(locale) ? locale : "he";
   const c = translations[l].contact_page;
-  return { title: c.meta_title, description: c.meta_description };
+  return { title: c.meta_title, description: c.meta_description, alternates: canonicalAlternates("/contact", l) };
 }
 
 export default async function ContactPage({
