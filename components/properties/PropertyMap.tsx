@@ -36,7 +36,7 @@ export default function PropertyMap({
   const leafletRef = useRef<any>(null);
   const [mapReady, setMapReady] = useState(false);
 
-  const mapped = properties.filter((p) => p.lat && p.lng);
+  const mapped = properties.filter((p) => p.lat && p.lng && p.status === "available");
 
   // Effect 1 — create the Leaflet map instance exactly once. Must never depend
   // on `properties`/`mapped` — re-running this would try to re-init Leaflet on
@@ -108,7 +108,6 @@ export default function PropertyMap({
     layerGroup.clearLayers();
 
     mapped.forEach((p) => {
-      const sold = p.status !== "available";
       const iconUrl = p.type === "rent" ? RENT_ICON_URL : SALE_ICON_URL;
       const icon = L.icon({ iconUrl, iconSize: [28, 36], iconAnchor: [14, 36], popupAnchor: [0, -36] });
 
@@ -117,19 +116,15 @@ export default function PropertyMap({
           ? `₪${p.price.toLocaleString("he-IL")} / חודש`
           : `₪${p.price.toLocaleString("he-IL")}`;
 
-      const statusBadge = sold
-        ? `<span style="display:inline-block;font-size:10px;color:#e5e5e5;background:#444;border-radius:4px;padding:1px 6px;margin-inline-start:6px;">${p.status === "rented" ? "הושכר" : "נמכר"}</span>`
-        : "";
-
       const popup = `
         <div dir="rtl" style="min-width:180px;font-family:Arial,sans-serif;">
-          <p style="font-size:13px;font-weight:600;color:#FAF6EE;margin:0 0 4px">${p.title}${statusBadge}</p>
+          <p style="font-size:13px;font-weight:600;color:#FAF6EE;margin:0 0 4px">${p.title}</p>
           <p style="font-size:12px;color:#C9A96E;margin:0 0 4px">${priceStr}</p>
           <p style="font-size:11px;color:#aaa;margin:0 0 8px">${p.bedrooms} חד׳ · ${p.size_sqm} מ״ר · ${p.city}</p>
           <a href="/nadlan/${p.id}" style="font-size:11px;color:#C9A96E;text-decoration:underline;">לנכס ←</a>
         </div>`;
 
-      L.marker([p.lat, p.lng], { icon, opacity: sold ? 0.55 : 1 })
+      L.marker([p.lat, p.lng], { icon })
         .addTo(layerGroup)
         .bindPopup(popup, { className: "crm-popup" });
     });
