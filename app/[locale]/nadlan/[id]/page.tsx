@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getPropertyById } from "@/lib/db";
 import PropertyPageClient from "@/components/properties/PropertyPageClient";
-import { localizedField } from "@/lib/property-utils";
+import { localizedField, schemaStreetAddress } from "@/lib/property-utils";
 import { isLocale, localizedPath } from "@/lib/locale-path";
 import { translations, type Locale } from "@/lib/translations";
 
@@ -67,6 +67,9 @@ export default async function PropertyPage({
 
   const nav = translations[l].nav;
   const title = localizedField(property, "title", l);
+  // Masked to match address_visibility — the full street address must not leak
+  // into structured data when the page itself hides it.
+  const streetAddress = schemaStreetAddress(property);
 
   const schema = {
     "@context": "https://schema.org",
@@ -83,7 +86,7 @@ export default async function PropertyPage({
         floorSize: { "@type": "QuantitativeValue", value: property.size_sqm, unitCode: "MTK" },
         address: {
           "@type": "PostalAddress",
-          streetAddress: property.address,
+          ...(streetAddress ? { streetAddress } : {}),
           addressLocality: localizedField(property, "city", l),
           addressCountry: "IL",
         },

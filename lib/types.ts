@@ -1,5 +1,9 @@
 export type PropertyType = "sale" | "rent" | "project";
 export type PropertyStatus = "available" | "sold" | "rented";
+/** How much of the address the public site reveals for a property.
+ *  full = street + house number (default), street = street name only,
+ *  neighborhood = neighborhood + city only, no street. */
+export type AddressVisibility = "full" | "street" | "neighborhood";
 
 export function isPropertyType(value: string | undefined): value is PropertyType {
   return value === "sale" || value === "rent" || value === "project";
@@ -46,6 +50,7 @@ export interface Property {
   lat?: number | null;
   lng?: number | null;
   crm_id?: string;
+  address_visibility?: AddressVisibility;
 }
 
 export interface BlogPost {

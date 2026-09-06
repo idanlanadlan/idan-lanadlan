@@ -96,6 +96,12 @@ const MIGRATION_SQL_BLOG_FEATURED = `-- בקרה ידנית על אילו מאמ
 ALTER TABLE blog_posts
   ADD COLUMN IF NOT EXISTS featured BOOLEAN NOT NULL DEFAULT true;`;
 
+const MIGRATION_SQL_ADDRESS_VISIBILITY = `-- כמה מהכתובת להציג באתר לכל נכס (רחוב+מספר / רחוב בלבד / שכונה בלבד)
+-- DEFAULT 'full' כדי שנכסים קיימים ימשיכו להציג כתובת מלאה כמו היום
+ALTER TABLE properties
+  ADD COLUMN IF NOT EXISTS address_visibility TEXT NOT NULL DEFAULT 'full'
+    CHECK (address_visibility IN ('full', 'street', 'neighborhood'));`;
+
 // SECURITY FIX — the original "properties" policy below (see Step 2, line
 // "service_all") had no FOR/TO clause. In Postgres that silently defaults
 // to ALL commands (SELECT/INSERT/UPDATE/DELETE) for ALL roles — including
@@ -279,6 +285,15 @@ export default function SetupPage() {
           </p>
           <pre className="bg-black rounded-lg p-4 text-xs text-cream overflow-x-auto leading-relaxed font-mono">
             {MIGRATION_SQL_BLOG_FEATURED}
+          </pre>
+        </Step>
+
+        <Step num={13} title="עדכון: רמת הצגת כתובת לכל נכס">
+          <p className="text-sm text-gray-light mb-3">
+            כדי לבחור בטופס הנכס כמה מהכתובת מוצג באתר (כתובת מלאה / רחוב בלבד / שכונה בלבד), הרץ ב-<strong className="text-cream">SQL Editor</strong> את זה:
+          </p>
+          <pre className="bg-black rounded-lg p-4 text-xs text-cream overflow-x-auto leading-relaxed font-mono">
+            {MIGRATION_SQL_ADDRESS_VISIBILITY}
           </pre>
         </Step>
       </div>

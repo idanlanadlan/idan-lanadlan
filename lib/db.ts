@@ -183,25 +183,52 @@ export async function getFeaturedProperties(): Promise<Property[]> {
   return ((data ?? []) as unknown[]).map(normalizeProperty);
 }
 
+// Fields that live behind a migration in /admin/setup and may not exist yet
+// on a connected project. If PostgREST rejects a write because one of these
+// columns is unknown, we drop it and retry so the core listing still saves
+// (rather than failing every create/edit — which is what happened when
+// crm_id was added unconditionally).
+const OPTIONAL_PROPERTY_COLUMNS = ["address_visibility", "crm_id"] as const;
+
+function withoutUnknownColumn<T extends Record<string, unknown>>(
+  row: T,
+  errorMessage: string
+): T | null {
+  if (!/column|schema cache/i.test(errorMessage)) return null;
+  for (const col of OPTIONAL_PROPERTY_COLUMNS) {
+    if (col in row && errorMessage.includes(col)) {
+      const copy = { ...row };
+      delete copy[col];
+      return copy;
+    }
+  }
+  return null;
+}
+
 export async function createProperty(property: Omit<Property, "id" | "created_at">): Promise<Property> {
-  const { data, error } = await createAdminClient()
-    .from("properties")
-    .insert([property])
-    .select()
-    .single();
-  if (error) throw new Error(error.message);
-  return data as Property;
+  const client = createAdminClient();
+  let row: Record<string, unknown> = property;
+  for (let attempt = 0; attempt < OPTIONAL_PROPERTY_COLUMNS.length + 1; attempt++) {
+    const { data, error } = await client.from("properties").insert([row]).select().single();
+    if (!error) return data as Property;
+    const retry = withoutUnknownColumn(row, error.message);
+    if (!retry) throw new Error(error.message);
+    row = retry;
+  }
+  throw new Error("createProperty: unresolved unknown-column error");
 }
 
 export async function updateProperty(id: string, property: Partial<Omit<Property, "id" | "created_at">>): Promise<Property> {
-  const { data, error } = await createAdminClient()
-    .from("properties")
-    .update(property)
-    .eq("id", id)
-    .select()
-    .single();
-  if (error) throw new Error(error.message);
-  return data as Property;
+  const client = createAdminClient();
+  let row: Record<string, unknown> = property;
+  for (let attempt = 0; attempt < OPTIONAL_PROPERTY_COLUMNS.length + 1; attempt++) {
+    const { data, error } = await client.from("properties").update(row).eq("id", id).select().single();
+    if (!error) return data as Property;
+    const retry = withoutUnknownColumn(row, error.message);
+    if (!retry) throw new Error(error.message);
+    row = retry;
+  }
+  throw new Error("updateProperty: unresolved unknown-column error");
 }
 
 export async function deleteProperty(id: string): Promise<void> {

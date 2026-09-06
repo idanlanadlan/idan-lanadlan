@@ -9,7 +9,7 @@ import {
 } from "@/lib/db";
 import { translatePropertyFields } from "@/lib/translate-property";
 import { isAdmin } from "@/lib/require-admin";
-import type { PropertyType, PropertyStatus } from "@/lib/types";
+import type { PropertyType, PropertyStatus, AddressVisibility } from "@/lib/types";
 
 function parseForm(formData: FormData) {
   const images = (formData.get("images") as string)
@@ -17,6 +17,11 @@ function parseForm(formData: FormData) {
     .map((s) => s.trim())
     .filter(Boolean);
   const crmId = formData.get("crm_id") as string | null;
+  const addressVisibility = formData.get("address_visibility") as string | null;
+  const validVisibility: AddressVisibility =
+    addressVisibility === "street" || addressVisibility === "neighborhood"
+      ? addressVisibility
+      : "full";
 
   return {
     title: formData.get("title") as string,
@@ -47,6 +52,10 @@ function parseForm(formData: FormData) {
     // still pending a migration (see admin/setup), and Supabase errors on
     // an unknown column even when the value would be undefined.
     ...(crmId ? { crm_id: crmId } : {}),
+    // Always sent (a toggle has to be able to go back to "full"). If setup
+    // Step 13 hasn't run yet, createProperty/updateProperty drop this key
+    // and retry rather than failing the whole save.
+    address_visibility: validVisibility,
   };
 }
 

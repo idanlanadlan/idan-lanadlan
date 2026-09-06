@@ -210,6 +210,23 @@ export default function PropertyForm({ action, property, defaultType }: Props) {
             if (neighborhoodRef.current) neighborhoodRef.current.value = name;
           }}
         />
+        <div className="mt-2">
+          <label className="block text-[11px] text-gray-light mb-1">
+            מה להציג באתר
+          </label>
+          <select
+            className={field}
+            name="address_visibility"
+            defaultValue={property?.address_visibility ?? "full"}
+          >
+            <option value="full">כתובת מלאה (רחוב + מספר בית)</option>
+            <option value="street">רחוב בלבד (בלי מספר בית)</option>
+            <option value="neighborhood">שכונה בלבד (בלי הרחוב)</option>
+          </select>
+          <p className="text-[11px] text-gray-light/70 mt-1">
+            המפה בעמוד הנכס נשארת מדויקת בכל מקרה — זה משפיע רק על טקסט הכתובת.
+          </p>
+        </div>
       </div>
 
       {/* Neighborhood + City */}

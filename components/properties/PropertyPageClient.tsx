@@ -26,7 +26,7 @@ import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { Property } from "@/lib/types";
-import { grossSize, pricePerSqm, localizedField } from "@/lib/property-utils";
+import { grossSize, pricePerSqm, localizedField, displayAddress } from "@/lib/property-utils";
 import { safeJsonLd } from "@/lib/json-ld";
 
 interface Props {
@@ -41,9 +41,8 @@ export default function PropertyPageClient({ property, schema }: Props) {
 
   const title = localizedField(property, "title", locale);
   const description = localizedField(property, "description", locale);
-  const neighborhood = localizedField(property, "neighborhood", locale);
-  const city = localizedField(property, "city", locale);
-  const address = localizedField(property, "address", locale);
+  // Honors the property's address_visibility (full / street only / neighborhood only).
+  const address = displayAddress(property, locale);
 
   const images = property.images.length > 0 ? property.images : [];
   const hasGallery = images.length > 1;
@@ -168,7 +167,7 @@ export default function PropertyPageClient({ property, schema }: Props) {
                 </h1>
                 <p className="flex items-center gap-2 text-sm text-gray-light mb-6">
                   <MapPin size={14} className="text-gold" />
-                  {address}, {neighborhood}, {city}
+                  {address}
                 </p>
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 py-6 border-y border-gray-dark mb-6">
@@ -191,9 +190,11 @@ export default function PropertyPageClient({ property, schema }: Props) {
                   <h2 className="text-sm font-semibold text-white">{pd.location_title}</h2>
                   <p className="text-xs text-gray-light mt-1 flex items-center gap-1">
                     <MapPin size={11} className="text-gold" />
-                    {address}, {neighborhood}, {city}
+                    {address}
                   </p>
                 </div>
+                {/* The embedded map stays at the exact address regardless of
+                    address_visibility — only the text label above is masked. */}
                 <iframe
                   src={`https://www.google.com/maps?q=${encodeURIComponent(`${property.address}, ${property.neighborhood}, ${property.city}, ישראל`)}&output=embed&z=15`}
                   width="100%"
