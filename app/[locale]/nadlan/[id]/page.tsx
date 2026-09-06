@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { getPropertyById } from "@/lib/db";
 import PropertyPageClient from "@/components/properties/PropertyPageClient";
 import { localizedField } from "@/lib/property-utils";
-import { isLocale } from "@/lib/locale-path";
+import { isLocale, localizedPath } from "@/lib/locale-path";
 import { translations, type Locale } from "@/lib/translations";
 
 const BASE = "https://idanlanadlan.co.il";
@@ -65,29 +65,44 @@ export default async function PropertyPage({
   const property = await getPropertyById(id);
   if (!property) notFound();
 
+  const nav = translations[l].nav;
+  const title = localizedField(property, "title", l);
+
   const schema = {
     "@context": "https://schema.org",
-    "@type": "RealEstateListing",
-    name: localizedField(property, "title", l),
-    description: localizedField(property, "description", l),
-    url: propertyUrl(property.id, l),
-    image: property.images[0] ?? "",
-    price: property.price,
-    priceCurrency: "ILS",
-    numberOfRooms: property.bedrooms,
-    floorSize: { "@type": "QuantitativeValue", value: property.size_sqm, unitCode: "MTK" },
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: property.address,
-      addressLocality: localizedField(property, "city", l),
-      addressCountry: "IL",
-    },
-    seller: {
-      "@type": "RealEstateAgent",
-      name: "עידן חולי — עידן לנדל״ן",
-      telephone: "+972-54-979-1171",
-      url: "https://idanlanadlan.co.il",
-    },
+    "@graph": [
+      {
+        "@type": "RealEstateListing",
+        name: title,
+        description: localizedField(property, "description", l),
+        url: propertyUrl(property.id, l),
+        image: property.images[0] ?? "",
+        price: property.price,
+        priceCurrency: "ILS",
+        numberOfRooms: property.bedrooms,
+        floorSize: { "@type": "QuantitativeValue", value: property.size_sqm, unitCode: "MTK" },
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: property.address,
+          addressLocality: localizedField(property, "city", l),
+          addressCountry: "IL",
+        },
+        seller: {
+          "@type": "RealEstateAgent",
+          name: "עידן חולי — עידן לנדל״ן",
+          telephone: "+972-54-979-1171",
+          url: BASE,
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: nav.home, item: `${BASE}${localizedPath("/", l)}` },
+          { "@type": "ListItem", position: 2, name: nav.properties, item: `${BASE}${localizedPath("/nadlan", l)}` },
+          { "@type": "ListItem", position: 3, name: title },
+        ],
+      },
+    ],
   };
 
   return <PropertyPageClient property={property} schema={schema} />;

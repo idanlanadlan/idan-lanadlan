@@ -9,7 +9,7 @@ import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import { getBlogPostBySlug } from "@/lib/db";
 import { localizedBlogField, localizedBlogKeywords } from "@/lib/blog-utils";
 import { translations, type Locale } from "@/lib/translations";
-import { isLocale } from "@/lib/locale-path";
+import { isLocale, localizedPath } from "@/lib/locale-path";
 import { safeJsonLd } from "@/lib/json-ld";
 
 const BASE = "https://idanlanadlan.co.il";
@@ -79,24 +79,36 @@ export default async function BlogPostPage({
 
   const schema = {
     "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: title,
-    description: excerpt,
-    image: post.cover_image,
-    author: {
-      "@type": "Person",
-      name: authorName,
-      url: `${BASE}/about`,
-    },
-    datePublished: post.created_at,
-    dateModified: post.updated_at,
-    articleBody: content ? content.replace(/^#{2,3} /gm, "") : undefined,
-    keywords: keywords.join(", "),
-    publisher: {
-      "@type": "Organization",
-      name: siteName,
-      url: BASE,
-    },
+    "@graph": [
+      {
+        "@type": "BlogPosting",
+        headline: title,
+        description: excerpt,
+        image: post.cover_image,
+        author: {
+          "@type": "Person",
+          name: authorName,
+          url: `${BASE}/about`,
+        },
+        datePublished: post.created_at,
+        dateModified: post.updated_at,
+        articleBody: content ? content.replace(/^#{2,3} /gm, "") : undefined,
+        keywords: keywords.join(", "),
+        publisher: {
+          "@type": "Organization",
+          name: siteName,
+          url: BASE,
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: nav.home, item: `${BASE}${localizedPath("/", l)}` },
+          { "@type": "ListItem", position: 2, name: blogPage.eyebrow, item: `${BASE}${localizedPath("/blog", l)}` },
+          { "@type": "ListItem", position: 3, name: title },
+        ],
+      },
+    ],
   };
 
   return (
