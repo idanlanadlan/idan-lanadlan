@@ -25,6 +25,8 @@ export interface T {
   consent: { privacy_prefix: string; privacy_link: string; privacy_suffix: string; marketing_label: string; };
   a11y_widget: { open_aria: string; title: string; font_size: string; font_step: string; contrast: string; motion: string; links: string; reset: string; close_aria: string; statement_link: string; };
   groups_modal: { description: string; name_label: string; name_placeholder: string; phone_label: string; looking_label_sale: string; looking_label_rent: string; looking_placeholder_sale: string; looking_placeholder_rent: string; budget_label: string; budget_placeholder_sale: string; budget_placeholder_rent: string; purpose_label: string; purpose_placeholder: string; purpose_investment: string; purpose_living: string; purpose_both: string; submit_button: string; disclaimer: string; success_title: string; success_message: string; success_button: string; };
+  groups_page: { meta_title: string; meta_description: string; };
+  properties_page: { meta_title: string; meta_description: string; eyebrow: string; h1: string; subtitle: string; };
   about: {
     meta_title: string; meta_description: string;
     eyebrow: string; heading_line1: string; heading_line2: string;
@@ -408,6 +410,17 @@ export const translations: Record<Locale, T> = {
       success_title: "הפרטים התקבלו!",
       success_message: "עידן מחכה לך בקבוצה. לחץ להצטרפות עכשיו.",
       success_button: "הצטרף לקבוצה עכשיו",
+    },
+    groups_page: {
+      meta_title: "קבוצות VIP לנדל״ן בתל אביב | עידן לנדל״ן",
+      meta_description: "קבוצות וואטסאפ סגורות ובלעדיות ללקוחות עידן לנדל״ן — עדכון ראשון על נכסים ודירות חמים בתל אביב למכירה ולהשכרה, לפני הפרסום הפומבי.",
+    },
+    properties_page: {
+      meta_title: "נכסים למכירה ולהשכרה בתל אביב | עידן לנדל״ן",
+      meta_description: "מבחר נכסים ודירות למכירה ולהשכרה בתל אביב וסביבתה — עידן חולי, עידן לנדל״ן. מפה אינטראקטיבית וסינון לפי עיר, שכונה ותקציב.",
+      eyebrow: "נכסים",
+      h1: "נכסים למכירה ולהשכרה",
+      subtitle: "נכסים נבחרים בתל אביב וסביבתה — עידן חולי, עידן לנדל״ן",
     },
     about: {
       meta_title: "אודות עידן חולי | עידן לנדל״ן",
@@ -1312,6 +1325,17 @@ export const translations: Record<Locale, T> = {
       success_message: "Idan is waiting for you in the group. Click to join now.",
       success_button: "Join the group now",
     },
+    groups_page: {
+      meta_title: "VIP Real Estate Groups in Tel Aviv | Idan LaNadlan",
+      meta_description: "Closed, exclusive WhatsApp groups for Idan LaNadlan clients — first notice on sought-after Tel Aviv properties and rentals for sale and rent, before they go public.",
+    },
+    properties_page: {
+      meta_title: "Properties for Sale and Rent in Tel Aviv | Idan LaNadlan",
+      meta_description: "A selection of properties and apartments for sale and rent in Tel Aviv and the surrounding area — Idan Huli, Idan LaNadlan. Interactive map and filters by city, neighborhood and budget.",
+      eyebrow: "Properties",
+      h1: "Properties for Sale and Rent",
+      subtitle: "Selected properties in Tel Aviv and the surrounding area — Idan Huli, Idan LaNadlan",
+    },
     about: {
       meta_title: "About Idan Huli | Idan LaNadlan",
       meta_description: "Idan Huli — about a decade of experience in real estate brokerage and marketing. Transparency, professionalism and results.",
@@ -2215,6 +2239,17 @@ export const translations: Record<Locale, T> = {
       success_message: "Idan vous attend dans le groupe. Cliquez pour rejoindre maintenant.",
       success_button: "Rejoindre le groupe maintenant",
     },
+    groups_page: {
+      meta_title: "Groupes VIP immobiliers à Tel Aviv | Idan LaNadlan",
+      meta_description: "Groupes WhatsApp fermés et exclusifs pour les clients d'Idan LaNadlan — informés en premier des biens et locations recherchés à Tel Aviv, avant leur publication.",
+    },
+    properties_page: {
+      meta_title: "Biens à vendre et à louer à Tel Aviv | Idan LaNadlan",
+      meta_description: "Une sélection de biens et d'appartements à vendre et à louer à Tel Aviv et ses environs — Idan Huli, Idan LaNadlan. Carte interactive et filtres par ville, quartier et budget.",
+      eyebrow: "Biens",
+      h1: "Biens à vendre et à louer",
+      subtitle: "Une sélection de biens à Tel Aviv et ses environs — Idan Huli, Idan LaNadlan",
+    },
     about: {
       meta_title: "À propos d'Idan Huli | Idan LaNadlan",
       meta_description: "Idan Huli — une décennie d'expérience en courtage et marketing immobilier. Transparence, professionnalisme et résultats.",
@@ -3117,6 +3152,17 @@ export const translations: Record<Locale, T> = {
       success_title: "¡Datos recibidos!",
       success_message: "Idan te espera en el grupo. Haz clic para unirte ahora.",
       success_button: "Unirme al grupo ahora",
+    },
+    groups_page: {
+      meta_title: "Grupos VIP inmobiliarios en Tel Aviv | Idan LaNadlan",
+      meta_description: "Grupos de WhatsApp cerrados y exclusivos para clientes de Idan LaNadlan: primer aviso sobre propiedades y alquileres destacados en Tel Aviv, antes de su publicación.",
+    },
+    properties_page: {
+      meta_title: "Propiedades en venta y alquiler en Tel Aviv | Idan LaNadlan",
+      meta_description: "Una selección de propiedades y apartamentos en venta y alquiler en Tel Aviv y sus alrededores — Idan Huli, Idan LaNadlan. Mapa interactivo y filtros por ciudad, barrio y presupuesto.",
+      eyebrow: "Propiedades",
+      h1: "Propiedades en venta y alquiler",
+      subtitle: "Propiedades seleccionadas en Tel Aviv y sus alrededores — Idan Huli, Idan LaNadlan",
     },
     about: {
       meta_title: "Sobre Idan Huli | Idan LaNadlan",
