@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
-import type { Property, PropertyType } from "@/lib/types";
+import type { Broker, ListingSource, Property, PropertyBrokerLink, PropertyType } from "@/lib/types";
 import AddressAutocomplete from "@/components/admin/AddressAutocomplete";
 import ImageManager from "@/components/admin/ImageManager";
 
@@ -14,6 +14,10 @@ interface Props {
   action: (formData: FormData) => Promise<void>;
   property?: Partial<Property>;
   defaultType?: PropertyType;
+  /** Saved collaboration brokers, for the "מקור הנכס" picker. */
+  brokers?: Broker[];
+  /** This property's existing marketing-source record (edit mode). */
+  brokerLink?: PropertyBrokerLink | null;
 }
 
 function SubmitButton({ isEdit }: { isEdit: boolean }) {
@@ -30,9 +34,22 @@ function SubmitButton({ isEdit }: { isEdit: boolean }) {
   );
 }
 
-export default function PropertyForm({ action, property, defaultType }: Props) {
+export default function PropertyForm({
+  action,
+  property,
+  defaultType,
+  brokers = [],
+  brokerLink,
+}: Props) {
   const formRef = useRef<HTMLFormElement>(null);
   const neighborhoodRef = useRef<HTMLInputElement>(null);
+
+  const [listingSource, setListingSource] = useState<ListingSource>(
+    brokerLink?.listing_source ?? "self"
+  );
+  const [brokerChoice, setBrokerChoice] = useState<string>(
+    brokerLink?.broker_id ?? (brokers.length ? "" : "__new__")
+  );
 
   return (
     <form ref={formRef} action={action} className="flex flex-col gap-6">
@@ -269,6 +286,87 @@ export default function PropertyForm({ action, property, defaultType }: Props) {
       <div>
         <label className={label}>תמונות הנכס</label>
         <ImageManager name="images" defaultImages={property?.images ?? []} />
+      </div>
+
+      {/* Listing source — admin-only. Broker details never reach the public site. */}
+      <div className="rounded-lg border border-gray-dark bg-black/30 p-4">
+        <label className={label}>מקור הנכס</label>
+        <p className="text-[11px] text-gray-light/70 -mt-1 mb-3">
+          לשימוש פנימי בלבד — לא מוצג באתר. כל הנכסים מופיעים באתר עם הפרטים שלך.
+        </p>
+        <div className="flex flex-col gap-2 mb-3">
+          <label className="flex items-center gap-2.5 cursor-pointer text-sm text-cream">
+            <input
+              type="radio"
+              name="listing_source"
+              value="self"
+              checked={listingSource === "self"}
+              onChange={() => setListingSource("self")}
+              className="w-4 h-4 accent-gold"
+            />
+            הנכס שלי
+          </label>
+          <label className="flex items-center gap-2.5 cursor-pointer text-sm text-cream">
+            <input
+              type="radio"
+              name="listing_source"
+              value="collab"
+              checked={listingSource === "collab"}
+              onChange={() => setListingSource("collab")}
+              className="w-4 h-4 accent-gold"
+            />
+            בשיתוף פעולה עם מתווך אחר
+          </label>
+        </div>
+
+        {listingSource === "collab" && (
+          <div className="flex flex-col gap-3 pt-1">
+            {brokers.length > 0 && (
+              <div>
+                <label className="block text-[11px] text-gray-light mb-1">בחר מתווך</label>
+                <select
+                  className={field}
+                  name="broker_id"
+                  value={brokerChoice}
+                  onChange={(e) => setBrokerChoice(e.target.value)}
+                >
+                  <option value="" disabled>
+                    בחר מתווך שמור…
+                  </option>
+                  {brokers.map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {b.name}
+                      {b.agency ? ` — ${b.agency}` : ""}
+                      {b.phone ? ` · ${b.phone}` : ""}
+                    </option>
+                  ))}
+                  <option value="__new__">➕ מתווך חדש…</option>
+                </select>
+              </div>
+            )}
+            {brokers.length > 0 && brokerChoice !== "__new__" ? null : (
+              <div className="grid sm:grid-cols-2 gap-3">
+                {brokers.length === 0 && <input type="hidden" name="broker_id" value="__new__" />}
+                <div>
+                  <label className="block text-[11px] text-gray-light mb-1">שם המתווך *</label>
+                  <input className={field} name="broker_new_name" placeholder="ישראל ישראלי" />
+                </div>
+                <div>
+                  <label className="block text-[11px] text-gray-light mb-1">טלפון</label>
+                  <input className={field} name="broker_new_phone" dir="ltr" placeholder="054-000-0000" />
+                </div>
+                <div>
+                  <label className="block text-[11px] text-gray-light mb-1">משרד / סוכנות</label>
+                  <input className={field} name="broker_new_agency" placeholder="רי/מקס, אנגלו סכסון…" />
+                </div>
+                <div>
+                  <label className="block text-[11px] text-gray-light mb-1">הערות</label>
+                  <input className={field} name="broker_new_notes" placeholder="אחוז עמלה, איש קשר…" />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Status + Featured */}

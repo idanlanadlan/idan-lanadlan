@@ -53,6 +53,28 @@ export interface Property {
   address_visibility?: AddressVisibility;
 }
 
+/** A co-operating broker on a collaboration listing. Admin-only — broker
+ *  details are never sent to the public site (see lib/db.ts). */
+export interface Broker {
+  id: string;
+  name: string;
+  phone: string;
+  agency: string;
+  notes: string;
+  created_at: string;
+}
+
+export type ListingSource = "self" | "collab";
+
+/** Per-property record of who is marketing it. Absent = "self" (mine).
+ *  Admin-only — lives in its own table, never joined into public queries. */
+export interface PropertyBrokerLink {
+  property_id: string;
+  listing_source: ListingSource;
+  broker_id: string | null;
+  updated_at: string;
+}
+
 export interface BlogPost {
   id: string;
   title: string;

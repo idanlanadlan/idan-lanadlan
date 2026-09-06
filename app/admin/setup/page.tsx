@@ -102,6 +102,36 @@ ALTER TABLE properties
   ADD COLUMN IF NOT EXISTS address_visibility TEXT NOT NULL DEFAULT 'full'
     CHECK (address_visibility IN ('full', 'street', 'neighborhood'));`;
 
+const MIGRATION_SQL_BROKERS = `-- מתווכי שיתוף-פעולה + שיוך פר-נכס. הפרטים נשמרים לאדמין בלבד ואף פעם לא
+-- נשלחים לאתר הציבורי: RLS מרשה גישה רק ל-service_role, אין מדיניות public read.
+CREATE TABLE IF NOT EXISTS brokers (
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::TEXT,
+  name TEXT NOT NULL,
+  phone TEXT NOT NULL DEFAULT '',
+  agency TEXT NOT NULL DEFAULT '',
+  notes TEXT NOT NULL DEFAULT '',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS property_brokers (
+  property_id TEXT PRIMARY KEY REFERENCES properties(id) ON DELETE CASCADE,
+  listing_source TEXT NOT NULL DEFAULT 'self'
+    CHECK (listing_source IN ('self', 'collab')),
+  broker_id TEXT REFERENCES brokers(id) ON DELETE SET NULL,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+ALTER TABLE brokers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE property_brokers ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "service_role_all" ON brokers;
+DROP POLICY IF EXISTS "service_role_all" ON property_brokers;
+CREATE POLICY "service_role_all" ON brokers FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "service_role_all" ON property_brokers FOR ALL TO service_role USING (true) WITH CHECK (true);
+
+-- לוודא שאין קריאה ציבורית: השאילתה הזו צריכה להחזיר רק שורות עם roles = {service_role}
+SELECT tablename, policyname, cmd, roles FROM pg_policies
+WHERE tablename IN ('brokers', 'property_brokers') ORDER BY tablename;`;
+
 // SECURITY FIX — the original "properties" policy below (see Step 2, line
 // "service_all") had no FOR/TO clause. In Postgres that silently defaults
 // to ALL commands (SELECT/INSERT/UPDATE/DELETE) for ALL roles — including
@@ -294,6 +324,15 @@ export default function SetupPage() {
           </p>
           <pre className="bg-black rounded-lg p-4 text-xs text-cream overflow-x-auto leading-relaxed font-mono">
             {MIGRATION_SQL_ADDRESS_VISIBILITY}
+          </pre>
+        </Step>
+
+        <Step num={14} title="עדכון: מתווכי שיתוף-פעולה">
+          <p className="text-sm text-gray-light mb-3">
+            כדי לסמן על כל נכס אם הוא שלך או בשיתוף פעולה עם מתווך אחר (עם פרטי המתווך — לאדמין בלבד, לא מוצג באתר), הרץ ב-<strong className="text-cream">SQL Editor</strong> את זה:
+          </p>
+          <pre className="bg-black rounded-lg p-4 text-xs text-cream overflow-x-auto leading-relaxed font-mono">
+            {MIGRATION_SQL_BROKERS}
           </pre>
         </Step>
       </div>

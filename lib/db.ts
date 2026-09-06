@@ -1,6 +1,6 @@
 import { mockProperties, mockBlogPosts } from "./mock-data";
 import { createClient, createAdminClient, isConfigured } from "./supabase";
-import type { Property, BlogPost } from "./types";
+import type { Property, BlogPost, Broker, PropertyBrokerLink, ListingSource } from "./types";
 
 // ── Settings ──────────────────────────────────────────────
 export const DEFAULT_SETTINGS: Record<string, string> = {
@@ -236,6 +236,103 @@ export async function deleteProperty(id: string): Promise<void> {
     .from("properties")
     .delete()
     .eq("id", id);
+  if (error) throw new Error(error.message);
+}
+
+// ── Brokers (collaboration listings) ──────────────────────
+// Admin-only. Both tables are read/written exclusively through the service
+// role client here — they carry no public-read RLS policy (see setup Step
+// 14), so broker names/phones can never reach the public site even though
+// properties do. Read helpers soft-fail (empty result) when the tables
+// don't exist yet, so the admin UI still loads before the migration runs.
+
+export async function getBrokers(): Promise<Broker[]> {
+  if (!isConfigured) return [];
+  const { data, error } = await createAdminClient()
+    .from("brokers")
+    .select("*")
+    .order("name", { ascending: true });
+  return error ? [] : ((data as Broker[]) ?? []);
+}
+
+export async function getBrokerById(id: string): Promise<Broker | null> {
+  if (!isConfigured) return null;
+  const { data, error } = await createAdminClient()
+    .from("brokers")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+  return error ? null : ((data as Broker) ?? null);
+}
+
+export async function createBroker(broker: Omit<Broker, "id" | "created_at">): Promise<Broker> {
+  const { data, error } = await createAdminClient()
+    .from("brokers")
+    .insert([broker])
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  return data as Broker;
+}
+
+export async function updateBroker(
+  id: string,
+  broker: Partial<Omit<Broker, "id" | "created_at">>
+): Promise<Broker> {
+  const { data, error } = await createAdminClient()
+    .from("brokers")
+    .update(broker)
+    .eq("id", id)
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  return data as Broker;
+}
+
+export async function deleteBroker(id: string): Promise<void> {
+  const { error } = await createAdminClient().from("brokers").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+}
+
+/** All property→broker links, keyed by property_id, for the admin list. */
+export async function getPropertyBrokerLinks(): Promise<Record<string, PropertyBrokerLink>> {
+  if (!isConfigured) return {};
+  const { data, error } = await createAdminClient().from("property_brokers").select("*");
+  if (error) return {};
+  const map: Record<string, PropertyBrokerLink> = {};
+  ((data as PropertyBrokerLink[]) ?? []).forEach((row) => {
+    map[row.property_id] = row;
+  });
+  return map;
+}
+
+export async function getPropertyBrokerLink(propertyId: string): Promise<PropertyBrokerLink | null> {
+  if (!isConfigured) return null;
+  const { data, error } = await createAdminClient()
+    .from("property_brokers")
+    .select("*")
+    .eq("property_id", propertyId)
+    .maybeSingle();
+  return error ? null : ((data as PropertyBrokerLink) ?? null);
+}
+
+/** Upserts a property's marketing source. 'self' with no broker is the
+ *  default state; we still store it so "mine" is an explicit, visible choice. */
+export async function setPropertyBrokerLink(
+  propertyId: string,
+  link: { listing_source: ListingSource; broker_id: string | null }
+): Promise<void> {
+  const { error } = await createAdminClient()
+    .from("property_brokers")
+    .upsert(
+      {
+        property_id: propertyId,
+        listing_source: link.listing_source,
+        broker_id: link.listing_source === "collab" ? link.broker_id : null,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "property_id" }
+    );
   if (error) throw new Error(error.message);
 }
 

@@ -1,13 +1,29 @@
 import Link from "next/link";
 import { Plus, Download, Building2 } from "lucide-react";
-import { getProperties } from "@/lib/db";
+import { getProperties, getBrokers, getPropertyBrokerLinks } from "@/lib/db";
 import { deleteProperty, toggleFeatured, updateStatus } from "@/app/actions/properties";
 import PropertiesTable from "@/components/admin/PropertiesTable";
 
 export const dynamic = "force-dynamic";
 
 export default async function PropertiesAdmin() {
-  const properties = await getProperties();
+  const [properties, brokers, brokerLinks] = await Promise.all([
+    getProperties(),
+    getBrokers(),
+    getPropertyBrokerLinks(),
+  ]);
+  const brokersById = Object.fromEntries(brokers.map((b) => [b.id, b]));
+
+  // property id → short "collaboration with X" label for the table badge.
+  // Only collab listings get an entry; a plain "mine" property gets none.
+  const collabLabels: Record<string, string> = {};
+  for (const [propertyId, link] of Object.entries(brokerLinks)) {
+    if (link.listing_source !== "collab") continue;
+    const broker = link.broker_id ? brokersById[link.broker_id] : null;
+    collabLabels[propertyId] = broker
+      ? [broker.name, broker.agency].filter(Boolean).join(" · ")
+      : "מתווך לא צוין";
+  }
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
@@ -52,6 +68,7 @@ export default async function PropertiesAdmin() {
       ) : (
         <PropertiesTable
           properties={properties}
+          collabLabels={collabLabels}
           deleteProperty={deleteProperty}
           toggleFeatured={toggleFeatured}
           updateStatus={updateStatus}

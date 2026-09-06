@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Pencil, Star, Eye, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
+import { Pencil, Star, Eye, ArrowUp, ArrowDown, ArrowUpDown, Handshake } from "lucide-react";
 import StatusSelect from "@/components/admin/StatusSelect";
 import ConfirmDeleteForm from "@/components/admin/ConfirmDeleteForm";
 import type { Property, PropertyStatus } from "@/lib/types";
@@ -21,12 +21,20 @@ type SortDir = "asc" | "desc";
 
 interface Props {
   properties: Property[];
+  /** property id → "collaboration with X" label. Present only for collab listings. */
+  collabLabels?: Record<string, string>;
   deleteProperty: (formData: FormData) => Promise<void>;
   toggleFeatured: (formData: FormData) => Promise<void>;
   updateStatus: (formData: FormData) => Promise<void>;
 }
 
-export default function PropertiesTable({ properties, deleteProperty, toggleFeatured, updateStatus }: Props) {
+export default function PropertiesTable({
+  properties,
+  collabLabels = {},
+  deleteProperty,
+  toggleFeatured,
+  updateStatus,
+}: Props) {
   const [statusFilter, setStatusFilter] = useState<PropertyStatus | "all">("all");
   const [sortKey, setSortKey] = useState<SortKey | null>(null);
   const [sortDir, setSortDir] = useState<SortDir>("desc");
@@ -124,6 +132,12 @@ export default function PropertiesTable({ properties, deleteProperty, toggleFeat
                 <p className="text-xs text-gray-light mt-0.5 truncate">
                   {p.neighborhood}, {p.city} · {p.bedrooms} חד׳ · {p.size_sqm} מ״ר
                 </p>
+                {collabLabels[p.id] && (
+                  <p className="text-[11px] text-gold/80 mt-1 flex items-center gap-1 truncate">
+                    <Handshake size={11} className="shrink-0" />
+                    שת״פ · {collabLabels[p.id]}
+                  </p>
+                )}
               </div>
 
               {/* Price */}

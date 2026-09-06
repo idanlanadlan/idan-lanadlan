@@ -6,10 +6,48 @@ import {
   createProperty,
   updateProperty,
   deleteProperty as dbDeleteProperty,
+  createBroker,
+  setPropertyBrokerLink,
 } from "@/lib/db";
 import { translatePropertyFields } from "@/lib/translate-property";
 import { isAdmin } from "@/lib/require-admin";
 import type { PropertyType, PropertyStatus, AddressVisibility } from "@/lib/types";
+
+/**
+ * Records who is marketing a property, from the "מקור הנכס" section of the
+ * form. Runs after the listing itself is saved and is fully best-effort:
+ * a missing brokers/property_brokers table (setup Step 14 not run) or any
+ * other failure here must never surface as a failed property save.
+ * Broker details live only in these admin-only tables — never on the
+ * `properties` row the public site reads.
+ */
+async function applyBrokerLink(propertyId: string, formData: FormData) {
+  const source = formData.get("listing_source") === "collab" ? "collab" : "self";
+  try {
+    if (source === "self") {
+      await setPropertyBrokerLink(propertyId, { listing_source: "self", broker_id: null });
+      return;
+    }
+
+    let brokerId = (formData.get("broker_id") as string | null) || null;
+    const newName = ((formData.get("broker_new_name") as string) || "").trim();
+
+    if ((brokerId === "__new__" || !brokerId) && newName) {
+      const broker = await createBroker({
+        name: newName,
+        phone: ((formData.get("broker_new_phone") as string) || "").trim(),
+        agency: ((formData.get("broker_new_agency") as string) || "").trim(),
+        notes: ((formData.get("broker_new_notes") as string) || "").trim(),
+      });
+      brokerId = broker.id;
+    }
+    if (brokerId === "__new__") brokerId = null;
+
+    await setPropertyBrokerLink(propertyId, { listing_source: "collab", broker_id: brokerId });
+  } catch (err) {
+    console.error("[applyBrokerLink] skipped — is setup Step 14 done?", err);
+  }
+}
 
 function parseForm(formData: FormData) {
   const images = (formData.get("images") as string)
@@ -63,7 +101,8 @@ export async function createPropertyAction(formData: FormData) {
   if (!(await isAdmin())) throw new Error("Unauthorized");
   const data = parseForm(formData);
   const translations = await translatePropertyFields(data);
-  await createProperty({ ...data, ...translations });
+  const created = await createProperty({ ...data, ...translations });
+  await applyBrokerLink(created.id, formData);
   revalidatePath("/");
   revalidatePath("/nadlan");
   revalidatePath("/admin/properties");
@@ -76,6 +115,7 @@ export async function updatePropertyAction(formData: FormData) {
   const data = parseForm(formData);
   const translations = await translatePropertyFields(data);
   await updateProperty(id, { ...data, ...translations });
+  await applyBrokerLink(id, formData);
   revalidatePath("/");
   revalidatePath("/nadlan");
   revalidatePath(`/nadlan/${id}`);

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createPropertyAction } from "@/app/actions/properties";
 import PropertyForm from "@/components/admin/PropertyForm";
+import { getBrokers } from "@/lib/db";
 import { isPropertyType } from "@/lib/types";
 
 // Saving now also calls Claude to auto-translate the listing (EN/FR).
@@ -14,6 +15,7 @@ export default async function NewPropertyPage({
   const { type } = await searchParams;
   const defaultType = isPropertyType(type) ? type : undefined;
   const isProject = defaultType === "project";
+  const brokers = await getBrokers();
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-10">
@@ -29,7 +31,7 @@ export default async function NewPropertyPage({
         </h1>
       </div>
 
-      <PropertyForm action={createPropertyAction} defaultType={defaultType} />
+      <PropertyForm action={createPropertyAction} defaultType={defaultType} brokers={brokers} />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getPropertyById } from "@/lib/db";
+import { getPropertyById, getBrokers, getPropertyBrokerLink } from "@/lib/db";
 import { updatePropertyAction, deleteProperty } from "@/app/actions/properties";
 import PropertyForm from "@/components/admin/PropertyForm";
 import ConfirmDeleteForm from "@/components/admin/ConfirmDeleteForm";
@@ -22,6 +22,8 @@ export default async function EditPropertyPage({
     throw err;
   }
   if (!property) notFound();
+
+  const [brokers, brokerLink] = await Promise.all([getBrokers(), getPropertyBrokerLink(id)]);
 
   const updateWithId = updatePropertyAction.bind(null);
 
@@ -57,7 +59,12 @@ export default async function EditPropertyPage({
         </div>
       </div>
 
-      <PropertyForm action={updatePropertyAction} property={property} />
+      <PropertyForm
+        action={updatePropertyAction}
+        property={property}
+        brokers={brokers}
+        brokerLink={brokerLink}
+      />
     </div>
   );
 }
