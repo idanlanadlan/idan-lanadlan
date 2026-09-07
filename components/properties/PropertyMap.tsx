@@ -10,7 +10,17 @@ interface Props {
   height?: string;
   /** Legend labels — defaults to Hebrew (admin screens don't localize) */
   labels?: { sale: string; rent: string; on_map: string };
+  /** Open framed on Tel Aviv (Herzliya in the north → Bat Yam in the south)
+   *  instead of auto-fitting to every pin. Pins outside the frame are still
+   *  there — the viewer can zoom out. Filtering still re-fits to the results. */
+  frameTelAviv?: boolean;
 }
+
+// Default framing: centered on Tel Aviv, zoom 12 keeps Herzliya in view to the
+// north and Bat Yam / Holon to the south (fitBounds can't frame this reliably
+// across the range of container widths, so a fixed view is steadier).
+const TEL_AVIV_CENTER: [number, number] = [32.09, 34.79];
+const TEL_AVIV_ZOOM = 12;
 
 // Gold and blue marker SVG as data URLs
 const MARKER_SVG = (color: string) =>
@@ -27,6 +37,7 @@ export default function PropertyMap({
   properties,
   height = "480px",
   labels = { sale: "מכירה", rent: "השכרה", on_map: "נכסים על המפה" },
+  frameTelAviv = false,
 }: Props) {
   const mapRef = useRef<HTMLDivElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -36,6 +47,9 @@ export default function PropertyMap({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const leafletRef = useRef<any>(null);
   const [mapReady, setMapReady] = useState(false);
+  // With frameTelAviv, the first marker pass keeps the Tel Aviv frame; only a
+  // later change (the user filtering) re-fits the view to the results.
+  const didInitialFrame = useRef(false);
 
   const mapped = properties.filter((p) => p.lat && p.lng && p.status === "available");
 
@@ -74,7 +88,11 @@ export default function PropertyMap({
         maxZoom: 19,
       }).addTo(map);
 
-      map.setView([32.07, 34.78], 12);
+      if (frameTelAviv) {
+        map.setView(TEL_AVIV_CENTER, TEL_AVIV_ZOOM);
+      } else {
+        map.setView([32.07, 34.78], 12);
+      }
 
       layerGroupRef.current = L.layerGroup().addTo(map);
       leafletRef.current = L;
@@ -134,10 +152,15 @@ export default function PropertyMap({
         .bindPopup(popup, { className: "crm-popup", minWidth: 200 });
     });
 
-    if (mapped.length > 1) {
+    // Keep the Tel Aviv frame on the very first paint; from then on, re-fit to
+    // whatever the current filter shows.
+    const skipFit = frameTelAviv && !didInitialFrame.current;
+    didInitialFrame.current = true;
+
+    if (!skipFit && mapped.length > 1) {
       const bounds = L.latLngBounds(mapped.map((p) => [p.lat, p.lng]));
       map.fitBounds(bounds, { padding: [40, 40] });
-    } else if (mapped.length === 1) {
+    } else if (!skipFit && mapped.length === 1) {
       map.setView([mapped[0].lat, mapped[0].lng], 14);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -25,6 +25,13 @@ export default function PropertyCard({ property, variant = "default" }: Property
     project: pd.type_project,
   };
 
+  // Sale/project = gold (the brand accent); rent = blue — matches the map pins.
+  const typeBadge: Record<Property["type"], string> = {
+    sale: "bg-gold text-black",
+    rent: "bg-blue-400 text-black",
+    project: "bg-gold text-black",
+  };
+
   const statusLabel: Partial<Record<Property["status"], string>> = {
     sold: pd.status_sold,
     rented: pd.status_rented,
@@ -76,14 +83,9 @@ export default function PropertyCard({ property, variant = "default" }: Property
           )}
 
           {/* Type badge */}
-          <span className="absolute top-4 end-4 text-[10px] px-3 py-1.5 bg-gold text-black font-semibold tracking-widest uppercase">
+          <span className={`absolute top-4 end-4 text-[10px] px-3 py-1.5 font-semibold tracking-widest uppercase ${typeBadge[property.type]}`}>
             {typeLabel[property.type]}
           </span>
-
-          {/* Price — exact amount, in display font */}
-          <p className={`absolute bottom-4 end-4 font-display font-light text-white ${isLarge ? "text-2xl" : "text-lg"}`}>
-            {formatPrice(property.price, property.type)}
-          </p>
         </div>
 
         {/* Details */}
@@ -91,8 +93,12 @@ export default function PropertyCard({ property, variant = "default" }: Property
           <h3 className={`font-semibold text-cream mb-1 line-clamp-1 ${isLarge ? "text-lg" : "text-base"}`}>
             {title}
           </h3>
-          <p className="text-xs text-gray-light mb-5">
+          <p className="text-xs text-gray-light mb-3">
             {neighborhood}, {city}
+          </p>
+          {/* Price — the number people scan for */}
+          <p className={`font-display font-light text-gold mb-5 ${isLarge ? "text-3xl" : "text-2xl"}`}>
+            {formatPrice(property.price, property.type)}
           </p>
 
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-gray-light mt-auto">

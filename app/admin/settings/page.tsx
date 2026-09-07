@@ -198,23 +198,6 @@ export default async function SettingsPage() {
             </div>
           </SubGroup>
 
-          <SubGroup title="מפת נכסים">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className={label}>תווית עילית</label>
-                <input className={field} name="map_eyebrow_he" defaultValue={s.map_eyebrow_he} />
-              </div>
-              <div>
-                <label className={label}>כותרת</label>
-                <input className={field} name="map_title_he" defaultValue={s.map_title_he} />
-              </div>
-            </div>
-            <div>
-              <label className={label}>תת-כותרת</label>
-              <input className={field} name="map_subtitle_he" defaultValue={s.map_subtitle_he} />
-            </div>
-          </SubGroup>
-
           <SubGroup title="בלוג">
             <div className="grid grid-cols-2 gap-4">
               <div>

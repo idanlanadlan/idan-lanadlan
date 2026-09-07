@@ -97,23 +97,15 @@ export default function PropertiesClient({ properties }: { properties: Property[
             {/* Spacer */}
             <div className="flex-1" />
 
-            {/* View toggle */}
-            <div className="flex items-center gap-1 border border-gray-dark rounded-lg p-1">
-              <button
-                onClick={() => setView("list")}
-                title="רשימה"
-                className={`p-1.5 rounded transition-colors ${view === "list" ? "bg-gold text-black" : "text-gray-light hover:text-gold"}`}
-              >
-                <LayoutGrid size={16} />
-              </button>
-              <button
-                onClick={() => setView("map")}
-                title="מפה"
-                className={`p-1.5 rounded transition-colors ${view === "map" ? "bg-gold text-black" : "text-gray-light hover:text-gold"}`}
-              >
-                <Map size={16} />
-              </button>
-            </div>
+            {/* View toggle — one clear button. Starts on the list so the
+                properties are what draws the eye; this opens the map with pins. */}
+            <button
+              onClick={() => setView(view === "list" ? "map" : "list")}
+              className="flex items-center gap-2 border border-gray-dark rounded-lg px-3.5 py-2 text-sm text-gray-light hover:border-gold hover:text-gold transition-colors"
+            >
+              {view === "list" ? <Map size={15} /> : <LayoutGrid size={15} />}
+              {view === "list" ? p.view_map : p.view_list}
+            </button>
           </div>
 
           <div className="flex items-center gap-3 flex-wrap">
@@ -180,7 +172,7 @@ export default function PropertiesClient({ properties }: { properties: Property[
         <section className="py-10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <Suspense fallback={<div className="h-[480px] bg-charcoal border border-gray-dark rounded-xl animate-pulse" />}>
-              <PropertyMap properties={filtered} height="480px" />
+              <PropertyMap properties={filtered} height="480px" frameTelAviv />
             </Suspense>
           </div>
         </section>

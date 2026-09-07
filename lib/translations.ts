@@ -6,7 +6,7 @@ export interface T {
   hero: { eyebrow: string; line1: string; line2: string; subtitle: string; cta_properties: string; cta_contact: string; rating: string; };
   stats: { experience: string; experience_value: string; deals: string; deals_value: string; rating: string; office: string; office_value: string; };
   sections: {
-    properties: { eyebrow: string; title: string; description: string; all: string; filter_all: string; filter_sale: string; filter_rent: string; filter_projects: string; empty: string; filter_city_all: string; filter_neighborhood_all: string; sort_label: string; sort_default: string; sort_price_desc: string; sort_price_asc: string; budget_min: string; budget_max: string; };
+    properties: { eyebrow: string; title: string; description: string; all: string; filter_all: string; filter_sale: string; filter_rent: string; filter_projects: string; empty: string; filter_city_all: string; filter_neighborhood_all: string; sort_label: string; sort_default: string; sort_price_desc: string; sort_price_asc: string; budget_min: string; budget_max: string; view_map: string; view_list: string; };
     projects: { eyebrow: string; title: string; subtitle: string; empty: string; pitch_eyebrow: string; pitch_title: string; pitch_subtitle: string; pitch_items: string[]; pitch_form_title: string; };
     about: { eyebrow: string; quote: string; read_more: string; bio1: string; bio2: string; };
     testimonials: { eyebrow: string; title: string; all: string; google_review: string; };
@@ -221,6 +221,8 @@ export const translations: Record<Locale, T> = {
         sort_price_asc: "מחיר: מהנמוך לגבוה",
         budget_min: "מחיר מינימום",
         budget_max: "מחיר מקסימום",
+        view_map: "מפה",
+        view_list: "רשימה",
       },
       projects: {
         eyebrow: "ליווי יזמות והשקעות",
@@ -1151,6 +1153,8 @@ export const translations: Record<Locale, T> = {
         sort_price_asc: "Price: Low to High",
         budget_min: "Min price",
         budget_max: "Max price",
+        view_map: "Map",
+        view_list: "List",
       },
       projects: {
         eyebrow: "Development & Investment",
@@ -2081,6 +2085,8 @@ export const translations: Record<Locale, T> = {
         sort_price_asc: "Prix : croissant",
         budget_min: "Prix min",
         budget_max: "Prix max",
+        view_map: "Carte",
+        view_list: "Liste",
       },
       projects: {
         eyebrow: "Promotion et investissement",
@@ -3011,6 +3017,8 @@ export const translations: Record<Locale, T> = {
         sort_price_asc: "Precio: de menor a mayor",
         budget_min: "Precio mín.",
         budget_max: "Precio máx.",
+        view_map: "Mapa",
+        view_list: "Lista",
       },
       projects: {
         eyebrow: "Promoción e inversión",

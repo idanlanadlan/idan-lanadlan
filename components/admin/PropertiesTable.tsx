@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Pencil, Star, Eye, ArrowUp, ArrowDown, ArrowUpDown, Handshake } from "lucide-react";
+import { Pencil, Star, Eye, ArrowUp, ArrowDown, ArrowUpDown, Handshake, MapPin } from "lucide-react";
 import StatusSelect from "@/components/admin/StatusSelect";
 import ConfirmDeleteForm from "@/components/admin/ConfirmDeleteForm";
 import type { Property, PropertyStatus } from "@/lib/types";
@@ -144,7 +144,10 @@ export default function PropertiesTable({
                   {/* Exact street address — always shown to the admin, even when
                       the public site is set to hide it (address_visibility). */}
                   {p.address && (
-                    <p className="text-xs text-cream/90 mt-0.5 truncate">{p.address}</p>
+                    <p className="text-xs text-gold/90 mt-1 flex items-center gap-1 truncate">
+                      <MapPin size={11} className="shrink-0" />
+                      {p.address}
+                    </p>
                   )}
                   <p className="text-xs text-gray-light mt-0.5 truncate">
                     {p.neighborhood}, {p.city} · {p.bedrooms} חד׳ · {p.size_sqm} מ״ר
