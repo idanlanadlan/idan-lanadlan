@@ -102,6 +102,32 @@ ALTER TABLE properties
   ADD COLUMN IF NOT EXISTS address_visibility TEXT NOT NULL DEFAULT 'full'
     CHECK (address_visibility IN ('full', 'street', 'neighborhood'));`;
 
+const MIGRATION_SQL_SUBSCRIBERS = `-- רשימת תפוצה למייל (הרשמה עצמית באתר). אדמין בלבד — RLS ל-service_role בלבד,
+-- אין קריאה ציבורית. הטוקנים משמשים לקישורי אישור/הסרה במיילים.
+CREATE TABLE IF NOT EXISTS email_subscribers (
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::TEXT,
+  email TEXT NOT NULL UNIQUE,
+  name TEXT NOT NULL DEFAULT '',
+  status TEXT NOT NULL DEFAULT 'pending'
+    CHECK (status IN ('pending', 'confirmed', 'unsubscribed')),
+  confirm_token TEXT NOT NULL,
+  unsubscribe_token TEXT NOT NULL,
+  wants_new_listings BOOLEAN NOT NULL DEFAULT true,
+  wants_weekly_digest BOOLEAN NOT NULL DEFAULT true,
+  consent_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  confirmed_at TIMESTAMPTZ,
+  unsubscribed_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+ALTER TABLE email_subscribers ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "service_role_all" ON email_subscribers;
+CREATE POLICY "service_role_all" ON email_subscribers
+  FOR ALL TO service_role USING (true) WITH CHECK (true);
+
+-- לוודא שאין קריאה ציבורית — השאילתה צריכה להחזיר רק שורה עם roles = {service_role}
+SELECT tablename, policyname, cmd, roles FROM pg_policies WHERE tablename = 'email_subscribers';`;
+
 const MIGRATION_SQL_FLOOR_YARD = `-- קומה יכולה להיות חצי-קומה (למשל 3.5) + הוספת שדה "גודל חצר"
 -- ALTER COLUMN ... TYPE NUMERIC ממיר אוטומטית מספרים שלמים קיימים (3 → 3.0) — בטוח, לא הורס נתונים
 ALTER TABLE properties
@@ -348,6 +374,15 @@ export default function SetupPage() {
           </p>
           <pre className="bg-black rounded-lg p-4 text-xs text-cream overflow-x-auto leading-relaxed font-mono">
             {MIGRATION_SQL_FLOOR_YARD}
+          </pre>
+        </Step>
+
+        <Step num={16} title="עדכון: רשימת תפוצה למייל">
+          <p className="text-sm text-gray-light mb-3">
+            כדי שלקוחות יוכלו להירשם באתר לעדכוני נכסים במייל (עם אישור כפול והסרה עצמית), הרץ ב-<strong className="text-cream">SQL Editor</strong> את זה:
+          </p>
+          <pre className="bg-black rounded-lg p-4 text-xs text-cream overflow-x-auto leading-relaxed font-mono">
+            {MIGRATION_SQL_SUBSCRIBERS}
           </pre>
         </Step>
       </div>

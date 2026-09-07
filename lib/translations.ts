@@ -27,6 +27,16 @@ export interface T {
   groups_modal: { description: string; name_label: string; name_placeholder: string; phone_label: string; looking_label_sale: string; looking_label_rent: string; looking_placeholder_sale: string; looking_placeholder_rent: string; budget_label: string; budget_placeholder_sale: string; budget_placeholder_rent: string; purpose_label: string; purpose_placeholder: string; purpose_investment: string; purpose_living: string; purpose_both: string; submit_button: string; disclaimer: string; success_title: string; success_message: string; success_button: string; };
   groups_page: { meta_title: string; meta_description: string; };
   properties_page: { meta_title: string; meta_description: string; eyebrow: string; h1: string; subtitle: string; intro: string; empty_cta: string; alert_title: string; alert_subtitle: string; alert_looking_label: string; alert_looking_placeholder: string; alert_submit: string; alert_success_note: string; };
+  newsletter: {
+    meta_title: string; meta_description: string;
+    title: string; subtitle: string; name_label: string; email_label: string;
+    consent_prefix: string; consent_link: string; consent_suffix: string;
+    submit: string; sending: string;
+    success_title: string; success_note: string; already: string; generic_error: string;
+    confirmed_title: string; confirmed_note: string;
+    unsub_title: string; unsub_note: string; resubscribe: string;
+    bad_link: string;
+  };
   about: {
     meta_title: string; meta_description: string;
     eyebrow: string; heading_line1: string; heading_line2: string;
@@ -439,6 +449,29 @@ export const translations: Record<Locale, T> = {
       alert_looking_placeholder: "לדוגמה: 3–4 חדרים בצפון הישן, עד 5.5 מיליון ₪, למגורים",
       alert_submit: "עדכנו אותי →",
       alert_success_note: "נעדכן אתכם כשייכנס נכס שמתאים למה שחיפשתם",
+    },
+    newsletter: {
+      meta_title: "עדכוני נכסים במייל | עידן לנדל״ן",
+      meta_description: "הירשמו לרשימת התפוצה של עידן לנדל״ן — קבלו מייל על כל נכס חדש בתל אביב וסביבתה, וסיכום שבועי של כל הנכסים הזמינים. ניתן לבטל בכל עת.",
+      title: "קבלו את הנכסים החדשים ראשונים",
+      subtitle: "נכסים רבים נמכרים לפני שהם מתפרסמים. הירשמו ותקבלו מייל על כל נכס חדש שנכנס, וגם סיכום שבועי של הנכסים הזמינים.",
+      name_label: "שם מלא",
+      email_label: "כתובת מייל",
+      consent_prefix: "אני מאשר/ת קבלת עדכונים שיווקיים על נכסים במייל מעידן לנדל״ן, בהתאם ל",
+      consent_link: "מדיניות הפרטיות",
+      consent_suffix: ". ניתן לבטל את ההרשמה בכל עת.",
+      submit: "הרשמה לעדכונים →",
+      sending: "רושם...",
+      success_title: "כמעט סיימנו",
+      success_note: "שלחנו לך מייל לאישור ההרשמה — לחצו על הקישור שבו כדי להתחיל לקבל עדכונים.",
+      already: "הכתובת הזו כבר רשומה לעדכונים. אם לא מגיעים אליך מיילים, בדקו בתיקיית הספאם.",
+      generic_error: "משהו השתבש בהרשמה. נסו שוב או פנו לעידן ישירות.",
+      confirmed_title: "ההרשמה אושרה",
+      confirmed_note: "מעכשיו תקבלו מייל על כל נכס חדש, וסיכום שבועי של הנכסים הזמינים.",
+      unsub_title: "ההרשמה בוטלה",
+      unsub_note: "לא תקבלו יותר מיילים מרשימת התפוצה. נרשמת בטעות?",
+      resubscribe: "הרשמה מחדש",
+      bad_link: "הקישור אינו תקין או שפג תוקפו.",
     },
     about: {
       meta_title: "אודות עידן חולי | עידן לנדל״ן",
@@ -1372,6 +1405,29 @@ export const translations: Record<Locale, T> = {
       alert_submit: "Keep me posted →",
       alert_success_note: "We'll be in touch when a property matches what you're looking for",
     },
+    newsletter: {
+      meta_title: "Property updates by email | Idan LaNadlan",
+      meta_description: "Join Idan LaNadlan's mailing list — get an email on every new property in Tel Aviv and the area, plus a weekly recap of everything available. Unsubscribe anytime.",
+      title: "Be the first to hear about new properties",
+      subtitle: "Many properties sell before they're ever listed. Subscribe to get an email on every new listing, plus a weekly recap of what's available.",
+      name_label: "Full name",
+      email_label: "Email address",
+      consent_prefix: "I agree to receive marketing property updates by email from Idan LaNadlan, in line with the ",
+      consent_link: "privacy policy",
+      consent_suffix: ". You can unsubscribe at any time.",
+      submit: "Subscribe →",
+      sending: "Subscribing...",
+      success_title: "Almost there",
+      success_note: "We've sent you a confirmation email — click the link in it to start receiving updates.",
+      already: "This address is already subscribed. If emails aren't arriving, check your spam folder.",
+      generic_error: "Something went wrong. Please try again or contact Idan directly.",
+      confirmed_title: "Subscription confirmed",
+      confirmed_note: "You'll now get an email on every new property, plus a weekly recap of what's available.",
+      unsub_title: "You've been unsubscribed",
+      unsub_note: "You won't receive any more emails from the mailing list. Unsubscribed by mistake?",
+      resubscribe: "Subscribe again",
+      bad_link: "This link is invalid or has expired.",
+    },
     about: {
       meta_title: "About Idan Huli | Idan LaNadlan",
       meta_description: "Idan Huli — about a decade of experience in real estate brokerage and marketing. Transparency, professionalism and results.",
@@ -2304,6 +2360,29 @@ export const translations: Record<Locale, T> = {
       alert_submit: "Tenez-moi informé →",
       alert_success_note: "Nous vous contacterons dès qu'un bien correspond à votre recherche",
     },
+    newsletter: {
+      meta_title: "Nouveaux biens par e-mail | Idan LaNadlan",
+      meta_description: "Inscrivez-vous à la liste de diffusion d'Idan LaNadlan — recevez un e-mail pour chaque nouveau bien à Tel Aviv et ses environs, plus un récapitulatif hebdomadaire. Désinscription à tout moment.",
+      title: "Soyez informé en premier des nouveaux biens",
+      subtitle: "Beaucoup de biens se vendent avant d'être publiés. Inscrivez-vous pour recevoir un e-mail à chaque nouveau bien, plus un récapitulatif hebdomadaire.",
+      name_label: "Nom complet",
+      email_label: "Adresse e-mail",
+      consent_prefix: "J'accepte de recevoir par e-mail des mises à jour marketing sur les biens d'Idan LaNadlan, conformément à la ",
+      consent_link: "politique de confidentialité",
+      consent_suffix: ". Vous pouvez vous désinscrire à tout moment.",
+      submit: "S'inscrire →",
+      sending: "Inscription...",
+      success_title: "Presque terminé",
+      success_note: "Nous vous avons envoyé un e-mail de confirmation — cliquez sur le lien pour commencer à recevoir les mises à jour.",
+      already: "Cette adresse est déjà inscrite. Si vous ne recevez pas d'e-mails, vérifiez vos spams.",
+      generic_error: "Une erreur s'est produite. Réessayez ou contactez Idan directement.",
+      confirmed_title: "Inscription confirmée",
+      confirmed_note: "Vous recevrez désormais un e-mail pour chaque nouveau bien, plus un récapitulatif hebdomadaire.",
+      unsub_title: "Vous êtes désinscrit",
+      unsub_note: "Vous ne recevrez plus d'e-mails de la liste de diffusion. Désinscription par erreur ?",
+      resubscribe: "Se réinscrire",
+      bad_link: "Ce lien est invalide ou a expiré.",
+    },
     about: {
       meta_title: "À propos d'Idan Huli | Idan LaNadlan",
       meta_description: "Idan Huli — une décennie d'expérience en courtage et marketing immobilier. Transparence, professionnalisme et résultats.",
@@ -3235,6 +3314,29 @@ export const translations: Record<Locale, T> = {
       alert_looking_placeholder: "p. ej. 3–4 habitaciones en el Old North, hasta 5,5 M₪, para vivir",
       alert_submit: "Mantenme informado →",
       alert_success_note: "Te contactaremos cuando una propiedad coincida con lo que buscas",
+    },
+    newsletter: {
+      meta_title: "Novedades de propiedades por correo | Idan LaNadlan",
+      meta_description: "Únete a la lista de correo de Idan LaNadlan — recibe un correo por cada nueva propiedad en Tel Aviv y alrededores, más un resumen semanal. Cancela cuando quieras.",
+      title: "Entérate primero de las nuevas propiedades",
+      subtitle: "Muchas propiedades se venden antes de publicarse. Suscríbete para recibir un correo por cada nueva propiedad, más un resumen semanal de lo disponible.",
+      name_label: "Nombre completo",
+      email_label: "Correo electrónico",
+      consent_prefix: "Acepto recibir por correo actualizaciones de marketing sobre propiedades de Idan LaNadlan, conforme a la ",
+      consent_link: "política de privacidad",
+      consent_suffix: ". Puedes darte de baja en cualquier momento.",
+      submit: "Suscribirse →",
+      sending: "Suscribiendo...",
+      success_title: "Casi listo",
+      success_note: "Te enviamos un correo de confirmación — haz clic en el enlace para empezar a recibir novedades.",
+      already: "Esta dirección ya está suscrita. Si no recibes correos, revisa la carpeta de spam.",
+      generic_error: "Algo salió mal. Inténtalo de nuevo o contacta a Idan directamente.",
+      confirmed_title: "Suscripción confirmada",
+      confirmed_note: "Ahora recibirás un correo por cada nueva propiedad, más un resumen semanal de lo disponible.",
+      unsub_title: "Te has dado de baja",
+      unsub_note: "No recibirás más correos de la lista. ¿Te diste de baja por error?",
+      resubscribe: "Suscribirse de nuevo",
+      bad_link: "Este enlace no es válido o ha caducado.",
     },
     about: {
       meta_title: "Sobre Idan Huli | Idan LaNadlan",

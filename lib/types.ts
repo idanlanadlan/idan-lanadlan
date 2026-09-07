@@ -102,6 +102,25 @@ export interface BlogPost {
   keywords_es?: string[];
 }
 
+export type SubscriberStatus = "pending" | "confirmed" | "unsubscribed";
+
+/** An email-newsletter subscriber. Admin-only table (service-role RLS).
+ *  consent_at + confirmed_at are the Amendment-40 consent record. */
+export interface Subscriber {
+  id: string;
+  email: string;
+  name: string;
+  status: SubscriberStatus;
+  confirm_token: string;
+  unsubscribe_token: string;
+  wants_new_listings: boolean;
+  wants_weekly_digest: boolean;
+  consent_at: string;
+  confirmed_at: string | null;
+  unsubscribed_at: string | null;
+  created_at: string;
+}
+
 export interface Testimonial {
   id: string;
   name: string;

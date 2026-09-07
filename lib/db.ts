@@ -1,6 +1,6 @@
 import { mockProperties, mockBlogPosts } from "./mock-data";
 import { createClient, createAdminClient, isConfigured } from "./supabase";
-import type { Property, BlogPost, Broker, PropertyBrokerLink, ListingSource } from "./types";
+import type { Property, BlogPost, Broker, PropertyBrokerLink, ListingSource, Subscriber } from "./types";
 
 // ── Settings ──────────────────────────────────────────────
 export const DEFAULT_SETTINGS: Record<string, string> = {
@@ -331,6 +331,78 @@ export async function setPropertyBrokerLink(
       { onConflict: "property_id" }
     );
   if (error) throw new Error(error.message);
+}
+
+// ── Email subscribers (newsletter) ────────────────────────
+// Admin-only, service-role RLS (setup Step 16). Read helpers soft-fail to
+// empty/null when the table doesn't exist yet, like the broker helpers.
+
+export async function getSubscriberByEmail(email: string): Promise<Subscriber | null> {
+  if (!isConfigured) return null;
+  const { data, error } = await createAdminClient()
+    .from("email_subscribers")
+    .select("*")
+    .eq("email", email.trim().toLowerCase())
+    .maybeSingle();
+  return error ? null : ((data as Subscriber) ?? null);
+}
+
+export async function getSubscriberByToken(
+  field: "confirm_token" | "unsubscribe_token",
+  token: string
+): Promise<Subscriber | null> {
+  if (!isConfigured || !token) return null;
+  const { data, error } = await createAdminClient()
+    .from("email_subscribers")
+    .select("*")
+    .eq(field, token)
+    .maybeSingle();
+  return error ? null : ((data as Subscriber) ?? null);
+}
+
+export async function createSubscriber(
+  sub: Omit<Subscriber, "id" | "created_at" | "confirmed_at" | "unsubscribed_at">
+): Promise<Subscriber> {
+  const { data, error } = await createAdminClient()
+    .from("email_subscribers")
+    .insert([sub])
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  return data as Subscriber;
+}
+
+export async function updateSubscriber(
+  id: string,
+  patch: Partial<Omit<Subscriber, "id" | "created_at">>
+): Promise<void> {
+  const { error } = await createAdminClient()
+    .from("email_subscribers")
+    .update(patch)
+    .eq("id", id);
+  if (error) throw new Error(error.message);
+}
+
+/** Confirmed subscribers who opted into a given stream. */
+export async function listConfirmedSubscribers(
+  pref: "wants_new_listings" | "wants_weekly_digest"
+): Promise<Subscriber[]> {
+  if (!isConfigured) return [];
+  const { data, error } = await createAdminClient()
+    .from("email_subscribers")
+    .select("*")
+    .eq("status", "confirmed")
+    .eq(pref, true);
+  return error ? [] : ((data as Subscriber[]) ?? []);
+}
+
+export async function getAllSubscribers(): Promise<Subscriber[]> {
+  if (!isConfigured) return [];
+  const { data, error } = await createAdminClient()
+    .from("email_subscribers")
+    .select("*")
+    .order("created_at", { ascending: false });
+  return error ? [] : ((data as Subscriber[]) ?? []);
 }
 
 // ── Blog posts ────────────────────────────────────────────
