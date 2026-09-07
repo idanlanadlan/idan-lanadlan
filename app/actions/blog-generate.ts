@@ -4,6 +4,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import type { BlogPost } from "@/lib/types";
 import { getAllBlogPosts } from "@/lib/db";
 import { isAdmin } from "@/lib/require-admin";
+import { RSS_FEEDS, RE_KEYWORDS, TOPIC_POOL } from "@/lib/blog-sources";
 
 export type GenerateResult =
   | { ok: true; draft: Partial<BlogPost> }
@@ -98,6 +99,111 @@ async function uniqueSlug(base: string): Promise<string> {
   let i = 2;
   while (existing.has(`${base}-${i}`)) i++;
   return `${base}-${i}`;
+}
+
+// ── Weekly automated draft (app/api/cron/blog) ───────────────────────────────
+
+const WEEKLY_GUIDANCE = `זו טיוטה שבועית אוטומטית לבלוג. הנחיות נוספות:
+- קהל היעד רחב: משקיעים, רוכשים למגורים, בעלי נכסים, מוכרי נכסים, יזמים שמעוניינים בשיווק פרויקטים, עולים חדשים, משקיעים יהודים מחו"ל, ותושבי תל אביב. כתוב כך שפסקת הפתיחה תדבר לרובם.
+- מיקוד גיאוגרפי: נדל"ן באופן כללי. אם המאמר עוסק באזור מסוים — שיהיה ברובו המוחלט על תל אביב, ואפשר להתפזר לערי המרכז הסמוכות (יפו, בת ים, ראשון לציון, רמת גן, גבעתיים, הרצליה). ירושלים רק אם באמת יש זווית מעניינת.
+- אם צירפתי לך כותרות חדשות מהשבוע — בחר זווית אחת עדכנית ורלוונטית לקהל שלנו וכתוב עליה מאמר מקורי (אל תעתיק, אל תסתמך על פרט שלא הופיע בכותרת). אם שום כותרת לא מתאימה לקהל שלנו — בחר נושא ירוק-עד מתוך המאגר שאתן לך.
+- אל תשכפל מאמר קיים — אתן לך את רשימת הכותרות שכבר פורסמו.`;
+
+const ITEM_RE = /<item[\s\S]*?<\/item>/gi;
+const TAG_RE = (tag: string) =>
+  new RegExp(`<${tag}[^>]*>\\s*(?:<!\\[CDATA\\[)?([\\s\\S]*?)(?:\\]\\]>)?\\s*<\\/${tag}>`, "i");
+
+function stripTags(s: string): string {
+  return s.replace(/<[^>]+>/g, " ").replace(/&[a-z#0-9]+;/gi, " ").replace(/\s+/g, " ").trim();
+}
+
+/** Best-effort pull of recent headlines from one RSS feed. Never throws. */
+async function fetchFeedHeadlines(
+  feed: { name: string; url: string },
+  filterByKeyword: boolean
+): Promise<string[]> {
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 8000);
+    const res = await fetch(feed.url, {
+      headers: { "User-Agent": "Mozilla/5.0 (compatible; idanlanadlan.co.il/blog-bot)" },
+      signal: controller.signal,
+    });
+    clearTimeout(timer);
+    if (!res.ok) return [];
+    const xml = await res.text();
+    const cutoff = Date.now() - 1000 * 60 * 60 * 24 * 16; // ~16 days
+    const out: string[] = [];
+    for (const block of xml.match(ITEM_RE) ?? []) {
+      const title = stripTags((block.match(TAG_RE("title"))?.[1] ?? "").trim());
+      if (!title) continue;
+      const desc = stripTags((block.match(TAG_RE("description"))?.[1] ?? "").slice(0, 300));
+      const pub = block.match(TAG_RE("pubDate"))?.[1]?.trim();
+      const ts = pub ? Date.parse(pub) : NaN;
+      if (!Number.isNaN(ts) && ts < cutoff) continue;
+      if (filterByKeyword && !RE_KEYWORDS.some((k) => title.includes(k) || desc.includes(k))) continue;
+      out.push(desc ? `${title} — ${desc}` : title);
+      if (out.length >= 8) break;
+    }
+    return out;
+  } catch {
+    return [];
+  }
+}
+
+async function weeklyNewsDigest(): Promise<string> {
+  const lists = await Promise.all(
+    RSS_FEEDS.map((f, i) => fetchFeedHeadlines(f, i > 0))
+  );
+  const lines: string[] = [];
+  RSS_FEEDS.forEach((f, i) => {
+    for (const h of lists[i].slice(0, 5)) lines.push(`- [${f.name}] ${h}`);
+  });
+  return lines.slice(0, 15).join("\n");
+}
+
+/**
+ * Generates the weekly draft. No admin check — the caller (the cron route)
+ * authenticates via CRON_SECRET, and the manual-trigger server action does its
+ * own isAdmin() check.
+ */
+export async function generateWeeklyDraft(): Promise<GenerateResult> {
+  const client = getClient();
+  if (!client) return { ok: false, error: "not_configured" };
+
+  const [digest, existingTitles] = await Promise.all([
+    weeklyNewsDigest(),
+    getAllBlogPosts().then((posts) => posts.map((p) => `- ${p.title}`).join("\n")),
+  ]);
+
+  const userMessage = [
+    WEEKLY_GUIDANCE,
+    "",
+    digest
+      ? `כותרות נדל"ן מהשבוע (מקורות: גלובס, דה מרקר):\n${digest}`
+      : 'לא נשלפו כותרות חדשות השבוע — בחר נושא ירוק-עד מהמאגר.',
+    "",
+    `מאגר נושאים ירוקי-עד (אם אין זווית חדשותית מתאימה, בחר אחד שלא כוסה):\n${TOPIC_POOL.map((t) => `- ${t}`).join("\n")}`,
+    "",
+    existingTitles ? `מאמרים שכבר פורסמו (אל תשכפל):\n${existingTitles}` : "",
+  ].join("\n");
+
+  try {
+    const msg = await client.messages.create({
+      model: "claude-sonnet-5",
+      max_tokens: 4096,
+      system: SYSTEM_PROMPT,
+      messages: [{ role: "user", content: userMessage }],
+      tools: [WRITE_ARTICLE_TOOL],
+      tool_choice: { type: "tool", name: "write_article" },
+    });
+    const draft = extractDraft(msg);
+    if (!draft) return { ok: false, error: "parse_error" };
+    draft.slug = await uniqueSlug(draft.slug ?? "");
+    return { ok: true, draft };
+  } catch {
+    return { ok: false, error: "api_error" };
+  }
 }
 
 export async function generateBlogDraft(mode: GenerateMode, value: string): Promise<GenerateResult> {

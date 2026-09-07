@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createBlogPost, updateBlogPost, deleteBlogPost as dbDeleteBlogPost, getBlogPostById } from "@/lib/db";
 import { translateBlogPostFields } from "@/lib/translate-blogpost";
+import { generateWeeklyDraft } from "@/app/actions/blog-generate";
 import { isAdmin } from "@/lib/require-admin";
 
 function slugify(text: string): string {
@@ -80,6 +81,30 @@ export async function translateExistingPost(formData: FormData) {
   revalidatePath("/blog");
   revalidatePath(`/blog/${post.slug}`);
   revalidatePath("/admin/blog");
+}
+
+/**
+ * Manual "generate this week's draft now" — the same generator the Sunday cron
+ * runs (news digest + evergreen topic pool), but on demand from /admin/blog.
+ * Saves an unpublished Hebrew draft and drops Idan straight into its editor.
+ */
+export async function generateWeeklyDraftNow() {
+  if (!(await isAdmin())) throw new Error("Unauthorized");
+  const result = await generateWeeklyDraft();
+  if (!result.ok) redirect(`/admin/blog?gen_error=${result.error}`);
+  const d = result.draft;
+  const post = await createBlogPost({
+    title: d.title ?? "",
+    slug: d.slug ?? "",
+    excerpt: d.excerpt ?? "",
+    content: d.content ?? "",
+    cover_image: "",
+    keywords: d.keywords ?? [],
+    published: false,
+    featured: false,
+  });
+  revalidatePath("/admin/blog");
+  redirect(`/admin/blog/${post.id}/edit`);
 }
 
 export async function deleteBlogPost(formData: FormData) {

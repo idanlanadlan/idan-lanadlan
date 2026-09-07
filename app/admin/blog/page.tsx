@@ -1,16 +1,26 @@
 import Link from "next/link";
-import { Plus, Pencil, Eye, EyeOff, Sparkles, Languages } from "lucide-react";
+import { Plus, Pencil, Eye, EyeOff, Sparkles, Languages, CalendarClock } from "lucide-react";
 import { getAllBlogPosts } from "@/lib/db";
-import { deleteBlogPost, togglePublished, translateExistingPost } from "@/app/actions/blog";
+import { deleteBlogPost, togglePublished, translateExistingPost, generateWeeklyDraftNow } from "@/app/actions/blog";
 import ConfirmDeleteForm from "@/components/admin/ConfirmDeleteForm";
 
 export const dynamic = "force-dynamic";
-// translateExistingPost can call Claude on a full article — same timeout
-// headroom as the create/edit forms.
+// translateExistingPost / generateWeeklyDraftNow call Claude on a full article
+// — same timeout headroom as the create/edit forms.
 export const maxDuration = 120;
 
-export default async function BlogAdmin() {
-  const posts = await getAllBlogPosts();
+const GEN_ERRORS: Record<string, string> = {
+  not_configured: "ANTHROPIC_API_KEY לא מוגדר ב-Vercel",
+  parse_error: "ה-AI לא החזיר טיוטה תקינה — נסה שוב",
+  api_error: "שגיאת חיבור ל-Claude API — נסה שוב",
+};
+
+export default async function BlogAdmin({
+  searchParams,
+}: {
+  searchParams: Promise<{ gen_error?: string }>;
+}) {
+  const [posts, { gen_error }] = await Promise.all([getAllBlogPosts(), searchParams]);
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-10">
@@ -21,9 +31,19 @@ export default async function BlogAdmin() {
           <p className="text-xs text-gray-light mt-1">{posts.length} מאמרים בסך הכל</p>
         </div>
         <div className="flex items-center gap-3">
+          <form action={generateWeeklyDraftNow}>
+            <button
+              type="submit"
+              title="מייצר טיוטה מכותרות החדשות של השבוע + מאגר נושאים — נשמרת כטיוטה בעברית"
+              className="flex items-center gap-2 border border-gold/40 text-gold px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-gold/10 transition-colors"
+            >
+              <CalendarClock size={16} />
+              טיוטה שבועית עכשיו
+            </button>
+          </form>
           <Link
             href="/admin/blog/generate"
-            className="flex items-center gap-2 border border-gold/40 text-gold px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-gold/10 transition-colors"
+            className="flex items-center gap-2 border border-gold/40 text-gold px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-gold/10 transition-colors"
           >
             <Sparkles size={16} />
             צור מאמר עם AI
@@ -37,6 +57,12 @@ export default async function BlogAdmin() {
           </Link>
         </div>
       </div>
+
+      {gen_error && (
+        <p className="mb-6 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-3">
+          {GEN_ERRORS[gen_error] ?? "יצירת הטיוטה נכשלה — נסה שוב"}
+        </p>
+      )}
 
       {posts.length === 0 ? (
         <div className="text-center py-20 text-gray-light">
