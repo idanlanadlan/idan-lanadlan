@@ -3,7 +3,7 @@ import Link from "next/link";
 import Script from "next/script";
 import { David_Libre, Assistant } from "next/font/google";
 import "../globals.css";
-import { Home, Plus, List, LogOut, BarChart2, FileText, Settings, Database, Handshake } from "lucide-react";
+import { Home, Plus, List, LogOut, BarChart2, FileText, Settings, Database, Handshake, Mail } from "lucide-react";
 import { logout } from "@/app/actions/logout";
 
 const davidLibre = David_Libre({
@@ -86,6 +86,13 @@ function AdminChrome({ children }: { children: React.ReactNode }) {
           >
             <Handshake size={14} />
             מתווכים
+          </Link>
+          <Link
+            href="/admin/subscribers"
+            className="flex items-center gap-1.5 text-xs text-gray-light hover:text-gold px-3 py-1.5 rounded transition-colors"
+          >
+            <Mail size={14} />
+            תפוצה
           </Link>
           <Link
             href="/admin/settings"

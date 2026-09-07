@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Phone, Mail, MapPin, MessageCircle } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSettings } from "@/contexts/SettingsContext";
+import NewsletterSignup from "@/components/NewsletterSignup";
 
 export default function Footer() {
   const { t } = useLanguage();
@@ -144,6 +145,11 @@ export default function Footer() {
               {f.terms}
             </Link>
           </div>
+        </div>
+
+        {/* Newsletter signup */}
+        <div className="mt-14 pt-10 border-t border-gray-dark">
+          <NewsletterSignup variant="compact" />
         </div>
 
         {/* Bottom bar */}

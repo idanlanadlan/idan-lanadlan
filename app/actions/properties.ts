@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 import {
   createProperty,
   updateProperty,
@@ -10,6 +11,7 @@ import {
   setPropertyBrokerLink,
 } from "@/lib/db";
 import { translatePropertyFields } from "@/lib/translate-property";
+import { sendNewListingAlert } from "@/lib/newsletter";
 import { isAdmin } from "@/lib/require-admin";
 import type { PropertyType, PropertyStatus, AddressVisibility } from "@/lib/types";
 
@@ -106,6 +108,11 @@ export async function createPropertyAction(formData: FormData) {
   const translations = await translatePropertyFields(data);
   const created = await createProperty({ ...data, ...translations });
   await applyBrokerLink(created.id, formData);
+  // Email newsletter subscribers about the new listing — after the response,
+  // never blocking or failing the save. Create-only: no re-alert on edits.
+  if (created.status === "available") {
+    after(() => sendNewListingAlert(created));
+  }
   revalidatePath("/");
   revalidatePath("/nadlan");
   revalidatePath("/admin/properties");
