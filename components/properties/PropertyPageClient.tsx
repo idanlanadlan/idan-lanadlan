@@ -32,9 +32,12 @@ import { safeJsonLd } from "@/lib/json-ld";
 interface Props {
   property: Property;
   schema: object;
+  /** Canonical URL of this property page, in the current locale — appended to
+   *  the WhatsApp pre-fill so Idan sees exactly which listing the lead is about. */
+  url: string;
 }
 
-export default function PropertyPageClient({ property, schema }: Props) {
+export default function PropertyPageClient({ property, schema, url }: Props) {
   const { t, locale } = useLanguage();
   const pd = t.sections.property_detail;
   const [activeImg, setActiveImg] = useState(0);
@@ -57,6 +60,12 @@ export default function PropertyPageClient({ property, schema }: Props) {
     if (type === "rent") return `₪${price.toLocaleString("he-IL")} ${pd.per_month}`;
     return `₪${price.toLocaleString("he-IL")}`;
   };
+
+  // Pre-filled WhatsApp message — title + a direct link so Idan can open the
+  // exact listing the lead is asking about without hunting for it.
+  const whatsappHref = `https://wa.me/972549791171?text=${encodeURIComponent(
+    `שלום עידן, אשמח לשמוע עוד על ${title}\n${url}`
+  )}`;
 
   const specs: { icon: typeof BedDouble; value: string | number; label: string }[] = [
     { icon: BedDouble, value: property.bedrooms, label: pd.rooms },
@@ -229,7 +238,7 @@ export default function PropertyPageClient({ property, schema }: Props) {
 
                 <div className="flex flex-col gap-3">
                   <a
-                    href={`https://wa.me/972549791171?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%A2%D7%99%D7%93%D7%9F%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A9%D7%9E%D7%95%D7%A2%20%D7%A2%D7%95%D7%93%20%D7%A2%D7%9C%20${encodeURIComponent(title)}`}
+                    href={whatsappHref}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn-gold px-5 py-3 rounded-lg text-sm flex items-center justify-center gap-2"

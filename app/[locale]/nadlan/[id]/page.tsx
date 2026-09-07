@@ -108,5 +108,5 @@ export default async function PropertyPage({
     ],
   };
 
-  return <PropertyPageClient property={property} schema={schema} />;
+  return <PropertyPageClient property={property} schema={schema} url={propertyUrl(property.id, l)} />;
 }
