@@ -102,7 +102,7 @@ export default function PropertyCard({ property, variant = "default" }: Property
             </span>
             <span className="flex items-center gap-1.5">
               <Maximize2 size={12} className="text-gold/70" aria-hidden="true" />
-              {property.size_sqm} {pd.sqm}
+              {property.size_sqm} {pd.sqm_unit}
             </span>
             {property.type !== "rent" && (
               <span className="flex items-center gap-1.5">

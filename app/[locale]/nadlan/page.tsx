@@ -3,6 +3,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import PropertiesClient from "@/components/properties/PropertiesClient";
+import PropertyAlertForm from "@/components/properties/PropertyAlertForm";
 import MapSection from "@/components/home/MapSection";
 import { getProperties } from "@/lib/db";
 import { isLocale, canonicalAlternates, localizedPath } from "@/lib/locale-path";
@@ -91,6 +92,12 @@ export default async function PropertiesPage({
 
         <MapSection properties={properties} />
         <PropertiesClient properties={properties} />
+
+        <section className="py-16 border-t border-gray-dark">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+            <PropertyAlertForm variant="section" />
+          </div>
+        </section>
       </main>
       <Footer />
       <WhatsAppButton />

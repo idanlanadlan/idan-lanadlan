@@ -22,6 +22,7 @@ import {
   ArrowUpDown,
   Toilet,
 } from "lucide-react";
+import { sendGAEvent } from "@next/third-parties/google";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
@@ -246,6 +247,7 @@ export default function PropertyPageClient({ property, schema, url }: Props) {
                     href={whatsappHref}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => { try { sendGAEvent("event", "contact", { method: "whatsapp", context: "property" }); } catch {} }}
                     className="btn-gold px-5 py-3 rounded-lg text-sm flex items-center justify-center gap-2"
                   >
                     <MessageCircle size={16} />

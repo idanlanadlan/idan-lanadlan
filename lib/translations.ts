@@ -26,7 +26,7 @@ export interface T {
   a11y_widget: { open_aria: string; title: string; font_size: string; font_step: string; contrast: string; motion: string; links: string; reset: string; close_aria: string; statement_link: string; };
   groups_modal: { description: string; name_label: string; name_placeholder: string; phone_label: string; looking_label_sale: string; looking_label_rent: string; looking_placeholder_sale: string; looking_placeholder_rent: string; budget_label: string; budget_placeholder_sale: string; budget_placeholder_rent: string; purpose_label: string; purpose_placeholder: string; purpose_investment: string; purpose_living: string; purpose_both: string; submit_button: string; disclaimer: string; success_title: string; success_message: string; success_button: string; };
   groups_page: { meta_title: string; meta_description: string; };
-  properties_page: { meta_title: string; meta_description: string; eyebrow: string; h1: string; subtitle: string; intro: string; };
+  properties_page: { meta_title: string; meta_description: string; eyebrow: string; h1: string; subtitle: string; intro: string; empty_cta: string; alert_title: string; alert_subtitle: string; alert_looking_label: string; alert_looking_placeholder: string; alert_submit: string; alert_success_note: string; };
   about: {
     meta_title: string; meta_description: string;
     eyebrow: string; heading_line1: string; heading_line2: string;
@@ -316,7 +316,7 @@ export const translations: Record<Locale, T> = {
         rooms: "חדרים",
         bathrooms: "מקלחות",
         toilets: "שירותים",
-        sqm: "מ״ר נטו",
+        sqm: "גודל הנכס במ״ר",
         sqm_unit: "מ״ר",
         gross_sqm: "מ״ר ברוטו",
         balcony: "מרפסת",
@@ -430,6 +430,13 @@ export const translations: Record<Locale, T> = {
       subtitle: "נכסים נבחרים בתל אביב וסביבתה — עידן חולי, עידן לנדל״ן",
       intro:
         "כאן תמצאו דירות למכירה ולהשכרה בתל אביב וביפו, וגם בערי המרכז הסמוכות — רמת גן, גבעתיים, בת ים, ראשון לציון והרצליה. כל נכס ממוקם על מפה אינטראקטיבית, וניתן לסנן לפי עיר, שכונה, סוג עסקה ותקציב. לא מצאתם את מה שחיפשתם? עידן חולי ילווה אתכם באיתור הנכס הנכון.",
+      empty_cta: "לא מצאנו נכסים שמתאימים לסינון. השאירו פרטים ונעדכן אתכם כשייכנס נכס מתאים.",
+      alert_title: "קבלו התראה על נכסים חדשים",
+      alert_subtitle: "נכסים רבים נמכרים לפני שהם מתפרסמים. השאירו פרטים ותהיו הראשונים לדעת על נכס שמתאים לכם.",
+      alert_looking_label: "מה אתם מחפשים?",
+      alert_looking_placeholder: "לדוגמה: 3–4 חדרים בצפון הישן, עד 5.5 מיליון ₪, למגורים",
+      alert_submit: "עדכנו אותי →",
+      alert_success_note: "נעדכן אתכם כשייכנס נכס שמתאים למה שחיפשתם",
     },
     about: {
       meta_title: "אודות עידן חולי | עידן לנדל״ן",
@@ -1239,7 +1246,7 @@ export const translations: Record<Locale, T> = {
         rooms: "Rooms",
         bathrooms: "Bathrooms",
         toilets: "Toilets",
-        sqm: "sqm (net)",
+        sqm: "Property size (sqm)",
         sqm_unit: "sqm",
         gross_sqm: "sqm (gross)",
         balcony: "Balcony",
@@ -1353,6 +1360,13 @@ export const translations: Record<Locale, T> = {
       subtitle: "Selected properties in Tel Aviv and the surrounding area — Idan Huli, Idan LaNadlan",
       intro:
         "Browse apartments for sale and rent in Tel Aviv and Jaffa, as well as the nearby central cities — Ramat Gan, Givatayim, Bat Yam, Rishon LeZion and Herzliya. Every listing is pinned on an interactive map, with filters by city, neighborhood, deal type and budget. Can't find what you're looking for? Idan Huli will help you track down the right property.",
+      empty_cta: "No properties match this filter. Leave your details and we'll let you know when a matching listing comes in.",
+      alert_title: "Get alerts on new properties",
+      alert_subtitle: "Many properties sell before they're ever listed. Leave your details and be the first to hear about one that fits.",
+      alert_looking_label: "What are you looking for?",
+      alert_looking_placeholder: "e.g. 3–4 rooms in the Old North, up to ₪5.5M, to live in",
+      alert_submit: "Keep me posted →",
+      alert_success_note: "We'll be in touch when a property matches what you're looking for",
     },
     about: {
       meta_title: "About Idan Huli | Idan LaNadlan",
@@ -2162,7 +2176,7 @@ export const translations: Record<Locale, T> = {
         rooms: "Pièces",
         bathrooms: "Salles de bain",
         toilets: "Toilettes",
-        sqm: "m² net",
+        sqm: "Surface du bien (m²)",
         sqm_unit: "m²",
         gross_sqm: "m² brut",
         balcony: "Balcon",
@@ -2276,6 +2290,13 @@ export const translations: Record<Locale, T> = {
       subtitle: "Une sélection de biens à Tel Aviv et ses environs — Idan Huli, Idan LaNadlan",
       intro:
         "Retrouvez ici des appartements à vendre et à louer à Tel Aviv et à Jaffa, ainsi que dans les villes voisines du centre — Ramat Gan, Givatayim, Bat Yam, Rishon LeZion et Herzliya. Chaque bien est situé sur une carte interactive, avec des filtres par ville, quartier, type de transaction et budget. Vous ne trouvez pas ce que vous cherchez? Idan Huli vous accompagnera pour trouver le bon bien.",
+      empty_cta: "Aucun bien ne correspond à ce filtre. Laissez vos coordonnées et nous vous préviendrons dès qu'un bien correspondant arrive.",
+      alert_title: "Recevez les alertes sur les nouveaux biens",
+      alert_subtitle: "Beaucoup de biens se vendent avant même d'être publiés. Laissez vos coordonnées et soyez les premiers informés.",
+      alert_looking_label: "Que recherchez-vous?",
+      alert_looking_placeholder: "ex. 3–4 pièces dans le Old North, jusqu'à 5,5 M₪, pour y habiter",
+      alert_submit: "Tenez-moi informé →",
+      alert_success_note: "Nous vous contacterons dès qu'un bien correspond à votre recherche",
     },
     about: {
       meta_title: "À propos d'Idan Huli | Idan LaNadlan",
@@ -3085,7 +3106,7 @@ export const translations: Record<Locale, T> = {
         rooms: "Habitaciones",
         bathrooms: "Baños",
         toilets: "Aseos",
-        sqm: "m² netos",
+        sqm: "Tamaño de la propiedad (m²)",
         sqm_unit: "m²",
         gross_sqm: "m² brutos",
         balcony: "Balcón",
@@ -3199,6 +3220,13 @@ export const translations: Record<Locale, T> = {
       subtitle: "Propiedades seleccionadas en Tel Aviv y sus alrededores — Idan Huli, Idan LaNadlan",
       intro:
         "Aquí encontrarás pisos en venta y alquiler en Tel Aviv y Jaffa, y también en las ciudades cercanas del centro — Ramat Gan, Givatayim, Bat Yam, Rishon LeZion y Herzliya. Cada propiedad está ubicada en un mapa interactivo, con filtros por ciudad, barrio, tipo de operación y presupuesto. ¿No encuentras lo que buscas? Idan Huli te acompañará para dar con la propiedad adecuada.",
+      empty_cta: "Ninguna propiedad coincide con este filtro. Deja tus datos y te avisaremos cuando entre una que encaje.",
+      alert_title: "Recibe alertas de nuevas propiedades",
+      alert_subtitle: "Muchas propiedades se venden antes de publicarse. Deja tus datos y sé el primero en enterarte de una que encaje.",
+      alert_looking_label: "¿Qué estás buscando?",
+      alert_looking_placeholder: "p. ej. 3–4 habitaciones en el Old North, hasta 5,5 M₪, para vivir",
+      alert_submit: "Mantenme informado →",
+      alert_success_note: "Te contactaremos cuando una propiedad coincida con lo que buscas",
     },
     about: {
       meta_title: "Sobre Idan Huli | Idan LaNadlan",

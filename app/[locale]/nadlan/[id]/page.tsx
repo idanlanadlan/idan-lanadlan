@@ -36,10 +36,10 @@ export async function generateMetadata({
   const typeLabel = { sale: t.type_sale, rent: t.type_rent, project: t.type_project }[p.type] ?? "";
   return {
     title: `${title} | ${meta.site_name}`,
-    description: `${p.bedrooms} ${t.rooms}, ${p.size_sqm} ${t.sqm} — ${neighborhood}, ${city}. ${t.price_label}: ${priceStr}. ${meta.site_name}.`,
+    description: `${p.bedrooms} ${t.rooms}, ${p.size_sqm} ${t.sqm_unit} — ${neighborhood}, ${city}. ${t.price_label}: ${priceStr}. ${meta.site_name}.`,
     openGraph: {
       title,
-      description: `${typeLabel} | ${p.bedrooms} ${t.rooms} | ${p.size_sqm} ${t.sqm} | ${priceStr}`,
+      description: `${typeLabel} | ${p.bedrooms} ${t.rooms} | ${p.size_sqm} ${t.sqm_unit} | ${priceStr}`,
       images: p.images[0] ? [{ url: p.images[0] }] : [],
     },
     alternates: {

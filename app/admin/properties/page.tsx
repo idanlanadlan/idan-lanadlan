@@ -14,14 +14,15 @@ export default async function PropertiesAdmin() {
   ]);
   const brokersById = Object.fromEntries(brokers.map((b) => [b.id, b]));
 
-  // property id → short "collaboration with X" label for the table badge.
+  // property id → "collaboration with X" label for the table badge, including
+  // the broker's notes (where Idan records the split — full co-op / N% / etc.).
   // Only collab listings get an entry; a plain "mine" property gets none.
   const collabLabels: Record<string, string> = {};
   for (const [propertyId, link] of Object.entries(brokerLinks)) {
     if (link.listing_source !== "collab") continue;
     const broker = link.broker_id ? brokersById[link.broker_id] : null;
     collabLabels[propertyId] = broker
-      ? [broker.name, broker.agency].filter(Boolean).join(" · ")
+      ? [broker.name, broker.agency, broker.notes].filter(Boolean).join(" · ")
       : "מתווך לא צוין";
   }
 

@@ -2,6 +2,7 @@
 
 import { useId, useState } from "react";
 import { MessageSquare } from "lucide-react";
+import { sendGAEvent } from "@next/third-parties/google";
 import { sendPropertyLead } from "@/app/actions/property-leads";
 import { isValidPhone } from "@/lib/validation";
 import ConsentCheckboxes, { type ConsentValue } from "@/components/ConsentCheckboxes";
@@ -60,6 +61,9 @@ export default function PropertyLeadForm({ propertyTitle, propertyUrl }: Props) 
       marketingConsent: consent.marketing,
     });
     setStatus(result.success ? "success" : "error");
+    if (result.success) {
+      try { sendGAEvent("event", "generate_lead", { form: "property_lead" }); } catch {}
+    }
   }
 
   if (status === "success") {

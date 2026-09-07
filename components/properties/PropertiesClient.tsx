@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { LayoutGrid, Map } from "lucide-react";
 import PropertyCard from "@/components/properties/PropertyCard";
 import PropertyMap from "@/components/properties/PropertyMap";
+import PropertyAlertForm from "@/components/properties/PropertyAlertForm";
 import type { Property, PropertyType } from "@/lib/types";
 import { localizedField } from "@/lib/property-utils";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -188,7 +189,10 @@ export default function PropertiesClient({ properties }: { properties: Property[
         <section className="py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
             {filtered.length === 0 ? (
-              <p className="text-center text-gray-light py-24">{p.empty}</p>
+              <div className="max-w-2xl mx-auto py-16">
+                <p className="text-center text-gray-light mb-6">{p.empty}</p>
+                <PropertyAlertForm variant="compact" />
+              </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filtered.map((property, i) => (

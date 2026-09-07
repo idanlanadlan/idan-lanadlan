@@ -121,23 +121,41 @@ export default function PropertiesTable({
                 i < visible.length - 1 ? "border-b border-gray-dark" : ""
               }`}
             >
-              {/* Title + location */}
-              <div className="min-w-0">
-                <Link
-                  href={`/admin/properties/${p.id}/edit`}
-                  className="text-sm text-white hover:text-gold transition-colors truncate block"
-                >
-                  {p.title}
-                </Link>
-                <p className="text-xs text-gray-light mt-0.5 truncate">
-                  {p.neighborhood}, {p.city} · {p.bedrooms} חד׳ · {p.size_sqm} מ״ר
-                </p>
-                {collabLabels[p.id] && (
-                  <p className="text-[11px] text-gold/80 mt-1 flex items-center gap-1 truncate">
-                    <Handshake size={11} className="shrink-0" />
-                    שת״פ · {collabLabels[p.id]}
-                  </p>
+              {/* Thumbnail + title + exact address + location */}
+              <div className="flex items-start gap-3 min-w-0">
+                {p.images[0] ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={p.images[0]}
+                    alt=""
+                    loading="lazy"
+                    className="w-14 h-14 rounded-md object-cover shrink-0 border border-gray-dark bg-black"
+                  />
+                ) : (
+                  <div className="w-14 h-14 rounded-md shrink-0 border border-gray-dark bg-black" />
                 )}
+                <div className="min-w-0">
+                  <Link
+                    href={`/admin/properties/${p.id}/edit`}
+                    className="text-sm text-white hover:text-gold transition-colors truncate block"
+                  >
+                    {p.title}
+                  </Link>
+                  {/* Exact street address — always shown to the admin, even when
+                      the public site is set to hide it (address_visibility). */}
+                  {p.address && (
+                    <p className="text-xs text-cream/90 mt-0.5 truncate">{p.address}</p>
+                  )}
+                  <p className="text-xs text-gray-light mt-0.5 truncate">
+                    {p.neighborhood}, {p.city} · {p.bedrooms} חד׳ · {p.size_sqm} מ״ר
+                  </p>
+                  {collabLabels[p.id] && (
+                    <p className="text-[11px] text-gold/80 mt-1 flex items-center gap-1 truncate">
+                      <Handshake size={11} className="shrink-0" />
+                      שת״פ · {collabLabels[p.id]}
+                    </p>
+                  )}
+                </div>
               </div>
 
               {/* Price */}
