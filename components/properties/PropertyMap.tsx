@@ -3,6 +3,7 @@
 // Leaflet is loaded dynamically inside useEffect — safe for SSR/Next.js 16
 import { useEffect, useRef, useState } from "react";
 import type { Property } from "@/lib/types";
+import { escapeHtml } from "@/lib/html-escape";
 
 interface Props {
   properties: Property[];
@@ -65,15 +66,13 @@ export default function PropertyMap({
       const map = L.map(mapRef.current!, { zoomControl: true, scrollWheelZoom: false });
       mapInstanceRef.current = map;
 
-      // CartoDB Voyager — colorful, Google Maps-like basemap (was Dark Matter)
-      L.tileLayer(
-        "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
-        {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
-          subdomains: "abcd",
-          maxZoom: 19,
-        }
-      ).addTo(map);
+      // OpenStreetMap standard tiles — colorful, Google Maps-like, and keyless.
+      // (CARTO's free Voyager basemap now stamps an "API KEY REQUIRED" watermark
+      // across every tile unless you register for a key.)
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19,
+      }).addTo(map);
 
       map.setView([32.07, 34.78], 12);
 
@@ -116,17 +115,23 @@ export default function PropertyMap({
           ? `₪${p.price.toLocaleString("he-IL")} / חודש`
           : `₪${p.price.toLocaleString("he-IL")}`;
 
+      const cover = p.images?.[0];
+      const imgTag = cover
+        ? `<img src="${escapeHtml(cover)}" alt="" loading="lazy" style="width:100%;height:120px;object-fit:cover;border-radius:6px;display:block;margin:0 0 8px" />`
+        : "";
+
       const popup = `
-        <div dir="rtl" style="min-width:180px;font-family:Arial,sans-serif;">
-          <p style="font-size:13px;font-weight:600;color:#FAF6EE;margin:0 0 4px">${p.title}</p>
+        <div dir="rtl" style="width:200px;font-family:Arial,sans-serif;">
+          ${imgTag}
+          <p style="font-size:13px;font-weight:600;color:#FAF6EE;margin:0 0 4px">${escapeHtml(p.title)}</p>
           <p style="font-size:12px;color:#C9A96E;margin:0 0 4px">${priceStr}</p>
-          <p style="font-size:11px;color:#aaa;margin:0 0 8px">${p.bedrooms} חד׳ · ${p.size_sqm} מ״ר · ${p.city}</p>
+          <p style="font-size:11px;color:#aaa;margin:0 0 8px">${p.bedrooms} חד׳ · ${p.size_sqm} מ״ר · ${escapeHtml(p.city)}</p>
           <a href="/nadlan/${p.id}" style="font-size:11px;color:#C9A96E;text-decoration:underline;">לנכס ←</a>
         </div>`;
 
       L.marker([p.lat, p.lng], { icon })
         .addTo(layerGroup)
-        .bindPopup(popup, { className: "crm-popup" });
+        .bindPopup(popup, { className: "crm-popup", minWidth: 200 });
     });
 
     if (mapped.length > 1) {
