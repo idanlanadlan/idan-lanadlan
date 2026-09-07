@@ -1,10 +1,13 @@
 import type { Property } from "./types";
 import type { Locale } from "./translations";
 
-export function grossSize(p: Property): number {
+/** The size shown to the public as "גודל הנכס": built area + full balcony.
+ *  size_sqm is entered as the built area only; the balcony is added here. */
+export function displaySize(p: Property): number {
   return p.size_sqm + (p.balcony_sqm ?? 0);
 }
 
+/** Weighted area for the ₪/m² figure — Israeli convention counts a balcony at 50%. */
 export function equivalentSize(p: Property): number {
   return p.size_sqm + (p.balcony_sqm ?? 0) / 2;
 }

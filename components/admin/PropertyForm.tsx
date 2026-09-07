@@ -51,6 +51,12 @@ export default function PropertyForm({
     brokerLink?.broker_id ?? (brokers.length ? "" : "__new__")
   );
 
+  // Built area + balcony are entered separately; the public site shows their
+  // sum as "גודל הנכס". Track both so the form can preview that total live.
+  const [sizeSqm, setSizeSqm] = useState(property?.size_sqm?.toString() ?? "");
+  const [balconySqm, setBalconySqm] = useState(property?.balcony_sqm?.toString() ?? "");
+  const totalWithBalcony = (Number(sizeSqm) || 0) + (Number(balconySqm) || 0);
+
   return (
     <form ref={formRef} action={action} className="flex flex-col gap-6">
       {property?.id && <input type="hidden" name="id" value={property.id} />}
@@ -133,14 +139,15 @@ export default function PropertyForm({
           />
         </div>
         <div>
-          <label className={label}>מ״ר נטו *</label>
+          <label className={label}>שטח בנוי במ״ר *</label>
           <input
             className={field}
             name="size_sqm"
             type="number"
             required
             min="0"
-            defaultValue={property?.size_sqm}
+            value={sizeSqm}
+            onChange={(e) => setSizeSqm(e.target.value)}
             placeholder="120"
           />
         </div>
@@ -168,7 +175,8 @@ export default function PropertyForm({
             type="number"
             step="0.5"
             min="0"
-            defaultValue={property?.balcony_sqm}
+            value={balconySqm}
+            onChange={(e) => setBalconySqm(e.target.value)}
             placeholder="10"
           />
         </div>
@@ -197,6 +205,11 @@ export default function PropertyForm({
           />
         </div>
       </div>
+
+      <p className="-mt-2 text-xs text-gray-light">
+        גודל הנכס שיוצג באתר (שטח בנוי + מרפסת):{" "}
+        <span className="text-gold font-semibold">{totalWithBalcony || "—"} מ״ר</span>
+      </p>
 
       {/* Amenities */}
       <div className="grid grid-cols-3 gap-4">

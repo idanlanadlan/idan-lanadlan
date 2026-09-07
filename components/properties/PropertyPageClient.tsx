@@ -29,7 +29,7 @@ import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import PropertyLeadForm from "@/components/properties/PropertyLeadForm";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { Property } from "@/lib/types";
-import { grossSize, pricePerSqm, localizedField, displayAddress } from "@/lib/property-utils";
+import { displaySize, pricePerSqm, localizedField, displayAddress } from "@/lib/property-utils";
 import { safeJsonLd } from "@/lib/json-ld";
 
 interface Props {
@@ -74,12 +74,10 @@ export default function PropertyPageClient({ property, schema, url }: Props) {
     { icon: BedDouble, value: property.bedrooms, label: pd.rooms },
     { icon: Bath, value: property.bathrooms, label: pd.bathrooms },
     ...(property.toilets ? [{ icon: Toilet, value: property.toilets, label: pd.toilets }] : []),
-    { icon: Maximize2, value: property.size_sqm, label: pd.sqm },
+    // "גודל הנכס" = built area + balcony (the built area alone is the admin input).
+    { icon: Maximize2, value: displaySize(property), label: pd.sqm },
     ...(property.balcony_sqm
-      ? [
-          { icon: Maximize2, value: grossSize(property), label: pd.gross_sqm },
-          { icon: Wind, value: property.balcony_sqm, label: `${pd.balcony} (${pd.sqm_unit})` },
-        ]
+      ? [{ icon: Wind, value: property.balcony_sqm, label: `${pd.balcony} (${pd.sqm_unit})` }]
       : []),
     ...(property.yard_sqm
       ? [{ icon: Trees, value: property.yard_sqm, label: `${pd.yard} (${pd.sqm_unit})` }]

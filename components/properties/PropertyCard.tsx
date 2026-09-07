@@ -5,7 +5,7 @@ import Link from "@/components/LocaleLink";
 import Image from "next/image";
 import { BedDouble, Maximize2, Layers, Wind, Trees, Car, Shield, ShieldCheck, Tag } from "lucide-react";
 import type { Property } from "@/lib/types";
-import { pricePerSqm, localizedField } from "@/lib/property-utils";
+import { pricePerSqm, displaySize, localizedField } from "@/lib/property-utils";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface PropertyCardProps {
@@ -108,7 +108,7 @@ export default function PropertyCard({ property, variant = "default" }: Property
             </span>
             <span className="flex items-center gap-1.5">
               <Maximize2 size={12} className="text-gold/70" aria-hidden="true" />
-              {property.size_sqm} {pd.sqm_unit}
+              {displaySize(property)} {pd.sqm_unit}
             </span>
             {property.type !== "rent" && (
               <span className="flex items-center gap-1.5">

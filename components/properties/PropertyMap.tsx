@@ -4,6 +4,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Property } from "@/lib/types";
 import { escapeHtml } from "@/lib/html-escape";
+import { displaySize } from "@/lib/property-utils";
 
 interface Props {
   properties: Property[];
@@ -143,7 +144,7 @@ export default function PropertyMap({
           ${imgTag}
           <p style="font-size:13px;font-weight:600;color:#FAF6EE;margin:0 0 4px">${escapeHtml(p.title)}</p>
           <p style="font-size:12px;color:#C9A96E;margin:0 0 4px">${priceStr}</p>
-          <p style="font-size:11px;color:#aaa;margin:0 0 8px">${p.bedrooms} חד׳ · ${p.size_sqm} מ״ר · ${escapeHtml(p.city)}</p>
+          <p style="font-size:11px;color:#aaa;margin:0 0 8px">${p.bedrooms} חד׳ · ${displaySize(p)} מ״ר · ${escapeHtml(p.city)}</p>
           <a href="/nadlan/${p.id}" style="font-size:11px;color:#C9A96E;text-decoration:underline;">לנכס ←</a>
         </div>`;
 

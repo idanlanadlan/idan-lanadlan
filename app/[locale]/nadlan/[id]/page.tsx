@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getPropertyById } from "@/lib/db";
 import PropertyPageClient from "@/components/properties/PropertyPageClient";
-import { localizedField, schemaStreetAddress } from "@/lib/property-utils";
+import { localizedField, schemaStreetAddress, displaySize } from "@/lib/property-utils";
 import { isLocale, localizedPath } from "@/lib/locale-path";
 import { translations, type Locale } from "@/lib/translations";
 
@@ -36,10 +36,10 @@ export async function generateMetadata({
   const typeLabel = { sale: t.type_sale, rent: t.type_rent, project: t.type_project }[p.type] ?? "";
   return {
     title: `${title} | ${meta.site_name}`,
-    description: `${p.bedrooms} ${t.rooms}, ${p.size_sqm} ${t.sqm_unit} — ${neighborhood}, ${city}. ${t.price_label}: ${priceStr}. ${meta.site_name}.`,
+    description: `${p.bedrooms} ${t.rooms}, ${displaySize(p)} ${t.sqm_unit} — ${neighborhood}, ${city}. ${t.price_label}: ${priceStr}. ${meta.site_name}.`,
     openGraph: {
       title,
-      description: `${typeLabel} | ${p.bedrooms} ${t.rooms} | ${p.size_sqm} ${t.sqm_unit} | ${priceStr}`,
+      description: `${typeLabel} | ${p.bedrooms} ${t.rooms} | ${displaySize(p)} ${t.sqm_unit} | ${priceStr}`,
       images: p.images[0] ? [{ url: p.images[0] }] : [],
     },
     alternates: {
@@ -95,7 +95,7 @@ export default async function PropertyPage({
         numberOfRooms: property.bedrooms,
         ...(property.bathrooms ? { numberOfBathroomsTotal: property.bathrooms } : {}),
         ...(property.floor != null ? { floorLevel: String(property.floor) } : {}),
-        floorSize: { "@type": "QuantitativeValue", value: property.size_sqm, unitCode: "MTK" },
+        floorSize: { "@type": "QuantitativeValue", value: displaySize(property), unitCode: "MTK" },
         ...(amenities.length
           ? { amenityFeature: amenities.map((name) => ({ "@type": "LocationFeatureSpecification", name, value: true })) }
           : {}),
