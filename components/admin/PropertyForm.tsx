@@ -113,7 +113,7 @@ export default function PropertyForm({
             className={field}
             name="bathrooms"
             type="number"
-            step="0.5"
+            step="1"
             required
             min="0"
             defaultValue={property?.bathrooms}
@@ -146,14 +146,15 @@ export default function PropertyForm({
         </div>
       </div>
 
-      {/* Floor + Balcony + Parking */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+      {/* Floor + Balcony + Yard + Parking */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div>
           <label className={label}>קומה</label>
           <input
             className={field}
             name="floor"
             type="number"
+            step="0.5"
             min="0"
             defaultValue={property?.floor}
             placeholder="5"
@@ -169,6 +170,18 @@ export default function PropertyForm({
             min="0"
             defaultValue={property?.balcony_sqm}
             placeholder="10"
+          />
+        </div>
+        <div>
+          <label className={label}>גודל חצר (מ״ר)</label>
+          <input
+            className={field}
+            name="yard_sqm"
+            type="number"
+            step="0.5"
+            min="0"
+            defaultValue={property?.yard_sqm}
+            placeholder="50"
           />
         </div>
         <div>

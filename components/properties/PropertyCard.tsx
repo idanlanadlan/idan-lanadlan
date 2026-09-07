@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "@/components/LocaleLink";
 import Image from "next/image";
-import { BedDouble, Maximize2, Layers, Wind, Car, Shield, ShieldCheck, Tag } from "lucide-react";
+import { BedDouble, Maximize2, Layers, Wind, Trees, Car, Shield, ShieldCheck, Tag } from "lucide-react";
 import type { Property } from "@/lib/types";
 import { pricePerSqm, localizedField } from "@/lib/property-utils";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -42,6 +42,7 @@ export default function PropertyCard({ property, variant = "default" }: Property
 
   const hasBadges =
     (property.balcony_sqm ?? 0) > 0 ||
+    (property.yard_sqm ?? 0) > 0 ||
     (property.parking_spots ?? 0) > 0 ||
     property.has_mamad ||
     property.has_shelter;
@@ -123,6 +124,12 @@ export default function PropertyCard({ property, variant = "default" }: Property
                 <span className="flex items-center gap-1.5">
                   <Wind size={12} className="text-gold/70" aria-hidden="true" />
                   {pd.balcony} {property.balcony_sqm} {pd.sqm_unit}
+                </span>
+              )}
+              {(property.yard_sqm ?? 0) > 0 && (
+                <span className="flex items-center gap-1.5">
+                  <Trees size={12} className="text-gold/70" aria-hidden="true" />
+                  {pd.yard} {property.yard_sqm} {pd.sqm_unit}
                 </span>
               )}
               {(property.parking_spots ?? 0) > 0 && (

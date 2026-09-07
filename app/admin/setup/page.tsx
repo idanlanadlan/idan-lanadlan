@@ -102,6 +102,12 @@ ALTER TABLE properties
   ADD COLUMN IF NOT EXISTS address_visibility TEXT NOT NULL DEFAULT 'full'
     CHECK (address_visibility IN ('full', 'street', 'neighborhood'));`;
 
+const MIGRATION_SQL_FLOOR_YARD = `-- קומה יכולה להיות חצי-קומה (למשל 3.5) + הוספת שדה "גודל חצר"
+-- ALTER COLUMN ... TYPE NUMERIC ממיר אוטומטית מספרים שלמים קיימים (3 → 3.0) — בטוח, לא הורס נתונים
+ALTER TABLE properties
+  ALTER COLUMN floor TYPE NUMERIC(4,1),
+  ADD COLUMN IF NOT EXISTS yard_sqm NUMERIC(6,1);`;
+
 const MIGRATION_SQL_BROKERS = `-- מתווכי שיתוף-פעולה + שיוך פר-נכס. הפרטים נשמרים לאדמין בלבד ואף פעם לא
 -- נשלחים לאתר הציבורי: RLS מרשה גישה רק ל-service_role, אין מדיניות public read.
 CREATE TABLE IF NOT EXISTS brokers (
@@ -333,6 +339,15 @@ export default function SetupPage() {
           </p>
           <pre className="bg-black rounded-lg p-4 text-xs text-cream overflow-x-auto leading-relaxed font-mono">
             {MIGRATION_SQL_BROKERS}
+          </pre>
+        </Step>
+
+        <Step num={15} title="עדכון: חצי-קומה (3.5) + שדה גודל חצר">
+          <p className="text-sm text-gray-light mb-3">
+            כדי שאפשר יהיה להזין קומה עם חצי (למשל 3.5) ולהוסיף גודל חצר לנכס, הרץ ב-<strong className="text-cream">SQL Editor</strong> את זה:
+          </p>
+          <pre className="bg-black rounded-lg p-4 text-xs text-cream overflow-x-auto leading-relaxed font-mono">
+            {MIGRATION_SQL_FLOOR_YARD}
           </pre>
         </Step>
       </div>

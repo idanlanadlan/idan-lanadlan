@@ -5,8 +5,12 @@ import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import PropertiesClient from "@/components/properties/PropertiesClient";
 import MapSection from "@/components/home/MapSection";
 import { getProperties } from "@/lib/db";
-import { isLocale, canonicalAlternates } from "@/lib/locale-path";
+import { isLocale, canonicalAlternates, localizedPath } from "@/lib/locale-path";
 import { translations } from "@/lib/translations";
+import { localizedField } from "@/lib/property-utils";
+import { safeJsonLd } from "@/lib/json-ld";
+
+const BASE = "https://idanlanadlan.co.il";
 
 export const dynamic = "force-dynamic";
 
@@ -33,10 +37,44 @@ export default async function PropertiesPage({
   const { locale } = await params;
   const l = isLocale(locale) ? locale : "he";
   const pp = translations[l].properties_page;
+  const nav = translations[l].nav;
   const properties = (await getProperties()).filter((p) => p.type !== "project");
+  const listable = properties.filter((p) => p.status === "available");
+
+  const schema = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        name: pp.h1,
+        description: pp.meta_description,
+        url: `${BASE}${localizedPath("/nadlan", l)}`,
+        mainEntity: {
+          "@type": "ItemList",
+          numberOfItems: listable.length,
+          itemListElement: listable.map((p, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            url: `${BASE}${localizedPath(`/nadlan/${p.id}`, l)}`,
+            name: localizedField(p, "title", l),
+            ...(p.images[0] ? { image: p.images[0] } : {}),
+            offers: { "@type": "Offer", price: p.price, priceCurrency: "ILS" },
+          })),
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: nav.home, item: `${BASE}${localizedPath("/", l)}` },
+          { "@type": "ListItem", position: 2, name: nav.properties, item: `${BASE}${localizedPath("/nadlan", l)}` },
+        ],
+      },
+    ],
+  };
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(schema) }} />
       <Header />
       <main id="main-content" className="min-h-screen pt-28">
         <section className="py-16 bg-charcoal border-b border-gray-dark">
@@ -47,6 +85,7 @@ export default async function PropertiesPage({
               {pp.h1}
             </h1>
             <p className="text-gray-light max-w-xl">{pp.subtitle}</p>
+            <p className="text-sm text-gray-light/80 max-w-3xl mt-4 leading-relaxed">{pp.intro}</p>
           </div>
         </section>
 

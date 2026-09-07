@@ -188,7 +188,7 @@ export async function getFeaturedProperties(): Promise<Property[]> {
 // columns is unknown, we drop it and retry so the core listing still saves
 // (rather than failing every create/edit — which is what happened when
 // crm_id was added unconditionally).
-const OPTIONAL_PROPERTY_COLUMNS = ["address_visibility", "crm_id"] as const;
+const OPTIONAL_PROPERTY_COLUMNS = ["address_visibility", "crm_id", "yard_sqm"] as const;
 
 function withoutUnknownColumn<T extends Record<string, unknown>>(
   row: T,

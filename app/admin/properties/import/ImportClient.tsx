@@ -123,7 +123,12 @@ export default function ImportClient({ brokers }: { brokers: Broker[] }) {
     if (!textInput.trim()) return;
     setPreview(null); setError("");
     startParse(async () => {
-      applyResult(await parsePropertyFromText(textInput), AI_ERRORS);
+      const result = await parsePropertyFromText(textInput);
+      // Keep the pasted text verbatim as the description — Idan wants the
+      // original wording, not an AI paraphrase. The AI parse is still used for
+      // the structured fields (price, rooms, address, …).
+      if (result.ok) result.property.description = textInput.trim();
+      applyResult(result, AI_ERRORS);
     });
   }
 

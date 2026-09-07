@@ -15,6 +15,7 @@ import {
   ChevronRight,
   Layers,
   Wind,
+  Trees,
   Car,
   Shield,
   ShieldCheck,
@@ -24,6 +25,7 @@ import {
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
+import PropertyLeadForm from "@/components/properties/PropertyLeadForm";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { Property } from "@/lib/types";
 import { grossSize, pricePerSqm, localizedField, displayAddress } from "@/lib/property-utils";
@@ -77,6 +79,9 @@ export default function PropertyPageClient({ property, schema, url }: Props) {
           { icon: Maximize2, value: grossSize(property), label: pd.gross_sqm },
           { icon: Wind, value: property.balcony_sqm, label: `${pd.balcony} (${pd.sqm_unit})` },
         ]
+      : []),
+    ...(property.yard_sqm
+      ? [{ icon: Trees, value: property.yard_sqm, label: `${pd.yard} (${pd.sqm_unit})` }]
       : []),
     ...(property.floor != null ? [{ icon: Layers, value: property.floor, label: pd.floor }] : []),
     ...(property.parking_spots ? [{ icon: Car, value: property.parking_spots, label: pd.parking }] : []),
@@ -253,6 +258,10 @@ export default function PropertyPageClient({ property, schema, url }: Props) {
                     <Phone size={16} />
                     054-979-1171
                   </a>
+                </div>
+
+                <div className="mt-6 pt-6 border-t border-gray-dark">
+                  <PropertyLeadForm propertyTitle={title} propertyUrl={url} />
                 </div>
 
                 <div className="mt-6 pt-6 border-t border-gray-dark">

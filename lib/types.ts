@@ -19,6 +19,7 @@ export interface Property {
   toilets?: number;
   size_sqm: number;
   balcony_sqm?: number;
+  yard_sqm?: number;
   floor?: number;
   parking_spots?: number;
   has_mamad?: boolean;

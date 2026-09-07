@@ -16,7 +16,7 @@ export interface T {
     social: { eyebrow: string; title: string; facebook_link: string; instagram_description: string; instagram_button: string; tiktok_description: string; tiktok_button: string; linkedin_description: string; linkedin_button: string; };
     faq: { eyebrow: string; title: string; subtitle: string; items: { q: string; a: string }[]; };
     groups: { eyebrow: string; title: string; subtitle: string; sale_badge: string; rent_badge: string; sale_title: string; sale_subtitle: string; sale_description: string; sale_items: string[]; rent_title: string; rent_subtitle: string; rent_description: string; rent_items: string[]; request_button: string; card_footer: string; managed_note: string; share_note: string; };
-    property_detail: { rooms: string; bathrooms: string; toilets: string; sqm: string; sqm_unit: string; gross_sqm: string; balcony: string; floor: string; parking: string; mamad: string; shelter: string; elevator: string; price_per_sqm: string; description_title: string; location_title: string; price_label: string; contact_text: string; whatsapp_button: string; per_month: string; type_sale: string; type_rent: string; type_project: string; status_sold: string; status_rented: string; };
+    property_detail: { rooms: string; bathrooms: string; toilets: string; sqm: string; sqm_unit: string; gross_sqm: string; balcony: string; yard: string; floor: string; parking: string; mamad: string; shelter: string; elevator: string; price_per_sqm: string; description_title: string; location_title: string; price_label: string; contact_text: string; whatsapp_button: string; per_month: string; type_sale: string; type_rent: string; type_project: string; status_sold: string; status_rented: string; lead_title: string; lead_city_label: string; lead_notes_label: string; lead_notes_optional: string; lead_submit: string; lead_success_note: string; };
   };
   footer: { tagline: string; quick_nav: string; contact: string; legal: string; privacy: string; accessibility: string; terms: string; copyright: string; license: string; };
   cookie: { message: string; accept: string; decline: string; privacy_link: string; };
@@ -26,7 +26,7 @@ export interface T {
   a11y_widget: { open_aria: string; title: string; font_size: string; font_step: string; contrast: string; motion: string; links: string; reset: string; close_aria: string; statement_link: string; };
   groups_modal: { description: string; name_label: string; name_placeholder: string; phone_label: string; looking_label_sale: string; looking_label_rent: string; looking_placeholder_sale: string; looking_placeholder_rent: string; budget_label: string; budget_placeholder_sale: string; budget_placeholder_rent: string; purpose_label: string; purpose_placeholder: string; purpose_investment: string; purpose_living: string; purpose_both: string; submit_button: string; disclaimer: string; success_title: string; success_message: string; success_button: string; };
   groups_page: { meta_title: string; meta_description: string; };
-  properties_page: { meta_title: string; meta_description: string; eyebrow: string; h1: string; subtitle: string; };
+  properties_page: { meta_title: string; meta_description: string; eyebrow: string; h1: string; subtitle: string; intro: string; };
   about: {
     meta_title: string; meta_description: string;
     eyebrow: string; heading_line1: string; heading_line2: string;
@@ -320,6 +320,7 @@ export const translations: Record<Locale, T> = {
         sqm_unit: "מ״ר",
         gross_sqm: "מ״ר ברוטו",
         balcony: "מרפסת",
+        yard: "חצר",
         floor: "קומה",
         parking: "חניה",
         mamad: "ממ״ד",
@@ -337,6 +338,12 @@ export const translations: Record<Locale, T> = {
         type_project: "פרויקט",
         status_sold: "נמכר",
         status_rented: "הושכר",
+        lead_title: "מעוניינים בנכס? השאירו פרטים",
+        lead_city_label: "עיר מגורים",
+        lead_notes_label: "הערות",
+        lead_notes_optional: "(אופציונלי)",
+        lead_submit: "שליחת פרטים →",
+        lead_success_note: "עידן יחזור אליכם בהקדם עם פרטים על הנכס",
       },
     },
     footer: {
@@ -421,6 +428,8 @@ export const translations: Record<Locale, T> = {
       eyebrow: "נכסים",
       h1: "נכסים למכירה ולהשכרה",
       subtitle: "נכסים נבחרים בתל אביב וסביבתה — עידן חולי, עידן לנדל״ן",
+      intro:
+        "כאן תמצאו דירות למכירה ולהשכרה בתל אביב וביפו, וגם בערי המרכז הסמוכות — רמת גן, גבעתיים, בת ים, ראשון לציון והרצליה. כל נכס ממוקם על מפה אינטראקטיבית, וניתן לסנן לפי עיר, שכונה, סוג עסקה ותקציב. לא מצאתם את מה שחיפשתם? עידן חולי ילווה אתכם באיתור הנכס הנכון.",
     },
     about: {
       meta_title: "אודות עידן חולי | עידן לנדל״ן",
@@ -1234,6 +1243,7 @@ export const translations: Record<Locale, T> = {
         sqm_unit: "sqm",
         gross_sqm: "sqm (gross)",
         balcony: "Balcony",
+        yard: "Yard",
         floor: "Floor",
         parking: "Parking",
         mamad: "Safe room",
@@ -1251,6 +1261,12 @@ export const translations: Record<Locale, T> = {
         type_project: "Project",
         status_sold: "Sold",
         status_rented: "Rented",
+        lead_title: "Interested in this property? Leave your details",
+        lead_city_label: "City of residence",
+        lead_notes_label: "Notes",
+        lead_notes_optional: "(optional)",
+        lead_submit: "Send details →",
+        lead_success_note: "Idan will get back to you shortly with details about the property",
       },
     },
     footer: {
@@ -1335,6 +1351,8 @@ export const translations: Record<Locale, T> = {
       eyebrow: "Properties",
       h1: "Properties for Sale and Rent",
       subtitle: "Selected properties in Tel Aviv and the surrounding area — Idan Huli, Idan LaNadlan",
+      intro:
+        "Browse apartments for sale and rent in Tel Aviv and Jaffa, as well as the nearby central cities — Ramat Gan, Givatayim, Bat Yam, Rishon LeZion and Herzliya. Every listing is pinned on an interactive map, with filters by city, neighborhood, deal type and budget. Can't find what you're looking for? Idan Huli will help you track down the right property.",
     },
     about: {
       meta_title: "About Idan Huli | Idan LaNadlan",
@@ -2148,6 +2166,7 @@ export const translations: Record<Locale, T> = {
         sqm_unit: "m²",
         gross_sqm: "m² brut",
         balcony: "Balcon",
+        yard: "Jardin",
         floor: "Étage",
         parking: "Parking",
         mamad: "Abri (Mamad)",
@@ -2165,6 +2184,12 @@ export const translations: Record<Locale, T> = {
         type_project: "Projet",
         status_sold: "Vendu",
         status_rented: "Loué",
+        lead_title: "Ce bien vous intéresse? Laissez vos coordonnées",
+        lead_city_label: "Ville de résidence",
+        lead_notes_label: "Remarques",
+        lead_notes_optional: "(facultatif)",
+        lead_submit: "Envoyer mes coordonnées →",
+        lead_success_note: "Idan vous recontactera rapidement avec les détails du bien",
       },
     },
     footer: {
@@ -2249,6 +2274,8 @@ export const translations: Record<Locale, T> = {
       eyebrow: "Biens",
       h1: "Biens à vendre et à louer",
       subtitle: "Une sélection de biens à Tel Aviv et ses environs — Idan Huli, Idan LaNadlan",
+      intro:
+        "Retrouvez ici des appartements à vendre et à louer à Tel Aviv et à Jaffa, ainsi que dans les villes voisines du centre — Ramat Gan, Givatayim, Bat Yam, Rishon LeZion et Herzliya. Chaque bien est situé sur une carte interactive, avec des filtres par ville, quartier, type de transaction et budget. Vous ne trouvez pas ce que vous cherchez? Idan Huli vous accompagnera pour trouver le bon bien.",
     },
     about: {
       meta_title: "À propos d'Idan Huli | Idan LaNadlan",
@@ -3062,6 +3089,7 @@ export const translations: Record<Locale, T> = {
         sqm_unit: "m²",
         gross_sqm: "m² brutos",
         balcony: "Balcón",
+        yard: "Jardín",
         floor: "Piso",
         parking: "Estacionamiento",
         mamad: "Cuarto blindado",
@@ -3079,6 +3107,12 @@ export const translations: Record<Locale, T> = {
         type_project: "Proyecto",
         status_sold: "Vendido",
         status_rented: "Alquilado",
+        lead_title: "¿Te interesa esta propiedad? Deja tus datos",
+        lead_city_label: "Ciudad de residencia",
+        lead_notes_label: "Comentarios",
+        lead_notes_optional: "(opcional)",
+        lead_submit: "Enviar mis datos →",
+        lead_success_note: "Idan te contactará pronto con los detalles de la propiedad",
       },
     },
     footer: {
@@ -3163,6 +3197,8 @@ export const translations: Record<Locale, T> = {
       eyebrow: "Propiedades",
       h1: "Propiedades en venta y alquiler",
       subtitle: "Propiedades seleccionadas en Tel Aviv y sus alrededores — Idan Huli, Idan LaNadlan",
+      intro:
+        "Aquí encontrarás pisos en venta y alquiler en Tel Aviv y Jaffa, y también en las ciudades cercanas del centro — Ramat Gan, Givatayim, Bat Yam, Rishon LeZion y Herzliya. Cada propiedad está ubicada en un mapa interactivo, con filtros por ciudad, barrio, tipo de operación y presupuesto. ¿No encuentras lo que buscas? Idan Huli te acompañará para dar con la propiedad adecuada.",
     },
     about: {
       meta_title: "Sobre Idan Huli | Idan LaNadlan",

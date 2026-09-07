@@ -66,10 +66,13 @@ function parseForm(formData: FormData) {
     price: Number(formData.get("price")),
     type: formData.get("type") as PropertyType,
     bedrooms: Number(formData.get("bedrooms")),
-    bathrooms: Number(formData.get("bathrooms")),
+    // Bathrooms are always a whole number (Idan's convention) — round defensively
+    // in case an old value or a pasted import carried a fraction.
+    bathrooms: Math.round(Number(formData.get("bathrooms"))),
     toilets: formData.get("toilets") ? Number(formData.get("toilets")) : undefined,
     size_sqm: Number(formData.get("size_sqm")),
     balcony_sqm: formData.get("balcony_sqm") ? Number(formData.get("balcony_sqm")) : undefined,
+    yard_sqm: formData.get("yard_sqm") ? Number(formData.get("yard_sqm")) : undefined,
     floor: formData.get("floor") ? Number(formData.get("floor")) : undefined,
     parking_spots: formData.get("parking_spots") ? Number(formData.get("parking_spots")) : undefined,
     has_mamad: formData.get("has_mamad") === "on",

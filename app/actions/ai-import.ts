@@ -21,6 +21,7 @@ const EXTRACTION_PROMPT = `אתה מומחה נדל"ן שמחלץ נתונים �
   "toilets": 1,
   "size_sqm": 120,
   "balcony_sqm": 10,
+  "yard_sqm": 30,
   "floor": 5,
   "parking_spots": 1,
   "has_mamad": true,
@@ -36,7 +37,8 @@ const EXTRACTION_PROMPT = `אתה מומחה נדל"ן שמחלץ נתונים �
 - type: "sale"=מכירה, "rent"=השכרה, "project"=פרויקט/בנייה חדשה
 - price: מספר שלם בשקלים בלבד (ללא ₪, ללא פסיקים)
 - שדות חסרים/לא ידועים: bedrooms/bathrooms/floor → 0, size_sqm → 0, שדות טקסט → ""
-- toilets/balcony_sqm/parking_spots: אם לא מוזכרים במקור, השאר null (אל תנחש)
+- toilets/balcony_sqm/yard_sqm/parking_spots: אם לא מוזכרים במקור, השאר null (אל תנחש)
+- yard_sqm: גודל חצר/גינה פרטית במ"ר (רלוונטי לדירות גן/קרקע/קוטג'), לא זהה למרפסת
 - has_mamad/has_shelter/has_elevator: true רק אם מוזכר מפורשות במקור, אחרת false
 - אל תמציא נתונים שאינם מופיעים במקור`;
 
@@ -57,6 +59,7 @@ function buildProperty(parsed: Record<string, unknown>): PropertyData {
     toilets: parsed.toilets != null ? Number(parsed.toilets) : undefined,
     size_sqm: Number(parsed.size_sqm ?? 0),
     balcony_sqm: parsed.balcony_sqm != null ? Number(parsed.balcony_sqm) : undefined,
+    yard_sqm: parsed.yard_sqm != null ? Number(parsed.yard_sqm) : undefined,
     floor: parsed.floor != null && Number(parsed.floor) !== 0 ? Number(parsed.floor) : undefined,
     parking_spots: parsed.parking_spots != null ? Number(parsed.parking_spots) : undefined,
     has_mamad: parsed.has_mamad === true,
