@@ -67,12 +67,22 @@ export interface Broker {
 
 export type ListingSource = "self" | "collab";
 
+/** The co-op terms with the other broker, per listing:
+ *  full    = שת״פ מלא — standard 50/50 split, nothing set aside.
+ *  partial = הפרשה — Idan owes the other side a cut of his commission;
+ *            collab_fee_pct holds how much (e.g. 0.5 for 0.5%). */
+export type CollabSplit = "full" | "partial";
+
 /** Per-property record of who is marketing it. Absent = "self" (mine).
  *  Admin-only — lives in its own table, never joined into public queries. */
 export interface PropertyBrokerLink {
   property_id: string;
   listing_source: ListingSource;
   broker_id: string | null;
+  /** Co-op terms — only meaningful when listing_source === "collab".
+   *  Nullable so links created before setup Step 17 still read cleanly. */
+  collab_split?: CollabSplit | null;
+  collab_fee_pct?: number | null;
   updated_at: string;
 }
 

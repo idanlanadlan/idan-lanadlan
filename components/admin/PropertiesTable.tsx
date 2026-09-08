@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Pencil, Star, Eye, ArrowUp, ArrowDown, ArrowUpDown, Handshake, MapPin } from "lucide-react";
 import StatusSelect from "@/components/admin/StatusSelect";
 import ConfirmDeleteForm from "@/components/admin/ConfirmDeleteForm";
-import type { Property, PropertyStatus } from "@/lib/types";
+import type { CollabSplit, Property, PropertyStatus } from "@/lib/types";
 
 const typeLabel: Record<string, string> = { sale: "מכירה", rent: "השכרה", project: "פרויקט" };
 const typeBg: Record<string, string> = {
@@ -19,18 +19,48 @@ const statusOrder: Record<PropertyStatus, number> = { available: 0, sold: 1, ren
 type SortKey = "price" | "status";
 type SortDir = "asc" | "desc";
 
+/** Who a co-op listing is with, and the commission terms. */
+export interface CollabInfo {
+  who: string;
+  split: CollabSplit | null;
+  feePct: number | null;
+}
+
 interface Props {
   properties: Property[];
-  /** property id → "collaboration with X" label. Present only for collab listings. */
-  collabLabels?: Record<string, string>;
+  /** property id → co-op broker + terms. Present only for collab listings. */
+  collabInfo?: Record<string, CollabInfo>;
   deleteProperty: (formData: FormData) => Promise<void>;
   toggleFeatured: (formData: FormData) => Promise<void>;
   updateStatus: (formData: FormData) => Promise<void>;
 }
 
+/** Small coloured pill summarising the co-op terms. */
+function CollabTermsBadge({ split, feePct }: { split: CollabSplit | null; feePct: number | null }) {
+  if (split === "partial") {
+    return (
+      <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-400 font-medium whitespace-nowrap">
+        הפרשה{feePct != null ? ` ${feePct}%` : ""}
+      </span>
+    );
+  }
+  if (split === "full") {
+    return (
+      <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 font-medium whitespace-nowrap">
+        שת״פ מלא
+      </span>
+    );
+  }
+  return (
+    <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-dark text-gray-light font-medium whitespace-nowrap">
+      תנאים לא צוינו
+    </span>
+  );
+}
+
 export default function PropertiesTable({
   properties,
-  collabLabels = {},
+  collabInfo = {},
   deleteProperty,
   toggleFeatured,
   updateStatus,
@@ -152,11 +182,17 @@ export default function PropertiesTable({
                   <p className="text-xs text-gray-light mt-0.5 truncate">
                     {p.neighborhood}, {p.city} · {p.bedrooms} חד׳ · {p.size_sqm} מ״ר
                   </p>
-                  {collabLabels[p.id] && (
-                    <p className="text-[11px] text-gold/80 mt-1 flex items-center gap-1 truncate">
-                      <Handshake size={11} className="shrink-0" />
-                      שת״פ · {collabLabels[p.id]}
-                    </p>
+                  {collabInfo[p.id] && (
+                    <div className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                      <span className="text-[11px] text-gold/80 flex items-center gap-1 min-w-0 truncate">
+                        <Handshake size={11} className="shrink-0" />
+                        שת״פ · {collabInfo[p.id].who}
+                      </span>
+                      <CollabTermsBadge
+                        split={collabInfo[p.id].split}
+                        feePct={collabInfo[p.id].feePct}
+                      />
+                    </div>
                   )}
                 </div>
               </div>

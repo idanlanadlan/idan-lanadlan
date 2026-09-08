@@ -1,6 +1,6 @@
 import { mockProperties, mockBlogPosts } from "./mock-data";
 import { createClient, createAdminClient, isConfigured } from "./supabase";
-import type { Property, BlogPost, Broker, PropertyBrokerLink, ListingSource, Subscriber } from "./types";
+import type { Property, BlogPost, Broker, PropertyBrokerLink, ListingSource, CollabSplit, Subscriber } from "./types";
 
 // ── Settings ──────────────────────────────────────────────
 export const DEFAULT_SETTINGS: Record<string, string> = {
@@ -313,24 +313,44 @@ export async function getPropertyBrokerLink(propertyId: string): Promise<Propert
   return error ? null : ((data as PropertyBrokerLink) ?? null);
 }
 
+// collab_split / collab_fee_pct arrived after Step 14 (their own migration,
+// Step 17). Drop them and retry the upsert if the columns aren't there yet,
+// so co-op listings still save on a project that hasn't run Step 17.
+const OPTIONAL_PROPERTY_BROKER_COLUMNS = ["collab_split", "collab_fee_pct"] as const;
+
 /** Upserts a property's marketing source. 'self' with no broker is the
  *  default state; we still store it so "mine" is an explicit, visible choice. */
 export async function setPropertyBrokerLink(
   propertyId: string,
-  link: { listing_source: ListingSource; broker_id: string | null }
+  link: {
+    listing_source: ListingSource;
+    broker_id: string | null;
+    collab_split?: CollabSplit | null;
+    collab_fee_pct?: number | null;
+  }
 ): Promise<void> {
-  const { error } = await createAdminClient()
-    .from("property_brokers")
-    .upsert(
-      {
-        property_id: propertyId,
-        listing_source: link.listing_source,
-        broker_id: link.listing_source === "collab" ? link.broker_id : null,
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: "property_id" }
-    );
-  if (error) throw new Error(error.message);
+  const client = createAdminClient();
+  const isCollab = link.listing_source === "collab";
+  let row: Record<string, unknown> = {
+    property_id: propertyId,
+    listing_source: link.listing_source,
+    broker_id: isCollab ? link.broker_id : null,
+    collab_split: isCollab ? link.collab_split ?? "full" : null,
+    collab_fee_pct: isCollab && link.collab_split === "partial" ? link.collab_fee_pct ?? null : null,
+    updated_at: new Date().toISOString(),
+  };
+
+  for (let attempt = 0; attempt < OPTIONAL_PROPERTY_BROKER_COLUMNS.length + 1; attempt++) {
+    const { error } = await client.from("property_brokers").upsert(row, { onConflict: "property_id" });
+    if (!error) return;
+    if (!/column|schema cache/i.test(error.message)) throw new Error(error.message);
+    const drop = OPTIONAL_PROPERTY_BROKER_COLUMNS.find((c) => c in row && error.message.includes(c));
+    if (!drop) throw new Error(error.message);
+    const copy = { ...row };
+    delete copy[drop];
+    row = copy;
+  }
+  throw new Error("setPropertyBrokerLink: unresolved unknown-column error");
 }
 
 // ── Email subscribers (newsletter) ────────────────────────

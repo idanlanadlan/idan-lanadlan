@@ -164,6 +164,13 @@ CREATE POLICY "service_role_all" ON property_brokers FOR ALL TO service_role USI
 SELECT tablename, policyname, cmd, roles FROM pg_policies
 WHERE tablename IN ('brokers', 'property_brokers') ORDER BY tablename;`;
 
+const MIGRATION_SQL_COLLAB_SPLIT = `-- תנאי שת״פ לכל נכס: "מלא" (חלוקה רגילה) או "הפרשה" (אני מפריש אחוז מהעמלה שלי)
+-- ואיזה אחוז. מתווסף לטבלת השיוך פר-נכס, לא לפרטי המתווך (שמשותפים בין נכסים).
+ALTER TABLE property_brokers
+  ADD COLUMN IF NOT EXISTS collab_split TEXT
+    CHECK (collab_split IN ('full', 'partial')),
+  ADD COLUMN IF NOT EXISTS collab_fee_pct NUMERIC(5,2);`;
+
 // SECURITY FIX — the original "properties" policy below (see Step 2, line
 // "service_all") had no FOR/TO clause. In Postgres that silently defaults
 // to ALL commands (SELECT/INSERT/UPDATE/DELETE) for ALL roles — including
@@ -383,6 +390,16 @@ export default function SetupPage() {
           </p>
           <pre className="bg-black rounded-lg p-4 text-xs text-cream overflow-x-auto leading-relaxed font-mono">
             {MIGRATION_SQL_SUBSCRIBERS}
+          </pre>
+        </Step>
+
+        <Step num={17} title="עדכון: תנאי שת״פ פר-נכס (מלא / אחוז הפרשה)">
+          <p className="text-sm text-gray-light mb-3">
+            כדי לסמן על כל נכס בשת״פ אם החלוקה מלאה או שצריך להפריש אחוז מהעמלה (וכמה),
+            ולראות את זה בעמוד הנכסים באדמין, הרץ ב-<strong className="text-cream">SQL Editor</strong> את זה:
+          </p>
+          <pre className="bg-black rounded-lg p-4 text-xs text-cream overflow-x-auto leading-relaxed font-mono">
+            {MIGRATION_SQL_COLLAB_SPLIT}
           </pre>
         </Step>
       </div>

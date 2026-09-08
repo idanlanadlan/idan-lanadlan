@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Plus, Download, Building2 } from "lucide-react";
 import { getProperties, getBrokers, getPropertyBrokerLinks } from "@/lib/db";
 import { deleteProperty, toggleFeatured, updateStatus } from "@/app/actions/properties";
-import PropertiesTable from "@/components/admin/PropertiesTable";
+import PropertiesTable, { type CollabInfo } from "@/components/admin/PropertiesTable";
 
 export const dynamic = "force-dynamic";
 
@@ -14,16 +14,20 @@ export default async function PropertiesAdmin() {
   ]);
   const brokersById = Object.fromEntries(brokers.map((b) => [b.id, b]));
 
-  // property id → "collaboration with X" label for the table badge, including
-  // the broker's notes (where Idan records the split — full co-op / N% / etc.).
-  // Only collab listings get an entry; a plain "mine" property gets none.
-  const collabLabels: Record<string, string> = {};
+  // property id → who the co-op is with + the terms (full split / N% set
+  // aside), for the table badge. Only collab listings get an entry; a plain
+  // "mine" property gets none.
+  const collabInfo: Record<string, CollabInfo> = {};
   for (const [propertyId, link] of Object.entries(brokerLinks)) {
     if (link.listing_source !== "collab") continue;
     const broker = link.broker_id ? brokersById[link.broker_id] : null;
-    collabLabels[propertyId] = broker
-      ? [broker.name, broker.agency, broker.notes].filter(Boolean).join(" · ")
-      : "מתווך לא צוין";
+    collabInfo[propertyId] = {
+      who: broker
+        ? [broker.name, broker.agency, broker.notes].filter(Boolean).join(" · ")
+        : "מתווך לא צוין",
+      split: link.collab_split ?? null,
+      feePct: link.collab_fee_pct ?? null,
+    };
   }
 
   return (
@@ -69,7 +73,7 @@ export default async function PropertiesAdmin() {
       ) : (
         <PropertiesTable
           properties={properties}
-          collabLabels={collabLabels}
+          collabInfo={collabInfo}
           deleteProperty={deleteProperty}
           toggleFeatured={toggleFeatured}
           updateStatus={updateStatus}

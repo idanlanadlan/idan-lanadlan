@@ -13,7 +13,7 @@ import {
 import { translatePropertyFields } from "@/lib/translate-property";
 import { sendNewListingAlert } from "@/lib/newsletter";
 import { isAdmin } from "@/lib/require-admin";
-import type { PropertyType, PropertyStatus, AddressVisibility } from "@/lib/types";
+import type { PropertyType, PropertyStatus, AddressVisibility, CollabSplit } from "@/lib/types";
 
 /**
  * Records who is marketing a property, from the "מקור הנכס" section of the
@@ -45,7 +45,17 @@ async function applyBrokerLink(propertyId: string, formData: FormData) {
     }
     if (brokerId === "__new__") brokerId = null;
 
-    await setPropertyBrokerLink(propertyId, { listing_source: "collab", broker_id: brokerId });
+    const collabSplit: CollabSplit = formData.get("collab_split") === "partial" ? "partial" : "full";
+    const rawPct = Number(formData.get("collab_fee_pct"));
+    const collabFeePct =
+      collabSplit === "partial" && Number.isFinite(rawPct) && rawPct > 0 ? rawPct : null;
+
+    await setPropertyBrokerLink(propertyId, {
+      listing_source: "collab",
+      broker_id: brokerId,
+      collab_split: collabSplit,
+      collab_fee_pct: collabFeePct,
+    });
   } catch (err) {
     console.error("[applyBrokerLink] skipped — is setup Step 14 done?", err);
   }

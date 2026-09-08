@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
-import type { Broker, ListingSource, Property, PropertyBrokerLink, PropertyType } from "@/lib/types";
+import type { Broker, CollabSplit, ListingSource, Property, PropertyBrokerLink, PropertyType } from "@/lib/types";
 import AddressAutocomplete from "@/components/admin/AddressAutocomplete";
 import ImageManager from "@/components/admin/ImageManager";
 
@@ -49,6 +49,12 @@ export default function PropertyForm({
   );
   const [brokerChoice, setBrokerChoice] = useState<string>(
     brokerLink?.broker_id ?? (brokers.length ? "" : "__new__")
+  );
+  const [collabSplit, setCollabSplit] = useState<CollabSplit>(
+    brokerLink?.collab_split ?? "full"
+  );
+  const [collabFeePct, setCollabFeePct] = useState<string>(
+    brokerLink?.collab_fee_pct != null ? String(brokerLink.collab_fee_pct) : ""
   );
 
   // Built area + balcony are entered separately; the public site shows their
@@ -386,11 +392,58 @@ export default function PropertyForm({
                   <input className={field} name="broker_new_agency" placeholder="רי/מקס, אנגלו סכסון…" />
                 </div>
                 <div>
-                  <label className="block text-[11px] text-gray-light mb-1">הערות</label>
-                  <input className={field} name="broker_new_notes" placeholder="אחוז עמלה, איש קשר…" />
+                  <label className="block text-[11px] text-gray-light mb-1">הערות על המתווך</label>
+                  <input className={field} name="broker_new_notes" placeholder="איש קשר, סוכנות…" />
                 </div>
               </div>
             )}
+
+            {/* Co-op terms — per listing, not per broker. */}
+            <div className="pt-1">
+              <label className="block text-[11px] text-gray-light mb-1.5">תנאי שת״פ מול המתווך</label>
+              <div className="flex flex-col gap-2">
+                <label className="flex items-center gap-2.5 cursor-pointer text-sm text-cream">
+                  <input
+                    type="radio"
+                    name="collab_split"
+                    value="full"
+                    checked={collabSplit === "full"}
+                    onChange={() => setCollabSplit("full")}
+                    className="w-4 h-4 accent-gold"
+                  />
+                  שת״פ מלא — חלוקה רגילה, אין הפרשה
+                </label>
+                <label className="flex items-center gap-2.5 cursor-pointer text-sm text-cream">
+                  <input
+                    type="radio"
+                    name="collab_split"
+                    value="partial"
+                    checked={collabSplit === "partial"}
+                    onChange={() => setCollabSplit("partial")}
+                    className="w-4 h-4 accent-gold"
+                  />
+                  צריך להפריש אחוז מהעמלה
+                </label>
+              </div>
+              {collabSplit === "partial" && (
+                <div className="mt-2 flex items-center gap-2">
+                  <input
+                    className={`${field} w-28`}
+                    name="collab_fee_pct"
+                    type="number"
+                    inputMode="decimal"
+                    step="0.25"
+                    min="0"
+                    max="100"
+                    dir="ltr"
+                    value={collabFeePct}
+                    onChange={(e) => setCollabFeePct(e.target.value)}
+                    placeholder="0.5"
+                  />
+                  <span className="text-sm text-gray-light">% מהעמלה מופרשים למתווך השני</span>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
