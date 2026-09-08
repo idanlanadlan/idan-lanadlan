@@ -30,7 +30,7 @@ export interface T {
   newsletter: {
     meta_title: string; meta_description: string;
     title: string; subtitle: string; name_label: string; email_label: string;
-    deal_label: string; deal_sale: string; deal_rent: string;
+    deal_label: string; deal_sale: string; deal_rent: string; deal_hint: string;
     cta_tab: string; modal_pitch: string;
     consent_prefix: string; consent_link: string; consent_suffix: string;
     submit: string; sending: string;
@@ -463,6 +463,7 @@ export const translations: Record<Locale, T> = {
       deal_label: "מה מעניין אתכם?",
       deal_sale: "למכירה",
       deal_rent: "להשכרה",
+      deal_hint: "בחרו לפחות אחד",
       cta_tab: "נכסים חמים, לפני כולם — הצטרפו לרשימה",
       modal_pitch: "מייל על כל נכס חדש — עוד לפני שהוא מתפרסם.",
       consent_prefix: "אני מאשר/ת קבלת עדכונים שיווקיים על נכסים במייל מעידן לנדל״ן, בהתאם ל",
@@ -1424,6 +1425,7 @@ export const translations: Record<Locale, T> = {
       deal_label: "What are you after?",
       deal_sale: "For sale",
       deal_rent: "For rent",
+      deal_hint: "Pick at least one",
       cta_tab: "Hot listings, before anyone else — join the list",
       modal_pitch: "An email on every new listing — before it goes public.",
       consent_prefix: "I agree to receive marketing property updates by email from Idan LaNadlan, in line with the ",
@@ -2385,6 +2387,7 @@ export const translations: Record<Locale, T> = {
       deal_label: "Qu'est-ce qui vous intéresse ?",
       deal_sale: "À vendre",
       deal_rent: "À louer",
+      deal_hint: "Choisissez-en au moins une",
       cta_tab: "Les biens en vue, avant tout le monde — inscrivez-vous",
       modal_pitch: "Un e-mail pour chaque nouveau bien — avant sa publication.",
       consent_prefix: "J'accepte de recevoir par e-mail des mises à jour marketing sur les biens d'Idan LaNadlan, conformément à la ",
@@ -3346,6 +3349,7 @@ export const translations: Record<Locale, T> = {
       deal_label: "¿Qué buscas?",
       deal_sale: "En venta",
       deal_rent: "En alquiler",
+      deal_hint: "Elige al menos una",
       cta_tab: "Propiedades destacadas, antes que nadie — únete",
       modal_pitch: "Un correo por cada nueva propiedad — antes de publicarse.",
       consent_prefix: "Acepto recibir por correo actualizaciones de marketing sobre propiedades de Idan LaNadlan, conforme a la ",

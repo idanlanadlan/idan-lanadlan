@@ -31,9 +31,10 @@ export default function NewsletterSignup({ variant = "section", onSubscribed }: 
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  // Two independent toggles — pick sale, rent, or both. Default: both on.
-  const [wantsSale, setWantsSale] = useState(true);
-  const [wantsRent, setWantsRent] = useState(true);
+  // Two independent toggles — pick sale, rent, or both. Nothing preselected;
+  // at least one is required to submit.
+  const [wantsSale, setWantsSale] = useState(false);
+  const [wantsRent, setWantsRent] = useState(false);
   const [hp, setHp] = useState(""); // honeypot
   const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "pending" | "already" | "error">("idle");
@@ -126,10 +127,13 @@ export default function NewsletterSignup({ variant = "section", onSubscribed }: 
         </div>
       </div>
 
-      {/* Deal-type choice — two toggles, pick one or both. Each carries a
-          checkbox indicator so "selected" reads at a glance. */}
+      {/* Deal-type choice — two toggles, pick one or both. Nothing is
+          preselected; at least one is required. Each carries a checkbox
+          indicator so "selected" reads at a glance. */}
       <fieldset>
-        <legend className={labelCls}>{n.deal_label}</legend>
+        <legend className={labelCls}>
+          {n.deal_label} <span className="text-red-400" aria-hidden="true">*</span>
+        </legend>
         <div className="grid grid-cols-2 gap-2">
           {([
             [n.deal_sale, wantsSale, setWantsSale],
@@ -158,6 +162,9 @@ export default function NewsletterSignup({ variant = "section", onSubscribed }: 
             </button>
           ))}
         </div>
+        {!wantsSale && !wantsRent && (
+          <p className="text-[11px] text-gray-light/80 mt-1.5">{n.deal_hint}</p>
+        )}
       </fieldset>
 
       {/* Honeypot — hidden from real users, bots fill it and get silently dropped */}
