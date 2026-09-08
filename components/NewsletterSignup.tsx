@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
-import { BellRing } from "lucide-react";
+import { BellRing, Check } from "lucide-react";
 import { sendGAEvent } from "@next/third-parties/google";
 import LocaleLink from "@/components/LocaleLink";
 import { subscribeToNewsletter } from "@/app/actions/newsletter";
@@ -126,7 +126,8 @@ export default function NewsletterSignup({ variant = "section", onSubscribed }: 
         </div>
       </div>
 
-      {/* Deal-type choice — two toggles, pick one or both */}
+      {/* Deal-type choice — two toggles, pick one or both. Each carries a
+          checkbox indicator so "selected" reads at a glance. */}
       <fieldset>
         <legend className={labelCls}>{n.deal_label}</legend>
         <div className="grid grid-cols-2 gap-2">
@@ -139,12 +140,20 @@ export default function NewsletterSignup({ variant = "section", onSubscribed }: 
               type="button"
               aria-pressed={on}
               onClick={() => set((v) => !v)}
-              className={`px-3 ${dense ? "py-2" : "py-2.5"} rounded-lg text-sm font-semibold border transition-colors ${
+              className={`flex items-center justify-center gap-2 px-3 ${dense ? "py-2.5" : "py-3"} rounded-lg text-sm font-bold border-2 transition-colors ${
                 on
-                  ? "bg-gold text-black border-gold"
-                  : "bg-black border-gray-dark text-gray-light hover:border-gold/50 hover:text-cream"
+                  ? "bg-gold text-black border-gold shadow-[0_0_0_3px_rgba(201,169,110,0.2)]"
+                  : "bg-transparent text-gray-light border-gray-dark hover:border-gold/50 hover:text-cream"
               }`}
             >
+              <span
+                aria-hidden="true"
+                className={`grid place-items-center w-4 h-4 rounded border-2 shrink-0 transition-colors ${
+                  on ? "bg-black/20 border-black/40 text-black" : "border-gray-light/50"
+                }`}
+              >
+                {on && <Check size={11} strokeWidth={4} />}
+              </span>
               {text}
             </button>
           ))}
