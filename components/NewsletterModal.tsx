@@ -182,21 +182,20 @@ export default function NewsletterModal() {
             </button>
 
             {!subscribed ? (
-              <div className="px-6 py-7 sm:px-8 overflow-y-auto" style={{ maxHeight: "92vh" }}>
-                <div className="divider-gold mb-5" />
+              <div className="px-5 py-5 sm:px-6 overflow-y-auto" style={{ maxHeight: "92vh" }}>
                 <h2
                   id={`${uid}-title`}
-                  className="font-display text-2xl sm:text-[1.7rem] font-light text-white leading-snug flex items-start gap-2.5"
+                  className="font-display text-lg sm:text-xl font-normal text-white leading-tight flex items-center gap-2 pe-8"
                 >
-                  <BellRing size={20} className="text-gold shrink-0 mt-1.5" aria-hidden="true" />
+                  <BellRing size={17} className="text-gold shrink-0" aria-hidden="true" />
                   <span>{n.title}</span>
                 </h2>
-                <p className="text-sm text-gray-light mt-3 mb-6 leading-relaxed">{n.subtitle}</p>
+                <p className="text-[13px] text-gray-light mt-1.5 mb-4 leading-snug">{n.modal_pitch}</p>
 
                 <NewsletterSignup variant="modal" onSubscribed={setSubscribed} />
 
                 {!manual && (
-                  <label className="mt-6 pt-4 border-t border-gray-dark/60 flex items-center gap-2.5 cursor-pointer">
+                  <label className="mt-4 pt-3 border-t border-gray-dark/60 flex items-center gap-2.5 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={dismissForever}

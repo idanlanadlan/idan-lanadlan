@@ -9,10 +9,6 @@ import { isValidEmail } from "@/lib/validation";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { DealInterest } from "@/lib/types";
 
-const field =
-  "w-full bg-black border border-gray-dark rounded-lg px-4 py-3 text-sm text-cream focus:border-gold outline-none transition-colors";
-const label = "block text-xs text-gold tracking-widest uppercase mb-2";
-
 function dealFrom(sale: boolean, rent: boolean): DealInterest {
   return sale && rent ? "both" : sale ? "sale" : "rent";
 }
@@ -88,17 +84,25 @@ export default function NewsletterSignup({ variant = "section", onSubscribed }: 
 
   const showPitch = variant === "section" || variant === "page";
   const twoUp = variant === "section" || variant === "page";
+  // The modal is height-constrained — pack the same fields tighter so it
+  // fits one screen with no inner scroll.
+  const dense = variant === "modal";
+  const fieldCls = `w-full bg-black border border-gray-dark rounded-lg px-4 ${dense ? "py-2" : "py-3"} text-sm text-cream focus:border-gold outline-none transition-colors`;
+  const labelCls = `block text-xs text-gold tracking-widest uppercase ${dense ? "mb-1" : "mb-2"}`;
 
   const form = (
-    <form onSubmit={handleSubmit} className={`space-y-4 ${variant === "band" ? "w-full" : "max-w-xl"}`}>
-      <div className={twoUp ? "grid sm:grid-cols-2 gap-3.5" : "space-y-4"}>
+    <form
+      onSubmit={handleSubmit}
+      className={`${dense ? "space-y-3" : "space-y-4"} ${variant === "band" ? "w-full" : "max-w-xl"}`}
+    >
+      <div className={dense ? "grid grid-cols-2 gap-2.5" : twoUp ? "grid sm:grid-cols-2 gap-3.5" : "space-y-4"}>
         <div>
-          <label htmlFor={`${uid}-name`} className={label}>
+          <label htmlFor={`${uid}-name`} className={labelCls}>
             {n.name_label} <span className="text-red-400" aria-hidden="true">*</span>
           </label>
           <input
             id={`${uid}-name`}
-            className={field}
+            className={fieldCls}
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
@@ -106,12 +110,12 @@ export default function NewsletterSignup({ variant = "section", onSubscribed }: 
           />
         </div>
         <div>
-          <label htmlFor={`${uid}-email`} className={label}>
+          <label htmlFor={`${uid}-email`} className={labelCls}>
             {n.email_label} <span className="text-red-400" aria-hidden="true">*</span>
           </label>
           <input
             id={`${uid}-email`}
-            className={field}
+            className={fieldCls}
             type="email"
             dir="ltr"
             value={email}
@@ -124,7 +128,7 @@ export default function NewsletterSignup({ variant = "section", onSubscribed }: 
 
       {/* Deal-type choice — two toggles, pick one or both */}
       <fieldset>
-        <legend className={label}>{n.deal_label}</legend>
+        <legend className={labelCls}>{n.deal_label}</legend>
         <div className="grid grid-cols-2 gap-2">
           {([
             [n.deal_sale, wantsSale, setWantsSale],
@@ -135,7 +139,7 @@ export default function NewsletterSignup({ variant = "section", onSubscribed }: 
               type="button"
               aria-pressed={on}
               onClick={() => set((v) => !v)}
-              className={`px-3 py-2.5 rounded-lg text-sm font-semibold border transition-colors ${
+              className={`px-3 ${dense ? "py-2" : "py-2.5"} rounded-lg text-sm font-semibold border transition-colors ${
                 on
                   ? "bg-gold text-black border-gold"
                   : "bg-black border-gray-dark text-gray-light hover:border-gold/50 hover:text-cream"
@@ -164,7 +168,7 @@ export default function NewsletterSignup({ variant = "section", onSubscribed }: 
           onChange={(e) => setConsent(e.target.checked)}
           className="h-4 w-4 shrink-0 mt-0.5 accent-gold cursor-pointer"
         />
-        <span className="text-xs text-gray-light leading-relaxed">
+        <span className={`text-gray-light ${dense ? "text-[11px] leading-snug" : "text-xs leading-relaxed"}`}>
           {n.consent_prefix}
           <LocaleLink href="/privacy" target="_blank" rel="noopener noreferrer" className="text-gold underline underline-offset-2 hover:opacity-80">
             {n.consent_link}
@@ -178,7 +182,7 @@ export default function NewsletterSignup({ variant = "section", onSubscribed }: 
       <button
         type="submit"
         disabled={!canSubmit || status === "loading"}
-        className="btn-gold px-6 py-3 rounded-lg text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-opacity w-full sm:w-auto"
+        className={`btn-gold px-6 ${dense ? "py-2.5 w-full" : "py-3 w-full sm:w-auto"} rounded-lg text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-opacity`}
       >
         {status === "loading" ? n.sending : n.submit}
       </button>
