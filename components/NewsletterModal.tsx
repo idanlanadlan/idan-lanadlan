@@ -52,10 +52,29 @@ export default function NewsletterModal() {
   const [open, setOpen] = useState(false);
   const [subscribed, setSubscribed] = useState<null | "pending" | "already">(null);
   const [dismissForever, setDismissForever] = useState(false);
+  // Opened by a deliberate click (the /nadlan side tab) rather than the
+  // auto-trigger — no "don't show again" prompt, and closing doesn't snooze.
+  const [manual, setManual] = useState(false);
   const armed = useRef(false);
+  const shownOnce = useRef(false); // the auto-popup fires at most once per visit
   const closeRef = useRef<HTMLButtonElement>(null);
   const pathname = usePathname();
   const suppressed = SUPPRESS_ON.some((p) => pathname === p || pathname.endsWith(p));
+
+  // Manual open — dispatched by NewsletterCtaTab. Bypasses eligibility; a
+  // person asking for it always gets it.
+  useEffect(() => {
+    const openNow = () => {
+      armed.current = true;
+      shownOnce.current = true;
+      setManual(true);
+      setSubscribed(null);
+      setDismissForever(false);
+      setOpen(true);
+    };
+    window.addEventListener("newsletter:open", openNow);
+    return () => window.removeEventListener("newsletter:open", openNow);
+  }, []);
 
   // Open on whichever comes first — a dwell timer or a scroll-depth threshold —
   // but only once the cookie banner has been answered (so we never stack two
@@ -69,9 +88,11 @@ export default function NewsletterModal() {
       if (window.scrollY / denom > SCROLL_TRIGGER) reveal();
     };
     const reveal = () => {
-      setOpen(true);
       window.clearTimeout(timer);
       window.removeEventListener("scroll", onScroll);
+      if (shownOnce.current) return; // a manual open already happened
+      shownOnce.current = true;
+      setOpen(true);
     };
     const arm = () => {
       if (armed.current) return;
@@ -99,8 +120,9 @@ export default function NewsletterModal() {
   const close = useCallback(() => {
     setOpen(false);
     if (subscribed) write("done");
-    else write(dismissForever ? "never" : "snoozed");
-  }, [subscribed, dismissForever]);
+    else if (!manual) write(dismissForever ? "never" : "snoozed");
+    setManual(false);
+  }, [subscribed, dismissForever, manual]);
 
   // Dialog behaviour: Esc closes, focus moves to the close button on open.
   useEffect(() => {
@@ -173,15 +195,17 @@ export default function NewsletterModal() {
 
                 <NewsletterSignup variant="modal" onSubscribed={setSubscribed} />
 
-                <label className="mt-6 pt-4 border-t border-gray-dark/60 flex items-center gap-2.5 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={dismissForever}
-                    onChange={(e) => setDismissForever(e.target.checked)}
-                    className="h-4 w-4 shrink-0 accent-gold cursor-pointer"
-                  />
-                  <span className="text-xs text-gray-light">{n.modal_dismiss}</span>
-                </label>
+                {!manual && (
+                  <label className="mt-6 pt-4 border-t border-gray-dark/60 flex items-center gap-2.5 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={dismissForever}
+                      onChange={(e) => setDismissForever(e.target.checked)}
+                      className="h-4 w-4 shrink-0 accent-gold cursor-pointer"
+                    />
+                    <span className="text-xs text-gray-light">{n.modal_dismiss}</span>
+                  </label>
+                )}
               </div>
             ) : (
               <motion.div

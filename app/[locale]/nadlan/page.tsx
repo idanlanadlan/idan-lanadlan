@@ -3,7 +3,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import PropertiesClient from "@/components/properties/PropertiesClient";
-import NewsletterSignup from "@/components/NewsletterSignup";
+import NewsletterCtaTab from "@/components/NewsletterCtaTab";
 import { getProperties } from "@/lib/db";
 import { isLocale, canonicalAlternates, localizedPath } from "@/lib/locale-path";
 import { translations } from "@/lib/translations";
@@ -77,33 +77,31 @@ export default async function PropertiesPage({
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(schema) }} />
       <Header />
       <main id="main-content" className="min-h-screen pt-28">
-        <section className="py-16 bg-charcoal border-b border-gray-dark">
+        {/* Slim header — the listings themselves should be the first thing that
+            pulls the eye and the scroll. The longer intro copy moves below. */}
+        <section className="pt-4 pb-7 sm:pb-8 bg-charcoal border-b border-gray-dark">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <p className="text-xs tracking-[0.3em] text-gold uppercase mb-3">{pp.eyebrow}</p>
             <div className="divider-gold mb-4" />
-            <h1 className="font-display text-4xl sm:text-5xl font-light text-white mb-4">
+            <h1 className="font-display text-3xl sm:text-4xl font-light text-white mb-2.5">
               {pp.h1}
             </h1>
-            <p className="text-gray-light max-w-xl">{pp.subtitle}</p>
-            <p className="text-sm text-gray-light/80 max-w-3xl mt-4 leading-relaxed">{pp.intro}</p>
-          </div>
-        </section>
-
-        <section className="relative border-b border-gray-dark/60 bg-charcoal overflow-hidden">
-          <div
-            className="absolute inset-0 pointer-events-none"
-            aria-hidden="true"
-            style={{ background: "radial-gradient(ellipse 55% 75% at 75% 50%, rgba(47,80,87,0.14) 0%, transparent 70%)" }}
-          />
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-14 sm:py-16">
-            <NewsletterSignup variant="band" />
+            <p className="text-sm sm:text-base text-gray-light max-w-xl">{pp.subtitle}</p>
           </div>
         </section>
 
         <PropertiesClient properties={properties} />
+
+        {/* Crawlable context — names the areas covered, for search. */}
+        <section className="py-12 border-t border-gray-dark bg-charcoal/40">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6">
+            <p className="text-sm text-gray-light/80 leading-relaxed">{pp.intro}</p>
+          </div>
+        </section>
       </main>
       <Footer />
       <WhatsAppButton />
+      <NewsletterCtaTab />
     </>
   );
 }
