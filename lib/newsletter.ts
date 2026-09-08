@@ -1,6 +1,6 @@
 import "server-only";
 import { randomBytes } from "crypto";
-import type { Property, Subscriber } from "./types";
+import type { DealInterest, Property, Subscriber } from "./types";
 import { escapeHtml } from "./html-escape";
 import { displaySize } from "./property-utils";
 import {
@@ -79,6 +79,17 @@ async function availableProperties(): Promise<Property[]> {
     .slice(0, 40);
 }
 
+/** A project is a buy, so it rides with "sale". */
+const isRent = (p: Property) => p.type === "rent";
+
+/** wants_sale / wants_rent are absent on pre-Step-18 rows — treat as opted in. */
+const wantsSale = (s: Subscriber) => s.wants_sale !== false;
+const wantsRent = (s: Subscriber) => s.wants_rent !== false;
+
+function dealFlags(deal: DealInterest): { wants_sale: boolean; wants_rent: boolean } {
+  return { wants_sale: deal !== "rent", wants_rent: deal !== "sale" };
+}
+
 // ── Sending ─────────────────────────────────────────────────────────────────
 
 async function sendOne(sub: Subscriber, subject: string, html: string): Promise<boolean> {
@@ -128,9 +139,14 @@ async function sendToMany(
 
 export type SubscribeResult = "pending" | "already" | "error";
 
-export async function subscribe(email: string, name: string): Promise<SubscribeResult> {
+export async function subscribe(
+  email: string,
+  name: string,
+  deal: DealInterest = "both"
+): Promise<SubscribeResult> {
   const clean = email.trim().toLowerCase();
   const displayName = name.trim();
+  const flags = dealFlags(deal);
 
   try {
     const existing = await getSubscriberByEmail(clean);
@@ -147,8 +163,9 @@ export async function subscribe(email: string, name: string): Promise<SubscribeR
         consent_at: now(),
         confirmed_at: null,
         unsubscribed_at: null,
+        ...flags,
       });
-      sub = { ...existing, name: displayName || existing.name, status: "pending", confirm_token };
+      sub = { ...existing, name: displayName || existing.name, status: "pending", confirm_token, ...flags };
     } else {
       sub = await createSubscriber({
         email: clean,
@@ -158,6 +175,7 @@ export async function subscribe(email: string, name: string): Promise<SubscribeR
         unsubscribe_token: token(),
         wants_new_listings: true,
         wants_weekly_digest: true,
+        ...flags,
         consent_at: now(),
       });
     }
@@ -188,11 +206,12 @@ export async function confirmSubscription(tok: string): Promise<boolean> {
   if (sub.status !== "confirmed") {
     await updateSubscriber(sub.id, { status: "confirmed", confirmed_at: now(), unsubscribed_at: null });
   }
-  // Welcome email with the current catalog.
-  const props = await availableProperties();
+  // Welcome email with the current catalog, narrowed to what they asked for.
+  const all = await availableProperties();
+  const props = all.filter((p) => (isRent(p) ? wantsRent(sub) : wantsSale(sub)));
   const body = `
     <p style="font-size:14px;color:#cfc9bd;line-height:1.7;">
-      ברוכים הבאים. מעכשיו תקבלו מייל על כל נכס חדש שנכנס, וגם סיכום שבועי של כל הנכסים הזמינים.
+      ברוכים הבאים. מעכשיו תקבלו מייל על כל נכס חדש שנכנס, וגם סיכום שבועי של הנכסים הזמינים.
       הנה מה שזמין כרגע:
     </p>
     ${propertyRowsHtml(props)}
@@ -215,20 +234,37 @@ export async function unsubscribe(tok: string): Promise<boolean> {
 export async function sendNewListingAlert(property: Property): Promise<number> {
   if (property.status !== "available") return 0;
   const subs = await listConfirmedSubscribers("wants_new_listings");
-  if (subs.length === 0) return 0;
+  const recipients = subs.filter((s) => (isRent(property) ? wantsRent(s) : wantsSale(s)));
+  if (recipients.length === 0) return 0;
   const body = `
     <p style="font-size:14px;color:#cfc9bd;line-height:1.7;">נכס חדש נכנס לרשימה:</p>
     ${propertyRowsHtml([property])}`;
-  return sendToMany(subs, `נכס חדש: ${property.title}`, body);
+  return sendToMany(recipients, `נכס חדש: ${property.title}`, body);
 }
+
+const digestBody = (props: Property[]) => `
+    <p style="font-size:14px;color:#cfc9bd;line-height:1.7;">הנכסים הזמינים אצל עידן לנדל״ן כרגע:</p>
+    ${propertyRowsHtml(props)}
+    <p style="margin-top:20px;"><a href="${BASE}/nadlan" style="color:#C9A96E;font-size:14px;">לכל הנכסים באתר ←</a></p>`;
 
 export async function sendWeeklyDigest(): Promise<number> {
   const subs = await listConfirmedSubscribers("wants_weekly_digest");
   const props = await availableProperties();
   if (subs.length === 0 || props.length === 0) return 0;
-  const body = `
-    <p style="font-size:14px;color:#cfc9bd;line-height:1.7;">כל הנכסים הזמינים אצל עידן לנדל״ן כרגע:</p>
-    ${propertyRowsHtml(props)}
-    <p style="margin-top:20px;"><a href="${BASE}/nadlan" style="color:#C9A96E;font-size:14px;">לכל הנכסים באתר ←</a></p>`;
-  return sendToMany(subs, "הנכסים הזמינים השבוע — עידן לנדל״ן", body);
+
+  const rentProps = props.filter(isRent);
+  const saleProps = props.filter((p) => !isRent(p));
+  const subject = "הנכסים הזמינים השבוע — עידן לנדל״ן";
+
+  // Each subscriber gets only the deal types they asked for. Three buckets:
+  // both (or pre-Step-18), sale-only, rent-only.
+  const both = subs.filter((s) => wantsSale(s) && wantsRent(s));
+  const saleOnly = subs.filter((s) => wantsSale(s) && !wantsRent(s));
+  const rentOnly = subs.filter((s) => wantsRent(s) && !wantsSale(s));
+
+  let sent = 0;
+  if (both.length && props.length) sent += await sendToMany(both, subject, digestBody(props));
+  if (saleOnly.length && saleProps.length) sent += await sendToMany(saleOnly, subject, digestBody(saleProps));
+  if (rentOnly.length && rentProps.length) sent += await sendToMany(rentOnly, subject, digestBody(rentProps));
+  return sent;
 }

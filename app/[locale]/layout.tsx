@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import CookieBanner from "@/components/CookieBanner";
+import NewsletterModal from "@/components/NewsletterModal";
 import Advisor from "@/components/Advisor";
 import AccessibilityWidget from "@/components/AccessibilityWidget";
 import AmbientBackground from "@/components/AmbientBackground";
@@ -200,6 +201,7 @@ export default async function RootLayout({
             <SettingsProvider settings={settings}>
               {children}
               <CookieBanner />
+              <NewsletterModal />
               <Advisor />
               <AccessibilityWidget />
             </SettingsProvider>

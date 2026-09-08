@@ -5,6 +5,7 @@ import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import Hero from "@/components/home/Hero";
 import StatsBar from "@/components/home/StatsBar";
 import FeaturedProperties from "@/components/home/FeaturedProperties";
+import NewsletterSignup from "@/components/NewsletterSignup";
 import AboutSnippet from "@/components/home/AboutSnippet";
 import Testimonials from "@/components/home/Testimonials";
 import SocialFeed from "@/components/home/SocialFeed";
@@ -37,6 +38,16 @@ export default async function HomePage() {
         <Hero />
         <StatsBar />
         <FeaturedProperties properties={featuredProperties} />
+        <section className="relative border-y border-gray-dark/50 bg-charcoal overflow-hidden">
+          <div
+            className="absolute inset-0 pointer-events-none"
+            aria-hidden="true"
+            style={{ background: "radial-gradient(ellipse 55% 75% at 75% 50%, rgba(47,80,87,0.14) 0%, transparent 70%)" }}
+          />
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-20 sm:py-24">
+            <NewsletterSignup variant="band" />
+          </div>
+        </section>
         <AboutSnippet />
         <Testimonials />
         <BlogPreview posts={blogPosts} />

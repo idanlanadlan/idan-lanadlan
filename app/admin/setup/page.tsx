@@ -171,6 +171,12 @@ ALTER TABLE property_brokers
     CHECK (collab_split IN ('full', 'partial')),
   ADD COLUMN IF NOT EXISTS collab_fee_pct NUMERIC(5,2);`;
 
+const MIGRATION_SQL_SUBSCRIBER_DEALS = `-- לכל נרשם לרשימת התפוצה: האם רוצה עדכונים על דירות למכירה, להשכרה, או שתיהן.
+-- DEFAULT true לשתי העמודות — נרשמים קיימים ממשיכים לקבל הכול, כמו היום.
+ALTER TABLE email_subscribers
+  ADD COLUMN IF NOT EXISTS wants_sale BOOLEAN NOT NULL DEFAULT true,
+  ADD COLUMN IF NOT EXISTS wants_rent BOOLEAN NOT NULL DEFAULT true;`;
+
 // SECURITY FIX — the original "properties" policy below (see Step 2, line
 // "service_all") had no FOR/TO clause. In Postgres that silently defaults
 // to ALL commands (SELECT/INSERT/UPDATE/DELETE) for ALL roles — including
@@ -400,6 +406,16 @@ export default function SetupPage() {
           </p>
           <pre className="bg-black rounded-lg p-4 text-xs text-cream overflow-x-auto leading-relaxed font-mono">
             {MIGRATION_SQL_COLLAB_SPLIT}
+          </pre>
+        </Step>
+
+        <Step num={18} title="עדכון: העדפת מכירה/השכרה לנרשמי הניוזלטר">
+          <p className="text-sm text-gray-light mb-3">
+            כדי שנרשמים יוכלו לבחור אם לקבל עדכונים על דירות למכירה, להשכרה או שתיהן
+            (בטופס ההרשמה ובחלון הקופץ), הרץ ב-<strong className="text-cream">SQL Editor</strong> את זה:
+          </p>
+          <pre className="bg-black rounded-lg p-4 text-xs text-cream overflow-x-auto leading-relaxed font-mono">
+            {MIGRATION_SQL_SUBSCRIBER_DEALS}
           </pre>
         </Step>
       </div>

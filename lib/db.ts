@@ -380,27 +380,46 @@ export async function getSubscriberByToken(
   return error ? null : ((data as Subscriber) ?? null);
 }
 
+// wants_sale / wants_rent arrived with setup Step 18. Drop them and retry the
+// insert if the columns aren't there yet, so signups still work pre-migration
+// (the subscriber just isn't deal-type-filtered until Step 18 runs).
+const OPTIONAL_SUBSCRIBER_COLUMNS = ["wants_sale", "wants_rent"] as const;
+
 export async function createSubscriber(
   sub: Omit<Subscriber, "id" | "created_at" | "confirmed_at" | "unsubscribed_at">
 ): Promise<Subscriber> {
-  const { data, error } = await createAdminClient()
-    .from("email_subscribers")
-    .insert([sub])
-    .select()
-    .single();
-  if (error) throw new Error(error.message);
-  return data as Subscriber;
+  const client = createAdminClient();
+  let row: Record<string, unknown> = { ...sub };
+  for (let attempt = 0; attempt < OPTIONAL_SUBSCRIBER_COLUMNS.length + 1; attempt++) {
+    const { data, error } = await client.from("email_subscribers").insert([row]).select().single();
+    if (!error) return data as Subscriber;
+    if (!/column|schema cache/i.test(error.message)) throw new Error(error.message);
+    const drop = OPTIONAL_SUBSCRIBER_COLUMNS.find((c) => c in row && error.message.includes(c));
+    if (!drop) throw new Error(error.message);
+    const copy = { ...row };
+    delete copy[drop];
+    row = copy;
+  }
+  throw new Error("createSubscriber: unresolved unknown-column error");
 }
 
 export async function updateSubscriber(
   id: string,
   patch: Partial<Omit<Subscriber, "id" | "created_at">>
 ): Promise<void> {
-  const { error } = await createAdminClient()
-    .from("email_subscribers")
-    .update(patch)
-    .eq("id", id);
-  if (error) throw new Error(error.message);
+  const client = createAdminClient();
+  let row: Record<string, unknown> = { ...patch };
+  for (let attempt = 0; attempt < OPTIONAL_SUBSCRIBER_COLUMNS.length + 1; attempt++) {
+    const { error } = await client.from("email_subscribers").update(row).eq("id", id);
+    if (!error) return;
+    if (!/column|schema cache/i.test(error.message)) throw new Error(error.message);
+    const drop = OPTIONAL_SUBSCRIBER_COLUMNS.find((c) => c in row && error.message.includes(c));
+    if (!drop) throw new Error(error.message);
+    const copy = { ...row };
+    delete copy[drop];
+    row = copy;
+  }
+  throw new Error("updateSubscriber: unresolved unknown-column error");
 }
 
 /** Confirmed subscribers who opted into a given stream. */

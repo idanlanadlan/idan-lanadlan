@@ -11,6 +11,17 @@ const statusMeta: Record<string, { label: string; cls: string }> = {
   unsubscribed: { label: "הוסר", cls: "bg-gray-dark text-gray-light" },
 };
 
+// wants_sale / wants_rent are absent on rows created before setup Step 18 —
+// undefined means "opted into everything".
+function dealLabel(wantsSale?: boolean, wantsRent?: boolean): string {
+  const sale = wantsSale !== false;
+  const rent = wantsRent !== false;
+  if (sale && rent) return "מכירה + השכרה";
+  if (sale) return "מכירה בלבד";
+  if (rent) return "השכרה בלבד";
+  return "—";
+}
+
 export default async function SubscribersAdmin({
   searchParams,
 }: {
@@ -66,16 +77,17 @@ export default async function SubscribersAdmin({
         </div>
       ) : (
         <div className="bg-charcoal border border-gray-dark rounded-xl overflow-hidden">
-          <div className="hidden md:grid grid-cols-[1fr_140px_120px_130px] gap-4 px-5 py-3 border-b border-gray-dark text-[10px] text-gray-light uppercase tracking-wider">
+          <div className="hidden md:grid grid-cols-[1fr_130px_120px_130px_110px] gap-4 px-5 py-3 border-b border-gray-dark text-[10px] text-gray-light uppercase tracking-wider">
             <span>מייל / שם</span>
             <span>סטטוס</span>
+            <span>מתעניין ב־</span>
             <span>מנוי</span>
             <span>נרשם</span>
           </div>
           {subs.map((s, i) => (
             <div
               key={s.id}
-              className={`grid md:grid-cols-[1fr_140px_120px_130px] gap-4 px-5 py-3.5 items-center text-sm ${
+              className={`grid md:grid-cols-[1fr_130px_120px_130px_110px] gap-4 px-5 py-3.5 items-center text-sm ${
                 i < subs.length - 1 ? "border-b border-gray-dark" : ""
               }`}
             >
@@ -86,6 +98,7 @@ export default async function SubscribersAdmin({
               <span className={`text-[11px] px-2 py-1 rounded-full w-fit ${statusMeta[s.status]?.cls ?? ""}`}>
                 {statusMeta[s.status]?.label ?? s.status}
               </span>
+              <span className="text-[11px] text-gray-light">{dealLabel(s.wants_sale, s.wants_rent)}</span>
               <span className="text-[11px] text-gray-light">
                 {[s.wants_new_listings && "חדשים", s.wants_weekly_digest && "שבועי"].filter(Boolean).join(" · ") || "—"}
               </span>

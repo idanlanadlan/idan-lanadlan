@@ -114,6 +114,9 @@ export interface BlogPost {
 
 export type SubscriberStatus = "pending" | "confirmed" | "unsubscribed";
 
+/** Which deals a subscriber wants to hear about. "both" is the default. */
+export type DealInterest = "sale" | "rent" | "both";
+
 /** An email-newsletter subscriber. Admin-only table (service-role RLS).
  *  consent_at + confirmed_at are the Amendment-40 consent record. */
 export interface Subscriber {
@@ -125,6 +128,10 @@ export interface Subscriber {
   unsubscribe_token: string;
   wants_new_listings: boolean;
   wants_weekly_digest: boolean;
+  /** sale / rent listings the subscriber opted into. Both true = "both".
+   *  Nullable/absent on rows created before setup Step 18 — treat as both. */
+  wants_sale?: boolean;
+  wants_rent?: boolean;
   consent_at: string;
   confirmed_at: string | null;
   unsubscribed_at: string | null;

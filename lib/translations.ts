@@ -30,12 +30,14 @@ export interface T {
   newsletter: {
     meta_title: string; meta_description: string;
     title: string; subtitle: string; name_label: string; email_label: string;
+    deal_label: string; deal_sale: string; deal_rent: string; deal_both: string;
     consent_prefix: string; consent_link: string; consent_suffix: string;
     submit: string; sending: string;
     success_title: string; success_note: string; already: string; generic_error: string;
     confirmed_title: string; confirmed_note: string;
     unsub_title: string; unsub_note: string; resubscribe: string;
     bad_link: string;
+    modal_dismiss: string;
   };
   about: {
     meta_title: string; meta_description: string;
@@ -457,6 +459,10 @@ export const translations: Record<Locale, T> = {
       subtitle: "נכסים רבים נמכרים לפני שהם מתפרסמים. הירשמו ותקבלו מייל על כל נכס חדש שנכנס, וגם סיכום שבועי של הנכסים הזמינים.",
       name_label: "שם מלא",
       email_label: "כתובת מייל",
+      deal_label: "מה מעניין אתכם?",
+      deal_sale: "למכירה",
+      deal_rent: "להשכרה",
+      deal_both: "גם וגם",
       consent_prefix: "אני מאשר/ת קבלת עדכונים שיווקיים על נכסים במייל מעידן לנדל״ן, בהתאם ל",
       consent_link: "מדיניות הפרטיות",
       consent_suffix: ". ניתן לבטל את ההרשמה בכל עת.",
@@ -472,6 +478,7 @@ export const translations: Record<Locale, T> = {
       unsub_note: "לא תקבלו יותר מיילים מרשימת התפוצה. נרשמת בטעות?",
       resubscribe: "הרשמה מחדש",
       bad_link: "הקישור אינו תקין או שפג תוקפו.",
+      modal_dismiss: "אל תציג הודעה זו שוב",
     },
     about: {
       meta_title: "אודות עידן חולי | עידן לנדל״ן",
@@ -1412,6 +1419,10 @@ export const translations: Record<Locale, T> = {
       subtitle: "Many properties sell before they're ever listed. Subscribe to get an email on every new listing, plus a weekly recap of what's available.",
       name_label: "Full name",
       email_label: "Email address",
+      deal_label: "What are you after?",
+      deal_sale: "For sale",
+      deal_rent: "For rent",
+      deal_both: "Both",
       consent_prefix: "I agree to receive marketing property updates by email from Idan LaNadlan, in line with the ",
       consent_link: "privacy policy",
       consent_suffix: ". You can unsubscribe at any time.",
@@ -1427,6 +1438,7 @@ export const translations: Record<Locale, T> = {
       unsub_note: "You won't receive any more emails from the mailing list. Unsubscribed by mistake?",
       resubscribe: "Subscribe again",
       bad_link: "This link is invalid or has expired.",
+      modal_dismiss: "Don't show this again",
     },
     about: {
       meta_title: "About Idan Huli | Idan LaNadlan",
@@ -2367,6 +2379,10 @@ export const translations: Record<Locale, T> = {
       subtitle: "Beaucoup de biens se vendent avant d'être publiés. Inscrivez-vous pour recevoir un e-mail à chaque nouveau bien, plus un récapitulatif hebdomadaire.",
       name_label: "Nom complet",
       email_label: "Adresse e-mail",
+      deal_label: "Qu'est-ce qui vous intéresse ?",
+      deal_sale: "À vendre",
+      deal_rent: "À louer",
+      deal_both: "Les deux",
       consent_prefix: "J'accepte de recevoir par e-mail des mises à jour marketing sur les biens d'Idan LaNadlan, conformément à la ",
       consent_link: "politique de confidentialité",
       consent_suffix: ". Vous pouvez vous désinscrire à tout moment.",
@@ -2382,6 +2398,7 @@ export const translations: Record<Locale, T> = {
       unsub_note: "Vous ne recevrez plus d'e-mails de la liste de diffusion. Désinscription par erreur ?",
       resubscribe: "Se réinscrire",
       bad_link: "Ce lien est invalide ou a expiré.",
+      modal_dismiss: "Ne plus afficher ce message",
     },
     about: {
       meta_title: "À propos d'Idan Huli | Idan LaNadlan",
@@ -3322,6 +3339,10 @@ export const translations: Record<Locale, T> = {
       subtitle: "Muchas propiedades se venden antes de publicarse. Suscríbete para recibir un correo por cada nueva propiedad, más un resumen semanal de lo disponible.",
       name_label: "Nombre completo",
       email_label: "Correo electrónico",
+      deal_label: "¿Qué buscas?",
+      deal_sale: "En venta",
+      deal_rent: "En alquiler",
+      deal_both: "Ambos",
       consent_prefix: "Acepto recibir por correo actualizaciones de marketing sobre propiedades de Idan LaNadlan, conforme a la ",
       consent_link: "política de privacidad",
       consent_suffix: ". Puedes darte de baja en cualquier momento.",
@@ -3337,6 +3358,7 @@ export const translations: Record<Locale, T> = {
       unsub_note: "No recibirás más correos de la lista. ¿Te diste de baja por error?",
       resubscribe: "Suscribirse de nuevo",
       bad_link: "Este enlace no es válido o ha caducado.",
+      modal_dismiss: "No volver a mostrar este mensaje",
     },
     about: {
       meta_title: "Sobre Idan Huli | Idan LaNadlan",

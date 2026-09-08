@@ -89,13 +89,18 @@ export default async function PropertiesPage({
           </div>
         </section>
 
-        <PropertiesClient properties={properties} />
-
-        <section className="py-16 border-t border-gray-dark">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6">
-            <NewsletterSignup variant="section" />
+        <section className="relative border-b border-gray-dark/60 bg-charcoal overflow-hidden">
+          <div
+            className="absolute inset-0 pointer-events-none"
+            aria-hidden="true"
+            style={{ background: "radial-gradient(ellipse 55% 75% at 75% 50%, rgba(47,80,87,0.14) 0%, transparent 70%)" }}
+          />
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-14 sm:py-16">
+            <NewsletterSignup variant="band" />
           </div>
         </section>
+
+        <PropertiesClient properties={properties} />
       </main>
       <Footer />
       <WhatsAppButton />
