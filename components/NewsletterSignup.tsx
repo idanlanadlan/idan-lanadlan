@@ -13,6 +13,10 @@ const field =
   "w-full bg-black border border-gray-dark rounded-lg px-4 py-3 text-sm text-cream focus:border-gold outline-none transition-colors";
 const label = "block text-xs text-gold tracking-widest uppercase mb-2";
 
+function dealFrom(sale: boolean, rent: boolean): DealInterest {
+  return sale && rent ? "both" : sale ? "sale" : "rent";
+}
+
 interface Props {
   /** "section" = heading + pitch card; "compact" = footer / empty-state;
    *  "page" = landing page; "band" = full-width strip, form beside the pitch;
@@ -24,8 +28,6 @@ interface Props {
   onSubscribed?: (state: "pending" | "already") => void;
 }
 
-const DEALS: DealInterest[] = ["both", "sale", "rent"];
-
 export default function NewsletterSignup({ variant = "section", onSubscribed }: Props) {
   const uid = useId();
   const { t } = useLanguage();
@@ -33,12 +35,15 @@ export default function NewsletterSignup({ variant = "section", onSubscribed }: 
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [deal, setDeal] = useState<DealInterest>("both");
+  // Two independent toggles — pick sale, rent, or both. Default: both on.
+  const [wantsSale, setWantsSale] = useState(true);
+  const [wantsRent, setWantsRent] = useState(true);
   const [hp, setHp] = useState(""); // honeypot
   const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "pending" | "already" | "error">("idle");
 
-  const canSubmit = name.trim() && isValidEmail(email) && consent;
+  const deal = dealFrom(wantsSale, wantsRent);
+  const canSubmit = name.trim() && isValidEmail(email) && consent && (wantsSale || wantsRent);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -117,29 +122,28 @@ export default function NewsletterSignup({ variant = "section", onSubscribed }: 
         </div>
       </div>
 
-      {/* Deal-type choice */}
+      {/* Deal-type choice — two toggles, pick one or both */}
       <fieldset>
         <legend className={label}>{n.deal_label}</legend>
-        <div role="radiogroup" aria-label={n.deal_label} className="grid grid-cols-3 gap-2">
-          {DEALS.map((d) => {
-            const active = deal === d;
-            return (
-              <button
-                key={d}
-                type="button"
-                role="radio"
-                aria-checked={active}
-                onClick={() => setDeal(d)}
-                className={`px-2 py-2.5 rounded-lg text-xs sm:text-sm font-semibold border transition-colors ${
-                  active
-                    ? "bg-gold text-black border-gold"
-                    : "bg-black border-gray-dark text-gray-light hover:border-gold/50 hover:text-cream"
-                }`}
-              >
-                {d === "both" ? n.deal_both : d === "sale" ? n.deal_sale : n.deal_rent}
-              </button>
-            );
-          })}
+        <div className="grid grid-cols-2 gap-2">
+          {([
+            [n.deal_sale, wantsSale, setWantsSale],
+            [n.deal_rent, wantsRent, setWantsRent],
+          ] as const).map(([text, on, set]) => (
+            <button
+              key={text}
+              type="button"
+              aria-pressed={on}
+              onClick={() => set((v) => !v)}
+              className={`px-3 py-2.5 rounded-lg text-sm font-semibold border transition-colors ${
+                on
+                  ? "bg-gold text-black border-gold"
+                  : "bg-black border-gray-dark text-gray-light hover:border-gold/50 hover:text-cream"
+              }`}
+            >
+              {text}
+            </button>
+          ))}
         </div>
       </fieldset>
 
