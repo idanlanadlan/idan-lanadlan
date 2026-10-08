@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getProperties, getPublishedBlogPosts } from "@/lib/db";
+import { getPublicProperties, getPublishedBlogPosts } from "@/lib/db";
 
 const BASE = "https://idanlanadlan.co.il";
 
@@ -60,7 +60,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ),
   ];
 
-  const properties = await getProperties();
+  const properties = await getPublicProperties();
   const propertyPages = properties
     .filter((p) => p.status === "available")
     .flatMap((p) =>

@@ -4,7 +4,7 @@ import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import PropertiesClient from "@/components/properties/PropertiesClient";
 import NewsletterCtaTab from "@/components/NewsletterCtaTab";
-import { getProperties } from "@/lib/db";
+import { getPublicProperties } from "@/lib/db";
 import { isLocale, canonicalAlternates, localizedPath } from "@/lib/locale-path";
 import { translations } from "@/lib/translations";
 import { localizedField } from "@/lib/property-utils";
@@ -38,7 +38,7 @@ export default async function PropertiesPage({
   const l = isLocale(locale) ? locale : "he";
   const pp = translations[l].properties_page;
   const nav = translations[l].nav;
-  const properties = (await getProperties()).filter((p) => p.type !== "project");
+  const properties = (await getPublicProperties()).filter((p) => p.type !== "project");
   const listable = properties.filter((p) => p.status === "available");
 
   const schema = {

@@ -147,6 +147,12 @@ export async function getProperties(): Promise<Property[]> {
   return ((data ?? []) as unknown[]).map(normalizeProperty);
 }
 
+/** Everything the public site may list — newsletter-only properties excluded.
+ *  The raw getProperties() stays unfiltered for the admin and the newsletter. */
+export async function getPublicProperties(): Promise<Property[]> {
+  return (await getProperties()).filter((p) => !p.newsletter_only);
+}
+
 function normalizeProperty(data: unknown): Property {
   const p = data as Record<string, unknown>;
   let images = p.images;
@@ -176,8 +182,13 @@ export async function getFeaturedProperties(): Promise<Property[]> {
     .eq("featured", true)
     .eq("status", "available")
     .order("created_at", { ascending: false })
-    .limit(6);
-  return ((data ?? []) as unknown[]).map(normalizeProperty);
+    .limit(20);
+  // Filtered in JS (not .eq in the query) so it keeps working before the
+  // newsletter_only migration; the wider limit leaves room for the 6 we show.
+  return ((data ?? []) as unknown[])
+    .map(normalizeProperty)
+    .filter((p) => !p.newsletter_only)
+    .slice(0, 6);
 }
 
 // Fields that live behind a migration in /admin/setup and may not exist yet
@@ -185,7 +196,7 @@ export async function getFeaturedProperties(): Promise<Property[]> {
 // columns is unknown, we drop it and retry so the core listing still saves
 // (rather than failing every create/edit — which is what happened when
 // crm_id was added unconditionally).
-const OPTIONAL_PROPERTY_COLUMNS = ["address_visibility", "crm_id", "yard_sqm"] as const;
+const OPTIONAL_PROPERTY_COLUMNS = ["address_visibility", "crm_id", "yard_sqm", "newsletter_only"] as const;
 
 function withoutUnknownColumn<T extends Record<string, unknown>>(
   row: T,
@@ -193,6 +204,9 @@ function withoutUnknownColumn<T extends Record<string, unknown>>(
 ): T | null {
   if (!/column|schema cache/i.test(errorMessage)) return null;
   for (const col of OPTIONAL_PROPERTY_COLUMNS) {
+    // Never silently drop newsletter_only=true: the property would go public.
+    // Let the save fail instead, so the missing migration is noticed.
+    if (col === "newsletter_only" && row[col] === true) continue;
     if (col in row && errorMessage.includes(col)) {
       const copy = { ...row };
       delete copy[col];

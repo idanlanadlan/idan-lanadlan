@@ -35,6 +35,9 @@ export async function generateMetadata({
   const city = localizedField(p, "city", l);
   const typeLabel = { sale: t.type_sale, rent: t.type_rent, project: t.type_project }[p.type] ?? "";
   return {
+    // Newsletter-only listings are reachable by the emailed link but must stay
+    // out of search results.
+    ...(p.newsletter_only ? { robots: { index: false, follow: false } } : {}),
     title: `${title} | ${meta.site_name}`,
     description: `${p.bedrooms} ${t.rooms}, ${displaySize(p)} ${t.sqm_unit} — ${neighborhood}, ${city}. ${t.price_label}: ${priceStr}. ${meta.site_name}.`,
     openGraph: {

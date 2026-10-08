@@ -471,6 +471,41 @@ export default function PropertyForm({
         </div>
       </div>
 
+      {/* Where the listing appears */}
+      <div className="rounded-lg border border-gray-dark bg-black/30 p-4">
+        <label className={label}>איפה הנכס מוצג</label>
+        <div className="flex flex-col gap-2 mt-2">
+          <label className="flex items-start gap-2.5 cursor-pointer text-sm text-cream">
+            <input
+              type="radio"
+              name="visibility"
+              value="site"
+              defaultChecked={!property?.newsletter_only}
+              className="w-4 h-4 mt-0.5 accent-gold"
+            />
+            <span>
+              באתר ובניוזלטר
+              <span className="block text-[11px] text-gray-light/70">הנכס מופיע ברשימות, בעמוד הבית ובמנועי חיפוש, ונשלח גם למנויים.</span>
+            </span>
+          </label>
+          <label className="flex items-start gap-2.5 cursor-pointer text-sm text-cream">
+            <input
+              type="radio"
+              name="visibility"
+              value="newsletter"
+              defaultChecked={!!property?.newsletter_only}
+              className="w-4 h-4 mt-0.5 accent-gold"
+            />
+            <span>
+              רק בניוזלטר (במייל בלבד)
+              <span className="block text-[11px] text-gray-light/70">
+                לא מופיע באתר ולא בגוגל. מנויים מקבלים אותו במייל, וקישור המייל פותח את עמוד הנכס.
+              </span>
+            </span>
+          </label>
+        </div>
+      </div>
+
       {/* Submit */}
       <div className="flex gap-3 pt-2">
         <SubmitButton isEdit={!!property?.id} />

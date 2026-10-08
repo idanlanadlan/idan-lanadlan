@@ -177,6 +177,11 @@ ALTER TABLE email_subscribers
   ADD COLUMN IF NOT EXISTS wants_sale BOOLEAN NOT NULL DEFAULT true,
   ADD COLUMN IF NOT EXISTS wants_rent BOOLEAN NOT NULL DEFAULT true;`;
 
+const MIGRATION_SQL_NEWSLETTER_ONLY = `-- נכס "רק בניוזלטר": לא מופיע באתר (רשימות, בית, sitemap) ומגיע ללקוחות רק במייל.
+-- DEFAULT false כדי שכל הנכסים הקיימים ימשיכו להופיע באתר כרגיל.
+ALTER TABLE properties
+  ADD COLUMN IF NOT EXISTS newsletter_only BOOLEAN NOT NULL DEFAULT false;`;
+
 // SECURITY FIX — the original "properties" policy below (see Step 2, line
 // "service_all") had no FOR/TO clause. In Postgres that silently defaults
 // to ALL commands (SELECT/INSERT/UPDATE/DELETE) for ALL roles — including
@@ -416,6 +421,15 @@ export default function SetupPage() {
           </p>
           <pre className="bg-black rounded-lg p-4 text-xs text-cream overflow-x-auto leading-relaxed font-mono">
             {MIGRATION_SQL_SUBSCRIBER_DEALS}
+          </pre>
+        </Step>
+
+        <Step num={19} title="עדכון: נכסים שמוצגים רק בניוזלטר">
+          <p className="text-sm text-gray-light mb-3">
+            כדי לבחור לכל נכס אם הוא מופיע באתר או מגיע ללקוחות רק במייל (ניוזלטר), הרץ ב-<strong className="text-cream">SQL Editor</strong> את זה:
+          </p>
+          <pre className="bg-black rounded-lg p-4 text-xs text-cream overflow-x-auto leading-relaxed font-mono">
+            {MIGRATION_SQL_NEWSLETTER_ONLY}
           </pre>
         </Step>
       </div>

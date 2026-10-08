@@ -4,7 +4,7 @@ import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import ProjectsClient from "@/components/properties/ProjectsClient";
 import LeadCaptureForm from "@/components/tools/LeadCaptureForm";
-import { getProperties } from "@/lib/db";
+import { getPublicProperties } from "@/lib/db";
 import { localizedField } from "@/lib/property-utils";
 import { isLocale, localizedPath } from "@/lib/locale-path";
 import { translations, type Locale } from "@/lib/translations";
@@ -54,7 +54,7 @@ export default async function ProjectsPage({
   const t = translations[l];
   const p = t.sections.projects;
 
-  const properties = (await getProperties()).filter((prop) => prop.type === "project");
+  const properties = (await getPublicProperties()).filter((prop) => prop.type === "project");
 
   const schema = {
     "@context": "https://schema.org",

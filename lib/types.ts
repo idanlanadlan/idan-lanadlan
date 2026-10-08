@@ -52,6 +52,10 @@ export interface Property {
   lng?: number | null;
   crm_id?: string;
   address_visibility?: AddressVisibility;
+  /** true = not listed anywhere on the public site (lists, home, sitemap);
+   *  reaches customers only through the email newsletter, whose links open
+   *  the (noindex) detail page. Absent/false = a normal public listing. */
+  newsletter_only?: boolean;
 }
 
 /** A co-operating broker on a collaboration listing. Admin-only — broker

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Plus, Download, Building2 } from "lucide-react";
 import { getProperties, getBrokers, getPropertyBrokerLinks } from "@/lib/db";
-import { deleteProperty, toggleFeatured, updateStatus } from "@/app/actions/properties";
+import { deleteProperty, toggleFeatured, toggleNewsletterOnly, updateStatus } from "@/app/actions/properties";
 import PropertiesTable, { type CollabInfo } from "@/components/admin/PropertiesTable";
 
 export const dynamic = "force-dynamic";
@@ -76,6 +76,7 @@ export default async function PropertiesAdmin() {
           collabInfo={collabInfo}
           deleteProperty={deleteProperty}
           toggleFeatured={toggleFeatured}
+          toggleNewsletterOnly={toggleNewsletterOnly}
           updateStatus={updateStatus}
         />
       )}

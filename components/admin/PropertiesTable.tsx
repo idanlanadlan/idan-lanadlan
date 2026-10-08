@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Pencil, Star, Eye, ArrowUp, ArrowDown, ArrowUpDown, Handshake, MapPin } from "lucide-react";
+import { Pencil, Star, Eye, ArrowUp, ArrowDown, ArrowUpDown, Handshake, MapPin, Mail, Globe } from "lucide-react";
 import StatusSelect from "@/components/admin/StatusSelect";
 import ConfirmDeleteForm from "@/components/admin/ConfirmDeleteForm";
 import type { CollabSplit, Property, PropertyStatus } from "@/lib/types";
@@ -32,6 +32,7 @@ interface Props {
   collabInfo?: Record<string, CollabInfo>;
   deleteProperty: (formData: FormData) => Promise<void>;
   toggleFeatured: (formData: FormData) => Promise<void>;
+  toggleNewsletterOnly: (formData: FormData) => Promise<void>;
   updateStatus: (formData: FormData) => Promise<void>;
 }
 
@@ -63,9 +64,11 @@ export default function PropertiesTable({
   collabInfo = {},
   deleteProperty,
   toggleFeatured,
+  toggleNewsletterOnly,
   updateStatus,
 }: Props) {
   const [statusFilter, setStatusFilter] = useState<PropertyStatus | "all">("all");
+  const [placement, setPlacement] = useState<"all" | "site" | "newsletter">("all");
   const [sortKey, setSortKey] = useState<SortKey | null>(null);
   const [sortDir, setSortDir] = useState<SortDir>("desc");
 
@@ -79,7 +82,11 @@ export default function PropertiesTable({
   }
 
   const visible = useMemo(() => {
-    let result = properties.filter((p) => statusFilter === "all" || p.status === statusFilter);
+    let result = properties.filter(
+      (p) =>
+        (statusFilter === "all" || p.status === statusFilter) &&
+        (placement === "all" || (placement === "newsletter") === !!p.newsletter_only)
+    );
 
     if (sortKey === "price") {
       result = [...result].sort((a, b) => (sortDir === "asc" ? a.price - b.price : b.price - a.price));
@@ -91,7 +98,7 @@ export default function PropertiesTable({
     }
 
     return result;
-  }, [properties, statusFilter, sortKey, sortDir]);
+  }, [properties, statusFilter, placement, sortKey, sortDir]);
 
   function SortIcon({ column }: { column: SortKey }) {
     if (sortKey !== column) return <ArrowUpDown size={11} className="opacity-40" />;
@@ -107,6 +114,17 @@ export default function PropertiesTable({
         <p className="text-xs text-gray-light">
           מציג {visible.length} מתוך {properties.length} נכסים
         </p>
+        <div className="flex items-center gap-2">
+        <select
+          value={placement}
+          onChange={(e) => setPlacement(e.target.value as "all" | "site" | "newsletter")}
+          className={selectClass}
+          aria-label="סינון לפי מקום הצגה"
+        >
+          <option value="all">אתר + ניוזלטר</option>
+          <option value="site">מוצגים באתר</option>
+          <option value="newsletter">רק בניוזלטר</option>
+        </select>
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value as PropertyStatus | "all")}
@@ -118,6 +136,7 @@ export default function PropertiesTable({
           <option value="sold">נמכר</option>
           <option value="rented">הושכר</option>
         </select>
+        </div>
       </div>
 
       <div className="bg-charcoal border border-gray-dark rounded-xl overflow-hidden">
@@ -173,6 +192,12 @@ export default function PropertiesTable({
                   </Link>
                   {/* Exact street address — always shown to the admin, even when
                       the public site is set to hide it (address_visibility). */}
+                  {p.newsletter_only && (
+                    <span className="inline-flex items-center gap-1 mb-1 text-[10px] px-1.5 py-0.5 rounded bg-gold/15 text-gold font-medium">
+                      <Mail size={10} />
+                      רק בניוזלטר — לא מופיע באתר
+                    </span>
+                  )}
                   {p.address && (
                     <p className="text-xs text-gold/90 mt-1 flex items-center gap-1 truncate">
                       <MapPin size={11} className="shrink-0" />
@@ -225,6 +250,17 @@ export default function PropertiesTable({
 
               {/* Actions */}
               <div className="flex items-center gap-2">
+                <form action={toggleNewsletterOnly}>
+                  <input type="hidden" name="id" value={p.id} />
+                  <input type="hidden" name="newsletter_only" value={String(!p.newsletter_only)} />
+                  <button
+                    type="submit"
+                    title={p.newsletter_only ? "העבר להצגה באתר" : "העבר לניוזלטר בלבד (הסר מהאתר)"}
+                    className={`p-1.5 transition-colors ${p.newsletter_only ? "text-gold" : "text-gray-light hover:text-gold"}`}
+                  >
+                    {p.newsletter_only ? <Globe size={15} /> : <Mail size={15} />}
+                  </button>
+                </form>
                 <Link
                   href={`/nadlan/${p.id}`}
                   target="_blank"

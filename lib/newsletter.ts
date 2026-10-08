@@ -64,6 +64,7 @@ function propertyRowsHtml(properties: Property[]): string {
       return `
 <div style="padding:16px 0;border-bottom:1px solid #2A2F36;">
   ${img}
+  ${p.newsletter_only ? `<p style="margin:0 0 6px;font-size:11px;letter-spacing:1px;color:#C9A96E;">★ בלעדי למנויי הניוזלטר</p>` : ""}
   <p style="margin:0 0 4px;font-size:15px;font-weight:bold;color:#FAF6EE;">${escapeHtml(p.title)}</p>
   <p style="margin:0 0 4px;font-size:14px;color:#C9A96E;">${priceStr(p)}</p>
   <p style="margin:0 0 10px;font-size:12px;color:#9a9488;">${p.bedrooms} חד׳ · ${displaySize(p)} מ״ר · ${escapeHtml(p.neighborhood)}, ${escapeHtml(p.city)}</p>

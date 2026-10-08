@@ -109,6 +109,9 @@ function parseForm(formData: FormData) {
     // Step 13 hasn't run yet, createProperty/updateProperty drop this key
     // and retry rather than failing the whole save.
     address_visibility: validVisibility,
+    // Always sent so it can be switched back off. Before setup Step 19 only the
+    // `false` value is silently dropped; `true` fails loudly (see lib/db.ts).
+    newsletter_only: formData.get("visibility") === "newsletter",
   };
 }
 
@@ -125,6 +128,7 @@ export async function createPropertyAction(formData: FormData) {
   }
   revalidatePath("/");
   revalidatePath("/nadlan");
+  revalidatePath("/projects");
   revalidatePath("/admin/properties");
   redirect("/admin/properties");
 }
@@ -138,6 +142,7 @@ export async function updatePropertyAction(formData: FormData) {
   await applyBrokerLink(id, formData);
   revalidatePath("/");
   revalidatePath("/nadlan");
+  revalidatePath("/projects");
   revalidatePath(`/nadlan/${id}`);
   revalidatePath("/admin/properties");
   redirect("/admin/properties");
@@ -159,6 +164,19 @@ export async function toggleFeatured(formData: FormData) {
   const featured = formData.get("featured") === "true";
   await updateProperty(id, { featured });
   revalidatePath("/");
+  revalidatePath("/admin/properties");
+}
+
+/** Quick switch from the properties table: public site <-> newsletter only. */
+export async function toggleNewsletterOnly(formData: FormData) {
+  if (!(await isAdmin())) throw new Error("Unauthorized");
+  const id = formData.get("id") as string;
+  const newsletter_only = formData.get("newsletter_only") === "true";
+  await updateProperty(id, { newsletter_only });
+  revalidatePath("/");
+  revalidatePath("/nadlan");
+  revalidatePath("/projects");
+  revalidatePath(`/nadlan/${id}`);
   revalidatePath("/admin/properties");
 }
 
