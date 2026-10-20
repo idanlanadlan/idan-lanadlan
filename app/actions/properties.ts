@@ -129,6 +129,7 @@ export async function createPropertyAction(formData: FormData) {
   revalidatePath("/");
   revalidatePath("/nadlan");
   revalidatePath("/projects");
+  revalidatePath("/sitemap.xml");
   revalidatePath("/admin/properties");
   redirect("/admin/properties");
 }
@@ -144,6 +145,7 @@ export async function updatePropertyAction(formData: FormData) {
   revalidatePath("/nadlan");
   revalidatePath("/projects");
   revalidatePath(`/nadlan/${id}`);
+  revalidatePath("/sitemap.xml");
   revalidatePath("/admin/properties");
   redirect("/admin/properties");
 }
@@ -154,6 +156,7 @@ export async function deleteProperty(formData: FormData) {
   await dbDeleteProperty(id);
   revalidatePath("/");
   revalidatePath("/nadlan");
+  revalidatePath("/sitemap.xml");
   revalidatePath("/admin/properties");
   redirect("/admin/properties");
 }
@@ -177,6 +180,7 @@ export async function toggleNewsletterOnly(formData: FormData) {
   revalidatePath("/nadlan");
   revalidatePath("/projects");
   revalidatePath(`/nadlan/${id}`);
+  revalidatePath("/sitemap.xml");
   revalidatePath("/admin/properties");
 }
 
@@ -187,5 +191,6 @@ export async function updateStatus(formData: FormData) {
   await updateProperty(id, { status });
   revalidatePath("/");
   revalidatePath("/nadlan");
+  revalidatePath("/sitemap.xml");
   revalidatePath("/admin/properties");
 }
