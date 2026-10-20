@@ -205,9 +205,16 @@ export default function BlogForm({ action, post }: Props) {
         />
         {uploadError && <p className="mt-1.5 text-xs text-amber-400">{uploadError}</p>}
         {coverPreview && (
-          <div className="relative w-full h-32 mt-2 rounded-lg overflow-hidden border border-gray-dark bg-black">
-            <Image src={coverPreview} alt="" fill sizes="600px" className="object-cover" unoptimized />
-          </div>
+          <>
+            {/* Whole image, never cropped: 16:9 matches the generated covers, and
+                object-contain keeps hand-uploaded images of any shape fully visible. */}
+            <div className="relative w-full max-w-2xl aspect-video mt-2 rounded-lg overflow-hidden border border-gray-dark bg-black">
+              <Image src={coverPreview} alt="" fill sizes="672px" className="object-contain" unoptimized />
+            </div>
+            <p className="text-[10px] text-gray mt-1">
+              בעמוד המאמר התמונה מוצגת במסגרת רחבה יותר, ולכן נחתכת מעט למעלה ולמטה.
+            </p>
+          </>
         )}
         <label className={`${label} mt-4`}>טקסט חלופי לתמונה (alt)</label>
         <input
