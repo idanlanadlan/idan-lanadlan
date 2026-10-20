@@ -7,7 +7,13 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import { getBlogPostBySlug } from "@/lib/db";
-import { localizedBlogField, localizedBlogKeywords } from "@/lib/blog-utils";
+import {
+  localizedBlogField,
+  localizedBlogKeywords,
+  isGeneratedCover,
+  COVER_WIDTH,
+  COVER_HEIGHT,
+} from "@/lib/blog-utils";
 import { translations, type Locale } from "@/lib/translations";
 import { isLocale, localizedPath } from "@/lib/locale-path";
 import { safeJsonLd } from "@/lib/json-ld";
@@ -32,6 +38,10 @@ export async function generateMetadata({
   const excerpt = localizedBlogField(post, "excerpt", l);
   const keywords = localizedBlogKeywords(post, l);
   const meta = translations[l].meta;
+  const alt = localizedBlogField(post, "cover_image_alt", l) || title;
+  // Fall back to the site-wide share card until a cover exists.
+  const cover = post.cover_image || `${BASE}/og-image.jpg`;
+  const coverSized = Boolean(post.cover_image) && isGeneratedCover(post.cover_image);
 
   return {
     title: `${title} | ${meta.site_name}`,
@@ -40,8 +50,14 @@ export async function generateMetadata({
     openGraph: {
       title,
       description: excerpt,
-      images: [{ url: post.cover_image }],
+      images: [{ url: cover, alt, ...(coverSized ? { width: COVER_WIDTH, height: COVER_HEIGHT } : {}) }],
       type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: excerpt,
+      images: [{ url: cover, alt }],
     },
     alternates: {
       canonical: postUrl(slug, l),
@@ -76,6 +92,8 @@ export default async function BlogPostPage({
   const excerpt = localizedBlogField(post, "excerpt", l);
   const content = localizedBlogField(post, "content", l);
   const keywords = localizedBlogKeywords(post, l);
+  const coverAlt = localizedBlogField(post, "cover_image_alt", l) || title;
+  const coverSized = Boolean(post.cover_image) && isGeneratedCover(post.cover_image);
 
   const schema = {
     "@context": "https://schema.org",
@@ -84,7 +102,17 @@ export default async function BlogPostPage({
         "@type": "BlogPosting",
         headline: title,
         description: excerpt,
-        image: post.cover_image,
+        image: !post.cover_image
+          ? undefined
+          : coverSized
+            ? {
+                "@type": "ImageObject",
+                url: post.cover_image,
+                width: COVER_WIDTH,
+                height: COVER_HEIGHT,
+                caption: coverAlt,
+              }
+            : post.cover_image,
         author: {
           "@type": "Person",
           name: authorName,
@@ -135,7 +163,7 @@ export default async function BlogPostPage({
               <>
                 <Image
                   src={post.cover_image}
-                  alt={title}
+                  alt={coverAlt}
                   fill
                   sizes="(max-width: 896px) 100vw, 896px"
                   className="object-cover"

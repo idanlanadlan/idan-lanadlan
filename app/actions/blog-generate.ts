@@ -1,13 +1,13 @@
 "use server";
 
 import Anthropic from "@anthropic-ai/sdk";
-import type { BlogPost } from "@/lib/types";
 import { getAllBlogPosts } from "@/lib/db";
 import { isAdmin } from "@/lib/require-admin";
 import { RSS_FEEDS, RE_KEYWORDS, TOPIC_POOL } from "@/lib/blog-sources";
+import { IMAGE_PROMPT_RULES, type WeeklyDraft } from "@/lib/blog-image";
 
 export type GenerateResult =
-  | { ok: true; draft: Partial<BlogPost> }
+  | { ok: true; draft: WeeklyDraft }
   | { ok: false; error: "not_configured" | "fetch_error" | "parse_error" | "api_error" };
 
 type GenerateMode = "idea" | "content" | "link";
@@ -26,6 +26,7 @@ const SYSTEM_PROMPT = `אתה קופירייטר ומומחה SEO/AEO של "עי
 - slug: לטיני בלבד, אותיות קטנות ומקפים, בלי עברית.
 - excerpt: תקציר/meta description קצר וממוקד, עד כ-155 תווים.
 - keywords: מערך של 5-8 מילות מפתח רלוונטיות (עברית).
+${IMAGE_PROMPT_RULES}
 
 קרא לכלי write_article עם הטיוטה המלאה — אל תחזיר טקסט חופשי.`;
 
@@ -47,8 +48,16 @@ const WRITE_ARTICLE_TOOL: Anthropic.Tool = {
         items: { type: "string" },
         description: "5-8 מילות מפתח רלוונטיות בעברית",
       },
+      image_prompt: {
+        type: "string",
+        description: "English scene description for the cover image (no text/logos/faces in the image)",
+      },
+      cover_alt: {
+        type: "string",
+        description: "טקסט חלופי לתמונת השער בעברית, עד 125 תווים, מתאר את התמונה בפועל",
+      },
     },
-    required: ["title", "slug", "excerpt", "content", "keywords"],
+    required: ["title", "slug", "excerpt", "content", "keywords", "image_prompt", "cover_alt"],
   },
 };
 
@@ -58,7 +67,7 @@ function getClient(): Anthropic | null {
   return new Anthropic({ apiKey: key });
 }
 
-function extractDraft(msg: Anthropic.Message): Partial<BlogPost> | null {
+function extractDraft(msg: Anthropic.Message): WeeklyDraft | null {
   const toolUse = msg.content.find((b): b is Anthropic.ToolUseBlock => b.type === "tool_use");
   if (!toolUse) return null;
   const input = toolUse.input as Record<string, unknown>;
@@ -68,6 +77,8 @@ function extractDraft(msg: Anthropic.Message): Partial<BlogPost> | null {
     excerpt: String(input.excerpt ?? ""),
     content: String(input.content ?? ""),
     keywords: Array.isArray(input.keywords) ? input.keywords.map(String) : [],
+    image_prompt: String(input.image_prompt ?? ""),
+    cover_image_alt: String(input.cover_alt ?? "").trim().slice(0, 160),
   };
 }
 
@@ -191,7 +202,7 @@ export async function generateWeeklyDraft(): Promise<GenerateResult> {
   try {
     const msg = await client.messages.create({
       model: "claude-sonnet-5",
-      max_tokens: 4096,
+      max_tokens: 5000,
       system: SYSTEM_PROMPT,
       messages: [{ role: "user", content: userMessage }],
       tools: [WRITE_ARTICLE_TOOL],
@@ -224,7 +235,7 @@ export async function generateBlogDraft(mode: GenerateMode, value: string): Prom
   try {
     const msg = await client.messages.create({
       model: "claude-sonnet-5",
-      max_tokens: 4096,
+      max_tokens: 5000,
       system: SYSTEM_PROMPT,
       messages: [{ role: "user", content: userMessage }],
       tools: [WRITE_ARTICLE_TOOL],

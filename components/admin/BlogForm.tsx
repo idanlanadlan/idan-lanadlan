@@ -3,8 +3,9 @@
 import { useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 import Image from "next/image";
-import { Upload } from "lucide-react";
+import { Sparkles, Upload } from "lucide-react";
 import type { BlogPost } from "@/lib/types";
+import { regenerateCoverImage } from "@/app/actions/blog";
 
 const field =
   "w-full bg-black border border-gray-dark rounded-lg px-4 py-2.5 text-sm text-cream focus:border-gold outline-none transition-colors";
@@ -30,9 +31,12 @@ function SubmitButton({ isEdit }: { isEdit: boolean }) {
 }
 
 export default function BlogForm({ action, post }: Props) {
+  const formRef = useRef<HTMLFormElement>(null);
   const coverInputRef = useRef<HTMLInputElement>(null);
+  const altInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const [generating, setGenerating] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const [coverPreview, setCoverPreview] = useState(post?.cover_image ?? "");
 
@@ -61,8 +65,50 @@ export default function BlogForm({ action, post }: Props) {
     }
   }
 
+  // Draws a fresh AI cover from the text currently in the form (works for unsaved
+  // drafts too) and drops the URL + alt text into the fields. Nothing is saved
+  // until the form is submitted.
+  async function handleRegenerate() {
+    const form = formRef.current;
+    if (!form) return;
+    const fd = new FormData(form);
+    const title = String(fd.get("title") ?? "").trim();
+    if (!title) {
+      setUploadError("הוסף כותרת למאמר לפני יצירת תמונה");
+      return;
+    }
+    setUploadError("");
+    setGenerating(true);
+    try {
+      const res = await regenerateCoverImage({
+        title,
+        excerpt: String(fd.get("excerpt") ?? ""),
+        keywords: String(fd.get("keywords") ?? "")
+          .split(",")
+          .map((k) => k.trim())
+          .filter(Boolean),
+        slug: String(fd.get("slug") ?? ""),
+      });
+      if (!res.ok) {
+        setUploadError(
+          res.error === "not_configured"
+            ? "יצירת תמונות AI לא מוגדרת (חסר GEMINI_API_KEY ב-Vercel)"
+            : "לא הצלחנו ליצור תמונה — נסה שוב, או העלה קובץ"
+        );
+        return;
+      }
+      if (coverInputRef.current) coverInputRef.current.value = res.url;
+      if (altInputRef.current) altInputRef.current.value = res.alt;
+      setCoverPreview(res.url);
+    } catch {
+      setUploadError("לא הצלחנו ליצור תמונה — נסה שוב, או העלה קובץ");
+    } finally {
+      setGenerating(false);
+    }
+  }
+
   return (
-    <form action={action} className="flex flex-col gap-6">
+    <form ref={formRef} action={action} className="flex flex-col gap-6">
       {post?.id && <input type="hidden" name="id" value={post.id} />}
 
       <div>
@@ -136,6 +182,15 @@ export default function BlogForm({ action, post }: Props) {
             <Upload size={14} />
             {uploading ? "מעלה..." : "העלה קובץ"}
           </button>
+          <button
+            type="button"
+            onClick={handleRegenerate}
+            disabled={generating || uploading}
+            className="shrink-0 flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-xs font-semibold border border-gold/40 text-gold hover:bg-gold/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Sparkles size={14} />
+            {generating ? "יוצר תמונה (עד חצי דקה)..." : "צור תמונה מחדש"}
+          </button>
         </div>
         <input
           ref={fileInputRef}
@@ -154,6 +209,18 @@ export default function BlogForm({ action, post }: Props) {
             <Image src={coverPreview} alt="" fill sizes="600px" className="object-cover" unoptimized />
           </div>
         )}
+        <label className={`${label} mt-4`}>טקסט חלופי לתמונה (alt)</label>
+        <input
+          ref={altInputRef}
+          className={field}
+          name="cover_image_alt"
+          defaultValue={post?.cover_image_alt}
+          maxLength={160}
+          placeholder="תיאור קצר של מה שרואים בתמונה — חשוב ל-SEO ולנגישות"
+        />
+        <p className="text-[10px] text-gray mt-1">
+          מה שרואים בתמונה בפועל (לא הכותרת), עד כ-125 תווים. מתורגם אוטומטית לשאר השפות בשמירה.
+        </p>
       </div>
 
       <div>

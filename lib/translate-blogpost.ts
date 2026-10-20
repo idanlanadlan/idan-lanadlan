@@ -1,7 +1,9 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { BlogPost } from "./types";
 
-type SourceFields = Pick<BlogPost, "title" | "excerpt" | "content" | "keywords">;
+type SourceFields = Pick<BlogPost, "title" | "excerpt" | "content" | "keywords"> & {
+  cover_image_alt?: string;
+};
 
 const LANG_FIELDS = {
   type: "object" as const,
@@ -10,6 +12,7 @@ const LANG_FIELDS = {
     excerpt: { type: "string" as const },
     content: { type: "string" as const },
     keywords: { type: "array" as const, items: { type: "string" as const } },
+    cover_image_alt: { type: "string" as const },
   },
   required: ["title", "excerpt", "content", "keywords"],
 };
@@ -47,11 +50,11 @@ export async function translateBlogPostFields(
       model: "claude-sonnet-5",
       max_tokens: 8192,
       system:
-        "אתה מתרגם מקצועי לתחום הנדל\"ן היוקרתי, ועורך תוכן SEO. תרגם את מאמר הבלוג המלא לאנגלית, לצרפתית ולספרדית באופן טבעי ושיווקי (לא תרגום מילולי מכני) — כמו שכתב תוכן מקומי בשפת היעד היה כותב. שמור במדויק על מבנה הכותרות של המאמר (שורות שמתחילות ב-## או ###) ועל חלוקת הפסקאות המקורית. תרגם את מילות המפתח (keywords) להתאמה אמיתית למונחי חיפוש בשפת היעד — לא תרגום מילולי של כל מילה. שמור על שמות מקומות מוכרים (Tel Aviv, לא תעתיק מלאכותי). קרא לכלי translate_blog_post עם התוצאה המלאה.",
+        "אתה מתרגם מקצועי לתחום הנדל\"ן היוקרתי, ועורך תוכן SEO. תרגם את מאמר הבלוג המלא לאנגלית, לצרפתית ולספרדית באופן טבעי ושיווקי (לא תרגום מילולי מכני) — כמו שכתב תוכן מקומי בשפת היעד היה כותב. שמור במדויק על מבנה הכותרות של המאמר (שורות שמתחילות ב-## או ###) ועל חלוקת הפסקאות המקורית. תרגם את מילות המפתח (keywords) להתאמה אמיתית למונחי חיפוש בשפת היעד — לא תרגום מילולי של כל מילה. אם סופק טקסט חלופי לתמונה (alt), תרגם אותו כתיאור קצר וטבעי של התמונה (עד 125 תווים); אם לא סופק, החזר מחרוזת ריקה ב-cover_image_alt. שמור על שמות מקומות מוכרים (Tel Aviv, לא תעתיק מלאכותי). קרא לכלי translate_blog_post עם התוצאה המלאה.",
       messages: [
         {
           role: "user",
-          content: `כותרת: ${fields.title}\n\nתקציר: ${fields.excerpt}\n\nמילות מפתח: ${fields.keywords.join(", ")}\n\nתוכן מלא:\n${fields.content}`,
+          content: `כותרת: ${fields.title}\n\nתקציר: ${fields.excerpt}\n\nמילות מפתח: ${fields.keywords.join(", ")}\n\nטקסט חלופי לתמונה (alt): ${fields.cover_image_alt ?? ""}\n\nתוכן מלא:\n${fields.content}`,
         },
       ],
       tools: [TRANSLATE_TOOL],
@@ -72,14 +75,17 @@ export async function translateBlogPostFields(
       excerpt_en: String(input.en.excerpt ?? ""),
       content_en: String(input.en.content ?? ""),
       keywords_en: Array.isArray(input.en.keywords) ? input.en.keywords.map(String) : [],
+      cover_image_alt_en: String(input.en.cover_image_alt ?? ""),
       title_fr: String(input.fr.title ?? ""),
       excerpt_fr: String(input.fr.excerpt ?? ""),
       content_fr: String(input.fr.content ?? ""),
       keywords_fr: Array.isArray(input.fr.keywords) ? input.fr.keywords.map(String) : [],
+      cover_image_alt_fr: String(input.fr.cover_image_alt ?? ""),
       title_es: String(input.es.title ?? ""),
       excerpt_es: String(input.es.excerpt ?? ""),
       content_es: String(input.es.content ?? ""),
       keywords_es: Array.isArray(input.es.keywords) ? input.es.keywords.map(String) : [],
+      cover_image_alt_es: String(input.es.cover_image_alt ?? ""),
     };
   } catch {
     return null;

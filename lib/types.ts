@@ -97,6 +97,11 @@ export interface BlogPost {
   excerpt: string;
   content: string;
   cover_image: string;
+  /** Descriptive alt text for the cover (SEO + accessibility). Hebrew; translations below. */
+  cover_image_alt?: string;
+  cover_image_alt_en?: string;
+  cover_image_alt_fr?: string;
+  cover_image_alt_es?: string;
   keywords: string[];
   published: boolean;
   featured?: boolean;

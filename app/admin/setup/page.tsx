@@ -182,6 +182,14 @@ const MIGRATION_SQL_NEWSLETTER_ONLY = `-- נכס "רק בניוזלטר": לא �
 ALTER TABLE properties
   ADD COLUMN IF NOT EXISTS newsletter_only BOOLEAN NOT NULL DEFAULT false;`;
 
+const MIGRATION_SQL_BLOG_COVER_ALT = `-- טקסט חלופי (alt) לתמונת השער של מאמרים, בעברית ובתרגומים. חשוב ל-SEO ולנגישות.
+-- עמודות ריקות לא משנות מאמרים קיימים.
+ALTER TABLE blog_posts
+  ADD COLUMN IF NOT EXISTS cover_image_alt TEXT,
+  ADD COLUMN IF NOT EXISTS cover_image_alt_en TEXT,
+  ADD COLUMN IF NOT EXISTS cover_image_alt_fr TEXT,
+  ADD COLUMN IF NOT EXISTS cover_image_alt_es TEXT;`;
+
 // SECURITY FIX — the original "properties" policy below (see Step 2, line
 // "service_all") had no FOR/TO clause. In Postgres that silently defaults
 // to ALL commands (SELECT/INSERT/UPDATE/DELETE) for ALL roles — including
@@ -430,6 +438,16 @@ export default function SetupPage() {
           </p>
           <pre className="bg-black rounded-lg p-4 text-xs text-cream overflow-x-auto leading-relaxed font-mono">
             {MIGRATION_SQL_NEWSLETTER_ONLY}
+          </pre>
+        </Step>
+
+        <Step num={20} title="עדכון: תמונות AI וטקסט חלופי (alt) למאמרים">
+          <p className="text-sm text-gray-light mb-3">
+            כדי שלכל מאמר תהיה תמונת שער עם טקסט חלופי לקידום האתר (SEO), הרץ ב-<strong className="text-cream">SQL Editor</strong> את זה.
+            בנוסף, ב-Vercel צריך להגדיר את <strong className="text-cream">GEMINI_API_KEY</strong> (מפתח מ-Google AI Studio) כדי שהטיוטה השבועית תכלול תמונה שנוצרה ב-AI:
+          </p>
+          <pre className="bg-black rounded-lg p-4 text-xs text-cream overflow-x-auto leading-relaxed font-mono">
+            {MIGRATION_SQL_BLOG_COVER_ALT}
           </pre>
         </Step>
       </div>

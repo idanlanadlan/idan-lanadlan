@@ -24,7 +24,12 @@ function alternatesFor(path: string) {
 /** One sitemap entry per locale, each carrying the full hreflang set. */
 function localizedEntries(
   path: string,
-  extra: { changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"]; priority: number; lastModified?: Date }
+  extra: {
+    changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"];
+    priority: number;
+    lastModified?: Date;
+    images?: string[];
+  }
 ): MetadataRoute.Sitemap {
   return (["he", "en", "fr", "es"] as const).map((locale) => ({
     url: urlFor(path, locale),
@@ -77,6 +82,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.7,
       lastModified: new Date(p.updated_at),
+      ...(p.cover_image ? { images: [p.cover_image] } : {}),
     })
   );
 

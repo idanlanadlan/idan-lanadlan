@@ -200,10 +200,11 @@ const OPTIONAL_PROPERTY_COLUMNS = ["address_visibility", "crm_id", "yard_sqm", "
 
 function withoutUnknownColumn<T extends Record<string, unknown>>(
   row: T,
-  errorMessage: string
+  errorMessage: string,
+  columns: readonly string[] = OPTIONAL_PROPERTY_COLUMNS
 ): T | null {
   if (!/column|schema cache/i.test(errorMessage)) return null;
-  for (const col of OPTIONAL_PROPERTY_COLUMNS) {
+  for (const col of columns) {
     // Never silently drop newsletter_only=true: the property would go public.
     // Let the save fail instead, so the missing migration is noticed.
     if (col === "newsletter_only" && row[col] === true) continue;
@@ -517,25 +518,40 @@ export async function getBlogPostById(id: string): Promise<BlogPost | null> {
   return (data as BlogPost) ?? null;
 }
 
+// Added by setup Step 20. Same safety net as the property columns above: if the
+// migration hasn't run yet, drop the unknown column and retry so the post still
+// saves. Longer names first, so an error about "..._en" never drops the base one.
+const OPTIONAL_BLOG_COLUMNS = [
+  "cover_image_alt_en",
+  "cover_image_alt_fr",
+  "cover_image_alt_es",
+  "cover_image_alt",
+] as const;
+
 export async function createBlogPost(post: Omit<BlogPost, "id" | "created_at" | "updated_at">): Promise<BlogPost> {
-  const { data, error } = await createAdminClient()
-    .from("blog_posts")
-    .insert([post])
-    .select()
-    .single();
-  if (error) throw new Error(error.message);
-  return data as BlogPost;
+  const client = createAdminClient();
+  let row: Record<string, unknown> = post;
+  for (let attempt = 0; attempt < OPTIONAL_BLOG_COLUMNS.length + 1; attempt++) {
+    const { data, error } = await client.from("blog_posts").insert([row]).select().single();
+    if (!error) return data as BlogPost;
+    const retry = withoutUnknownColumn(row, error.message, OPTIONAL_BLOG_COLUMNS);
+    if (!retry) throw new Error(error.message);
+    row = retry;
+  }
+  throw new Error("createBlogPost: unresolved unknown-column error");
 }
 
 export async function updateBlogPost(id: string, post: Partial<Omit<BlogPost, "id" | "created_at">>): Promise<BlogPost> {
-  const { data, error } = await createAdminClient()
-    .from("blog_posts")
-    .update({ ...post, updated_at: new Date().toISOString() })
-    .eq("id", id)
-    .select()
-    .single();
-  if (error) throw new Error(error.message);
-  return data as BlogPost;
+  const client = createAdminClient();
+  let row: Record<string, unknown> = { ...post, updated_at: new Date().toISOString() };
+  for (let attempt = 0; attempt < OPTIONAL_BLOG_COLUMNS.length + 1; attempt++) {
+    const { data, error } = await client.from("blog_posts").update(row).eq("id", id).select().single();
+    if (!error) return data as BlogPost;
+    const retry = withoutUnknownColumn(row, error.message, OPTIONAL_BLOG_COLUMNS);
+    if (!retry) throw new Error(error.message);
+    row = retry;
+  }
+  throw new Error("updateBlogPost: unresolved unknown-column error");
 }
 
 export async function deleteBlogPost(id: string): Promise<void> {
