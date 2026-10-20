@@ -94,7 +94,6 @@ proxy.ts                  # הגנת /admin + ניתוב שפות
 ## מה נשאר לעשות
 
 ### לאימות
-- **Resend בפרודקשן** — לא אומת שהמפתח והדומיין תקינים ושמיילים באמת נשלחים. `node scripts/check-newsletter.mjs --env .env.prod --send <מייל>` (אחרי `npx vercel env pull .env.prod --environment=production`; כותב סודות לדיסק).
 - **ביקורות** — `components/home/Testimonials.tsx` עדיין קורא מ-`mockTestimonials`; צריך ביקורות אמיתיות מלקוחות (ואולי טבלת `testimonials` ב-Supabase).
 
 ### ממתין לחומרים מעידן
