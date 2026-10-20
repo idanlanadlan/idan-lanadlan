@@ -208,6 +208,7 @@ const SECURITY_FIX_RLS = `-- === אבטחה דחופה: תיקון הרשאות 
 ALTER TABLE properties ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "service_all" ON properties;
 DROP POLICY IF EXISTS "public_read" ON properties;
+DROP POLICY IF EXISTS "service_role_write" ON properties;
 CREATE POLICY "public_read" ON properties FOR SELECT USING (true);
 CREATE POLICY "service_role_write" ON properties FOR ALL TO service_role USING (true) WITH CHECK (true);
 
@@ -216,6 +217,7 @@ CREATE POLICY "service_role_write" ON properties FOR ALL TO service_role USING (
 ALTER TABLE blog_posts ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "service_all" ON blog_posts;
 DROP POLICY IF EXISTS "public_read" ON blog_posts;
+DROP POLICY IF EXISTS "service_role_write" ON blog_posts;
 CREATE POLICY "public_read" ON blog_posts FOR SELECT USING (published = true);
 CREATE POLICY "service_role_write" ON blog_posts FOR ALL TO service_role USING (true) WITH CHECK (true);
 
@@ -224,6 +226,7 @@ CREATE POLICY "service_role_write" ON blog_posts FOR ALL TO service_role USING (
 ALTER TABLE site_settings ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "service_all" ON site_settings;
 DROP POLICY IF EXISTS "public_read" ON site_settings;
+DROP POLICY IF EXISTS "service_role_write" ON site_settings;
 CREATE POLICY "public_read" ON site_settings FOR SELECT USING (true);
 CREATE POLICY "service_role_write" ON site_settings FOR ALL TO service_role USING (true) WITH CHECK (true);
 
